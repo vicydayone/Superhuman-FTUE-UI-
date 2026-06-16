@@ -1,0 +1,122 @@
+"use client";
+
+import { ScreenLayout } from "./screen-layout";
+import { ContinueButton } from "./continue-button";
+import { AutoArchiveInbox } from "./inbox-preview";
+import { AUTO_ARCHIVE_MAIL } from "@/lib/data";
+import { cn } from "@/lib/utils";
+import type { AutoArchiveToggles, MailLabel, FlowStep } from "@/lib/types";
+
+const CATEGORIES: {
+  key: MailLabel;
+  color: string;
+  description: string;
+}[] = [
+  { key: "marketing", color: "#e09f81", description: "Marketing and promotional messages." },
+  { key: "news",      color: "#e4c450", description: "News and newsletter messages." },
+  { key: "pitch",     color: "#d5a1d7", description: "Cold pitch and outreach messages." },
+  { key: "social",    color: "#8da2d8", description: "Social network and online community messages." },
+];
+
+function Checkbox({ checked }: { checked: boolean }) {
+  return (
+    <span
+      className={cn(
+        "flex size-4 shrink-0 items-center justify-center rounded-[3px] border transition-colors duration-150",
+        checked ? "border-[#5f74aa] bg-[#5f74aa]" : "border-[#c5c5c5] bg-white",
+      )}
+    >
+      {checked && (
+        <svg viewBox="0 0 10 8" className="size-2.5" fill="none" aria-hidden>
+          <path
+            d="M1 4L3.8 7L9 1"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </span>
+  );
+}
+
+export function AutoArchiveScreen({
+  archivedLabels,
+  onToggle,
+  onContinue,
+  onNavigate,
+}: {
+  archivedLabels: AutoArchiveToggles;
+  onToggle: (key: MailLabel) => void;
+  onContinue: () => void;
+  onNavigate?: (step: FlowStep) => void;
+}) {
+  return (
+    <ScreenLayout
+      activeStep={2}
+      progress={1}
+      onNavigate={onNavigate}
+      left={
+        <>
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-2.5 text-ink">
+              <h1 className="text-[22px] font-semibold leading-normal">
+                Clear the clutter with Auto Archive.
+              </h1>
+              <p className="text-[14px] leading-normal">
+                We use your auto labels to cut through the noise – everything
+                saved and searchable, just out of your way.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-[14px]">
+              <p className="text-[14px] text-ink-subdued">
+                Which emails do you want to automatically archive?
+              </p>
+
+              {CATEGORIES.map(({ key, color, description }) => {
+                const checked = archivedLabels[key];
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => onToggle(key)}
+                    className="flex w-full items-center gap-[10px] rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] bg-white px-5 py-[14px] drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
+                  >
+                    <div className="flex flex-1 flex-col gap-[10px] items-start min-w-0">
+                      <span
+                        className="rounded-[4px] px-[5px] text-[11px] font-semibold leading-5 tracking-[-0.15px] text-white"
+                        style={{ backgroundColor: color }}
+                      >
+                        {key}
+                      </span>
+                      <span className="text-[14px] leading-normal text-[#686868]">
+                        {description}
+                      </span>
+                    </div>
+
+                    {checked && (
+                      <span className="shrink-0 text-[14px] text-[#6276a9]">
+                        Auto archived
+                      </span>
+                    )}
+                    <Checkbox checked={checked} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            <div className="h-px w-full bg-black/10" />
+            <div className="flex justify-end">
+              <ContinueButton onClick={onContinue} />
+            </div>
+          </div>
+        </>
+      }
+      preview={<AutoArchiveInbox mails={AUTO_ARCHIVE_MAIL} archivedLabels={archivedLabels} />}
+    />
+  );
+}

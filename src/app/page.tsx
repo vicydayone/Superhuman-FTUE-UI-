@@ -1,65 +1,114 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { IntroScreen } from "@/components/ftue/intro-screen";
+import { AutoArchiveScreen } from "@/components/ftue/auto-archive-screen";
+import { SplitInboxScreen } from "@/components/ftue/split-inbox-screen";
+import { AutoDraftScreen } from "@/components/ftue/auto-draft-screen";
+import { AutoReminderScreen } from "@/components/ftue/auto-reminder-screen";
+import { AskAiScreen } from "@/components/ftue/ask-ai-screen";
+import { SeatsScreen } from "@/components/ftue/seats-screen";
+import { DoneScreen } from "@/components/ftue/done-screen";
+import type {
+  AutoArchiveToggles,
+  AutoDraftToggles,
+  FlowStep,
+  ReminderChoice,
+  SplitToggles,
+} from "@/lib/types";
 
 export default function Home() {
+  const [step, setStep] = useState<FlowStep>("intro");
+  const [archivedLabels, setArchivedLabels] = useState<AutoArchiveToggles>({
+    marketing: true,
+    news: false,
+    pitch: false,
+    social: false,
+  });
+  const [splits, setSplits] = useState<SplitToggles>({
+    calendar: true,
+    jira: true,
+  });
+  const [autoDraft, setAutoDraft] = useState<AutoDraftToggles>({
+    followUps: true,
+    scheduling: true,
+  });
+  const [reminder, setReminder] = useState<ReminderChoice>("couple-days");
+
+  const restart = () => {
+    setArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
+    setSplits({ calendar: true, jira: true });
+    setAutoDraft({ followUps: true, scheduling: true });
+    setReminder("couple-days");
+    setStep("intro");
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
+      {/* Fills the viewport responsively; the pastel background wash spans the
+          whole screen and the white stepper/left panels sit on top of it. */}
+      <div className="h-full w-full">
+        {step === "intro" && (
+          <IntroScreen onContinue={() => setStep("auto-archive")} />
+        )}
+
+        {step === "auto-archive" && (
+          <AutoArchiveScreen
+            archivedLabels={archivedLabels}
+            onToggle={(key) =>
+              setArchivedLabels((prev) => ({ ...prev, [key]: !prev[key] }))
+            }
+            onContinue={() => setStep("split-inbox")}
+            onNavigate={setStep}
+          />
+        )}
+
+        {step === "split-inbox" && (
+          <SplitInboxScreen
+            toggles={splits}
+            onToggle={(key, value) =>
+              setSplits((s) => ({ ...s, [key]: value }))
+            }
+            onContinue={() => setStep("auto-draft")}
+            onNavigate={setStep}
+          />
+        )}
+
+        {step === "auto-draft" && (
+          <AutoDraftScreen
+            toggles={autoDraft}
+            onToggle={(key, value) =>
+              setAutoDraft((d) => ({ ...d, [key]: value }))
+            }
+            onContinue={() => setStep("auto-reminder")}
+            onNavigate={setStep}
+          />
+        )}
+
+        {step === "auto-reminder" && (
+          <AutoReminderScreen
+            choice={reminder}
+            onChoiceChange={setReminder}
+            onContinue={() => setStep("ask-ai")}
+            onNavigate={setStep}
+          />
+        )}
+
+        {step === "ask-ai" && (
+          <AskAiScreen
+            onContinue={() => setStep("seats")}
+            onNavigate={setStep}
+          />
+        )}
+
+        {step === "seats" && (
+          <SeatsScreen onContinue={() => setStep("done")} onNavigate={setStep} />
+        )}
+
+        {step === "done" && (
+          <DoneScreen onRestart={restart} onNavigate={setStep} />
+        )}
+      </div>
+    </main>
   );
 }
