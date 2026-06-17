@@ -1,31 +1,48 @@
-import type { AutoArchiveMail, MailLabel, SplitMail } from "./types";
+import type { AutoArchiveMail, AutoDraftDemo, MailLabel, SplitMail } from "./types";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Auto Archive dataset (Figma frame "auto archive - show everything")
+// Auto Archive dataset (Figma section "chapter 2", frames "all toggle off/on")
 //
-// 8 labelled (promotional) messages are routed to Auto Archive by "Keep it
-// clean"; the 11 unlabelled ones stay in the inbox. → Inbox 11 · Auto Archive 8.
+// 33 messages. 14 carry an auto-label (marketing 3 · news 5 · pitch 4 · social 2);
+// the other 19 are unlabelled. Each label toggle archives its mail:
+//   • all off            → Inbox 33 · Auto Archive 0
+//   • marketing (default) → Inbox 30 · Auto Archive 3
+//   • all on             → Inbox 19 · Auto Archive 14
 // ─────────────────────────────────────────────────────────────────────────────
 export const AUTO_ARCHIVE_MAIL: AutoArchiveMail[] = [
-  { sender: "LinkedIn", subject: "You have 3 new connection requests", date: "30 MAR", label: "social" },
-  { sender: "Anna Williams", subject: "Re: Project handover next week", date: "30 MAR" },
-  { sender: "Morning Brew", subject: "5 stories you shouldn't miss today", date: "29 MAR", label: "news" },
-  { sender: "Creative Agency", subject: "We help brands like yours grow faster", date: "29 MAR", label: "pitch" },
-  { sender: "IT Support", subject: "Your VPN access has been renewed", date: "28 MAR" },
-  { sender: "Shopify", subject: "Don't miss our summer deals", date: "28 MAR", label: "marketing" },
-  { sender: "TechCrunch", subject: "This week in tech – March edition", date: "27 MAR", label: "news" },
-  { sender: "Team Lead", subject: "Can you take a look at the Q2 report?", date: "27 MAR" },
-  { sender: "GrowthLab", subject: "Just checking in", date: "27 MAR", label: "pitch" },
-  { sender: "Twitter / X", subject: "Your post reached 2,400 impressions", date: "26 MAR", label: "social" },
-  { sender: "Sarah Chen", subject: "Offsite Information for June", date: "26 MAR" },
-  { sender: "Mailchimp", subject: "Your June campaign is live", date: "26 MAR", label: "marketing" },
-  { sender: "Product Development", subject: "Prototype Testing Phase Begins", date: "27 MAR" },
-  { sender: "Corporate Communications", subject: "Annual Report Draft Ready for Review", date: "26 MAR" },
-  { sender: "Customer Service", subject: "New Chatbot Deployment", date: "26 MAR" },
-  { sender: "Calendly", subject: "Reminder: Call with Felix tomorrow at 10:00", date: "26 MAR" },
-  { sender: "Finance", subject: "Q2 expense report due Friday", date: "25 MAR" },
-  { sender: "HR", subject: "Open enrollment starts Monday", date: "25 MAR" },
-  { sender: "Notion", subject: "Your workspace was updated", date: "24 MAR" },
+  { sender: "CodeGenius", subject: "Check out your new offer!", date: "30 JUN", label: "marketing" },
+  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN" },
+  { sender: "TechCrunch", subject: "OpenAI’s new model beats benchmarks across coding, math, and reasoning", date: "30 JUN", label: "news" },
+  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "29 JUN", label: "marketing" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN" },
+  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "29 JUN", label: "pitch" },
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN" },
+  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "29 JUN", label: "social" },
+  { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "27 JUN", label: "news" },
+  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "26 JUN", label: "pitch" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN" },
+  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "24 JUN", label: "marketing" },
+  { sender: "Lina Morales", subject: "Scale Smarter", date: "24 JUN", label: "pitch" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN" },
+  { sender: "LinkedIn", subject: "Your Weekly Highlights", date: "23 JUN", label: "social" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN" },
+  { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "23 JUN", label: "news" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN" },
+  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "22 JUN", label: "pitch" },
+  { sender: "New York Times", subject: "Breaking News: Federal Reserve holds interest rates steady for third straight meeting", date: "21 JUN", label: "news" },
+  { sender: "Morning Brew", subject: "MARKETS: Dow drops 300 points + What’s driving the selloff", date: "21 JUN", label: "news" },
+  { sender: "Jira", subject: "ITHO-84512 Password Reset Loop on Login Page", date: "21 JUN" },
+  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "21 JUN" },
+  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "20 JUN" },
+  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "19 JUN" },
+  { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "19 JUN" },
+  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "18 JUN" },
+  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "18 JUN" },
+  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "17 JUN" },
+  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "17 JUN" },
+  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "16 JUN" },
 ];
 
 /** Labels surfaced on the "Keep it clean" card. */
@@ -34,31 +51,46 @@ export const ARCHIVED_LABELS: MailLabel[] = ["marketing", "news", "pitch", "soci
 export const isArchived = (mail: AutoArchiveMail): boolean => mail.label !== undefined;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Split Inbox dataset (Figma frames "split inbox - toggle on/off")
+// Split Inbox dataset (Figma section "chapter 2": splits / calendar / jira / other)
 //
-// 19 messages across 4 categories → Important 6 · Calendar 4 · Jira 3 · Other 6.
-// Turning a split off folds that category back into the main (Important) view.
+// 27 messages across 4 categories → Important 9 · Calendar 5 · Jira 4 · Other 9.
+// Calendar & Jira are toggleable: turning one off hides its tab and folds that
+// mail back into Important (e.g. Calendar off → Important 14; both off → 18).
+// "Other" holds the promotional/labelled mail and is always shown. (The Figma
+// "other" frame draws 7 of the 9; CodeSprint + Medium fill it to the count of 9.)
 // ─────────────────────────────────────────────────────────────────────────────
 export const SPLIT_MAIL: SplitMail[] = [
-  { sender: "Anna Williams", subject: "Re: Project handover next week", date: "30 MAR", category: "important" },
-  { sender: "IT Support", subject: "Your VPN access has been renewed", date: "28 MAR", category: "important" },
-  { sender: "Team Lead", subject: "Can you take a look at the Q2 report?", date: "27 MAR", category: "important" },
-  { sender: "Calendly", subject: "Reminder: Call with Felix tomorrow at 10:00", date: "26 MAR", category: "calendar" },
-  { sender: "Jira", subject: "[PROJ-412] Bug assigned to you: Nav breaks on mobile", date: "26 MAR", category: "jira" },
-  { sender: "Google Calendar", subject: "Reminder: Design Review tomorrow at 2:00 PM", date: "26 MAR", category: "calendar" },
-  { sender: "Sarah Chen", subject: "Offsite Information for June", date: "26 MAR", category: "important" },
-  { sender: "Product Development", subject: "Prototype Testing Phase Begins", date: "25 MAR", category: "important" },
-  { sender: "Slack", subject: "You were mentioned in #design-feedback", date: "25 MAR", category: "other" },
-  { sender: "GitHub", subject: "Pull request #88 is ready for your review", date: "25 MAR", category: "other" },
-  { sender: "Jira", subject: "Sprint 24 starts today – 6 issues in your backlog", date: "24 MAR", category: "jira" },
-  { sender: "Lucas Becker", subject: "Call tomorrow", date: "24 MAR", category: "important" },
-  { sender: "Google Calendar", subject: "Reminder: Project Handover at 10:00 AM", date: "23 MAR", category: "calendar" },
-  { sender: "Calendly", subject: "Reminder: 1:1 with Maria at 3:00 PM", date: "23 MAR", category: "calendar" },
-  { sender: "Jira", subject: "[PROJ-389] Code review requested", date: "23 MAR", category: "jira" },
-  { sender: "Notion", subject: "New comment on your roadmap page", date: "25 MAR", category: "other" },
-  { sender: "Figma", subject: "Lucas shared a file with you", date: "24 MAR", category: "other" },
-  { sender: "Zoom", subject: "Your meeting recording is ready", date: "24 MAR", category: "other" },
-  { sender: "Linear", subject: "3 issues updated in your project", date: "23 MAR", category: "other" },
+  // Important (9)
+  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN", category: "important" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN", category: "important" },
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN", category: "important" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN", category: "important" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN", category: "important" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN", category: "important" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN", category: "important" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN", category: "important" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN", category: "important" },
+  // Calendar (5)
+  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "18 JUN", category: "calendar" },
+  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "18 JUN", category: "calendar" },
+  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "17 JUN", category: "calendar" },
+  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "17 JUN", category: "calendar" },
+  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "16 JUN", category: "calendar" },
+  // Jira (4)
+  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "21 JUN", category: "jira" },
+  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "20 JUN", category: "jira" },
+  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "19 JUN", category: "jira" },
+  { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "19 JUN", category: "jira" },
+  // Other (9 — promotional/labelled mail)
+  { sender: "CodeGenius", subject: "Check out your new offer!", date: "30 JUN", category: "other", label: "marketing" },
+  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "29 JUN", category: "other", label: "pitch" },
+  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "29 JUN", category: "other", label: "marketing" },
+  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "29 JUN", category: "other", label: "social" },
+  { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "27 JUN", category: "other", label: "news" },
+  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "26 JUN", category: "other", label: "pitch" },
+  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "24 JUN", category: "other", label: "marketing" },
+  { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "23 JUN", category: "other", label: "news" },
+  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "22 JUN", category: "other", label: "pitch" },
 ];
 
 export interface SplitTabDefinition {
@@ -96,6 +128,56 @@ export const AUTO_DRAFT_CARDS = [
   },
 ];
 
+/**
+ * Per-card preview content for Auto Draft. Selecting a card on the left swaps
+ * the incoming message + drafted reply shown in the preview. Reply segments
+ * with `highlight` render in the cobalt accent (the scheduling time slots).
+ */
+export const AUTO_DRAFT_DEMOS: Record<
+  AutoDraftDemo,
+  {
+    incoming: { sender: string; badge?: string; body: string };
+    reply: { text: string; highlight?: boolean }[];
+  }
+> = {
+  responses: {
+    incoming: {
+      sender: "Maria",
+      body: "Thanks for sending that contract over. The team and I will review and then we can discuss next steps.",
+    },
+    reply: [
+      {
+        text: "That’s great to hear Maria! I’m available to clarify anything or go over details if needed. Let me know if you’d like to discuss!",
+      },
+    ],
+  },
+  followUps: {
+    incoming: {
+      sender: "Me",
+      badge: "Auto Reminder returned",
+      body: "Hi Maria, did you get a chance to review the contract that I sent over? Let me know if you wanted to chat through any open details.",
+    },
+    reply: [
+      {
+        text: "I wanted to quickly follow up on my previous email. Do you have any open questions about your contract that I can help out with?",
+      },
+    ],
+  },
+  scheduling: {
+    incoming: {
+      sender: "Me",
+      body: "Hi Maria, did you get a chance to review the contract that I sent over? Let me know if you wanted to chat through any open details.",
+    },
+    reply: [
+      { text: "Awesome! Let’s set up a meeting to discuss later this week? I’m free " },
+      { text: "Thursday at 2PM", highlight: true },
+      { text: " or " },
+      { text: "Friday at 10AM", highlight: true },
+      { text: " – does either time work for you?" },
+    ],
+  },
+};
+
 /** Auto Reminder radio options. `wait` reads back into the preview banner. */
 export const REMINDER_OPTIONS: {
   key: import("./types").ReminderChoice;
@@ -104,33 +186,38 @@ export const REMINDER_OPTIONS: {
   recommended?: boolean;
 }[] = [
   { key: "asap", label: "As soon as possible", wait: "1 day later" },
-  { key: "couple-days", label: "Within a couple days", wait: "2 days later", recommended: true },
-  { key: "week", label: "Within a week", wait: "1 week later" },
+  { key: "couple-days", label: "2 days later", wait: "2 days later", recommended: true },
+  { key: "week", label: "Within a week", wait: "5 days later" },
 ];
 
-/** Example prompts shown on the Ask AI screen. */
+/** Example prompts shown on the Ask AI screen (also drive the preview answer). */
 export const ASK_AI_PROMPTS = [
   "Where is the upcoming offsite?",
-  "Summarize each company I'm meeting today.",
+  "Summarize each company I’m meeting today.",
   "Schedule a 30-min coffee chat with @Lily and draft a welcome email.",
 ];
 
-/** Tabs + counts shown in the Ask AI preview inbox (static illustration). */
+// Tabs + counts shown in the Ask AI preview inbox — mirrors the finished Split
+// Inbox state (Important active) so the inbox the user just organized carries
+// through. (Figma section node 1762-21338.)
 export const ASK_AI_TABS = [
-  { label: "Important", count: 8, active: true },
-  { label: "Calendar", count: 12 },
-  { label: "Jira", count: 7 },
-  { label: "News", count: 18 },
-  { label: "Other", count: 11 },
+  { label: "Important", count: 9, active: true },
+  { label: "Calendar", count: 5 },
+  { label: "Jira", count: 4 },
+  { label: "Other", count: 9 },
 ];
 
+// The Important list from Split Inbox, shown dimmed behind the Ask AI panel.
 export const ASK_AI_MAIL = [
-  { sender: "Anna Williams", subject: "Re: Project handover next week", date: "30 MAR" },
-  { sender: "IT Support", subject: "Your VPN access has been renewed", date: "28 MAR" },
-  { sender: "Team Lead", subject: "Can you take a look at the Q2 report?", date: "27 MAR" },
-  { sender: "Sarah Chen", subject: "Offsite Information for June", date: "26 MAR" },
-  { sender: "Product Development", subject: "Prototype Testing Phase Begins", date: "25 MAR" },
-  { sender: "Lucas Becker", subject: "Call tomorrow", date: "24 MAR" },
+  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN" },
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN" },
 ];
 
 /** Recommended teammates on the Seats screen. */

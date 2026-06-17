@@ -231,3 +231,38 @@
     }
   }
 }
+
+@keyframes label-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes tab-enter {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes screen-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Auto Reminder: the sent draft slides up into the thread, becoming "Me". */
+@keyframes reply-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* A fresh highlight (Auto Reminder banner) pops up below the reply. */
+@keyframes highlight-pop {
+  0%   { opacity: 0; transform: translateY(10px) scale(0.94); }
+  65%  { opacity: 1; transform: translateY(0) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Gentle cross-fade for preview content swapping inside the persistent card. */
+@keyframes preview-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

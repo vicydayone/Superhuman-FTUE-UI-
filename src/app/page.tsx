@@ -1,24 +1,60 @@
 "use client";
 
 import { useState } from "react";
+import { Stepper } from "@/components/ftue/stepper";
 import { IntroScreen } from "@/components/ftue/intro-screen";
-import { AutoArchiveScreen } from "@/components/ftue/auto-archive-screen";
-import { SplitInboxScreen } from "@/components/ftue/split-inbox-screen";
-import { AutoDraftScreen } from "@/components/ftue/auto-draft-screen";
-import { AutoReminderScreen } from "@/components/ftue/auto-reminder-screen";
-import { AskAiScreen } from "@/components/ftue/ask-ai-screen";
-import { SeatsScreen } from "@/components/ftue/seats-screen";
-import { DoneScreen } from "@/components/ftue/done-screen";
+import { WelcomeScreen, SignInScreen } from "@/components/ftue/auth-landing";
+import {
+  GoogleAccountScreen,
+  GoogleConsentScreen,
+  GoogleScopesScreen,
+  SigningInScreen,
+} from "@/components/ftue/google-auth";
+import { AutoArchiveLeft } from "@/components/ftue/auto-archive-screen";
+import { SplitInboxLeft } from "@/components/ftue/split-inbox-screen";
+import { AutoDraftLeft } from "@/components/ftue/auto-draft-screen";
+import { AutoReminderLeft } from "@/components/ftue/auto-reminder-screen";
+import { AskAiLeft } from "@/components/ftue/ask-ai-screen";
+import { SeatsLeft } from "@/components/ftue/seats-screen";
+import { DoneCard } from "@/components/ftue/done-screen";
+import { Chapter2Preview } from "@/components/ftue/inbox-preview";
+import { WorkflowPreview, SeatsPreview } from "@/components/ftue/workflow-previews";
+import { AUTO_ARCHIVE_MAIL, SPLIT_MAIL, REMINDER_OPTIONS } from "@/lib/data";
 import type {
   AutoArchiveToggles,
-  AutoDraftToggles,
+  AutoDraftDemo,
+  Chapter1Step,
   FlowStep,
   ReminderChoice,
   SplitToggles,
 } from "@/lib/types";
 
+/** Chapter 1 steps, in order — full-screen, no stepper / progress bar. */
+const CHAPTER1: Chapter1Step[] = [
+  "welcome",
+  "signin",
+  "google-account",
+  "google-consent",
+  "google-scopes",
+  "signing-in",
+];
+
+/** Which chapter is active + how many progress segments are filled, per step. */
+const STEPPER_META: Record<
+  Exclude<FlowStep, "intro" | Chapter1Step>,
+  { activeStep: 2 | 3 | "done"; progress: number }
+> = {
+  "auto-archive": { activeStep: 2, progress: 2 },
+  "split-inbox": { activeStep: 2, progress: 3 },
+  "auto-draft": { activeStep: 3, progress: 1 },
+  "auto-reminder": { activeStep: 3, progress: 2 },
+  "ask-ai": { activeStep: 3, progress: 3 },
+  seats: { activeStep: 3, progress: 4 },
+  done: { activeStep: "done", progress: 0 },
+};
+
 export default function Home() {
-  const [step, setStep] = useState<FlowStep>("intro");
+  const [step, setStep] = useState<FlowStep>("welcome");
   const [archivedLabels, setArchivedLabels] = useState<AutoArchiveToggles>({
     marketing: true,
     news: false,
@@ -29,84 +65,225 @@ export default function Home() {
     calendar: true,
     jira: true,
   });
-  const [autoDraft, setAutoDraft] = useState<AutoDraftToggles>({
-    followUps: true,
-    scheduling: true,
-  });
+  const [draftDemo, setDraftDemo] = useState<AutoDraftDemo>("responses");
   const [reminder, setReminder] = useState<ReminderChoice>("couple-days");
+  const [reminderHover, setReminderHover] = useState<ReminderChoice | null>(null);
+  const [askDemo, setAskDemo] = useState(0);
 
   const restart = () => {
     setArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
     setSplits({ calendar: true, jira: true });
-    setAutoDraft({ followUps: true, scheduling: true });
+    setDraftDemo("responses");
     setReminder("couple-days");
-    setStep("intro");
+    setAskDemo(0);
+    setStep("welcome");
   };
 
-  return (
-    <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
-      {/* Fills the viewport responsively; the pastel background wash spans the
-          whole screen and the white stepper/left panels sit on top of it. */}
-      <div className="h-full w-full">
-        {step === "intro" && (
-          <IntroScreen onContinue={() => setStep("auto-archive")} />
-        )}
+  // Hovering an option previews its wait; falls back to the selected choice.
+  const reminderWait =
+    REMINDER_OPTIONS.find((o) => o.key === (reminderHover ?? reminder))?.wait ??
+    "2 days later";
 
-        {step === "auto-archive" && (
-          <AutoArchiveScreen
+  // ── Left-column content per step ──────────────────────────────────────────
+  const leftFor = () => {
+    switch (step) {
+      case "auto-archive":
+        return (
+          <AutoArchiveLeft
             archivedLabels={archivedLabels}
             onToggle={(key) =>
               setArchivedLabels((prev) => ({ ...prev, [key]: !prev[key] }))
             }
-            onContinue={() => setStep("split-inbox")}
-            onNavigate={setStep}
+            onContinue={() => {
+              // Close the archive menu first, then advance after the animation.
+              setArchivedLabels({ marketing: false, news: false, pitch: false, social: false });
+              setTimeout(() => setStep("split-inbox"), 750);
+            }}
           />
-        )}
-
-        {step === "split-inbox" && (
-          <SplitInboxScreen
+        );
+      case "split-inbox":
+        return (
+          <SplitInboxLeft
             toggles={splits}
-            onToggle={(key, value) =>
-              setSplits((s) => ({ ...s, [key]: value }))
-            }
+            onToggle={(key, value) => setSplits((s) => ({ ...s, [key]: value }))}
             onContinue={() => setStep("auto-draft")}
-            onNavigate={setStep}
           />
-        )}
-
-        {step === "auto-draft" && (
-          <AutoDraftScreen
-            toggles={autoDraft}
-            onToggle={(key, value) =>
-              setAutoDraft((d) => ({ ...d, [key]: value }))
-            }
+        );
+      case "auto-draft":
+        return (
+          <AutoDraftLeft
+            onHover={setDraftDemo}
             onContinue={() => setStep("auto-reminder")}
-            onNavigate={setStep}
           />
-        )}
-
-        {step === "auto-reminder" && (
-          <AutoReminderScreen
+        );
+      case "auto-reminder":
+        return (
+          <AutoReminderLeft
             choice={reminder}
             onChoiceChange={setReminder}
+            onHover={setReminderHover}
             onContinue={() => setStep("ask-ai")}
-            onNavigate={setStep}
           />
-        )}
-
-        {step === "ask-ai" && (
-          <AskAiScreen
+        );
+      case "ask-ai":
+        return (
+          <AskAiLeft
+            onHover={setAskDemo}
             onContinue={() => setStep("seats")}
-            onNavigate={setStep}
           />
-        )}
+        );
+      case "seats":
+        return <SeatsLeft onContinue={() => setStep("done")} />;
+      default:
+        return null;
+    }
+  };
 
-        {step === "seats" && (
-          <SeatsScreen onContinue={() => setStep("done")} onNavigate={setStep} />
-        )}
+  // ── Preview per step. Chapter 2 (auto-archive + split-inbox) shares one
+  //    <Chapter2Preview> and Chapter 3 shares one <WorkflowPreview>, so each
+  //    chapter's browser card + titlebar stay mounted (no flash on Continue). ─
+  const previewFor = () => {
+    switch (step) {
+      case "auto-archive":
+      case "split-inbox":
+        return (
+          <Chapter2Preview
+            step={step}
+            archivedMails={AUTO_ARCHIVE_MAIL}
+            archivedLabels={archivedLabels}
+            splitMails={SPLIT_MAIL}
+            splits={splits}
+          />
+        );
+      case "auto-draft":
+      case "auto-reminder":
+      case "ask-ai":
+        return (
+          <WorkflowPreview
+            step={step}
+            draftDemo={draftDemo}
+            reminderWait={reminderWait}
+            askDemo={askDemo}
+          />
+        );
+      case "seats":
+        return <SeatsPreview />;
+      default:
+        return null;
+    }
+  };
 
-        {step === "done" && (
-          <DoneScreen onRestart={restart} onNavigate={setStep} />
+  // ── Chapter 1 — full-screen, no stepper. Linear click-through to Chapter 2. ──
+  const renderChapter1 = () => {
+    switch (step) {
+      case "welcome":
+        return <WelcomeScreen onContinue={() => setStep("signin")} />;
+      case "signin":
+        return <SignInScreen onContinue={() => setStep("google-account")} />;
+      case "google-account":
+        return <GoogleAccountScreen onContinue={() => setStep("google-consent")} />;
+      case "google-consent":
+        return (
+          <GoogleConsentScreen
+            onContinue={() => setStep("google-scopes")}
+            onCancel={() => setStep("google-account")}
+          />
+        );
+      case "google-scopes":
+        return (
+          <GoogleScopesScreen
+            onContinue={() => setStep("signing-in")}
+            onCancel={() => setStep("google-consent")}
+          />
+        );
+      case "signing-in":
+        return <SigningInScreen onContinue={() => setStep("intro")} />;
+      default:
+        return null;
+    }
+  };
+
+  const isChapter1 = (CHAPTER1 as string[]).includes(step);
+  const chapter1Idx = isChapter1 ? (CHAPTER1 as string[]).indexOf(step) : -1;
+  const goChapter1Back = () => {
+    if (chapter1Idx > 0) setStep(CHAPTER1[chapter1Idx - 1]);
+  };
+  const goChapter1Forward = () => {
+    if (chapter1Idx < CHAPTER1.length - 1) setStep(CHAPTER1[chapter1Idx + 1]);
+    else setStep("intro");
+  };
+
+  const meta =
+    isChapter1 || step === "intro"
+      ? null
+      : STEPPER_META[step as Exclude<FlowStep, "intro" | Chapter1Step>];
+
+  return (
+    <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
+      <div className="h-full w-full">
+        {isChapter1 ? (
+          <div className="relative h-full w-full">
+            {renderChapter1()}
+            {/* Prototype nav arrows — top-left overlay */}
+            <div className="absolute left-4 top-4 z-50 flex gap-1.5">
+              <button
+                type="button"
+                onClick={goChapter1Back}
+                disabled={chapter1Idx === 0}
+                aria-label="Previous screen"
+                className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-opacity hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden>
+                  <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={goChapter1Forward}
+                aria-label="Next screen"
+                className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-opacity hover:bg-white/30"
+              >
+                <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden>
+                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        ) : step === "intro" ? (
+          <IntroScreen onContinue={() => setStep("auto-archive")} />
+        ) : (
+          <div className="relative flex h-full w-full">
+            {/* Persistent stepper — stays mounted across every non-intro step,
+                so the progress bar holds its position and only the fill moves. */}
+            <Stepper
+              activeStep={meta!.activeStep}
+              progress={meta!.progress}
+              onNavigate={setStep}
+              className="absolute inset-x-0 top-0 z-10"
+            />
+
+            {step === "done" ? (
+              <DoneCard onRestart={restart} />
+            ) : (
+              <>
+                {/* Left column — white panel persists; inner content transitions. */}
+                <div className="flex h-full w-1/2 flex-col bg-white px-[100px] pb-[30px] pt-[100px]">
+                  <div
+                    key={step}
+                    className="flex min-h-0 flex-1 flex-col justify-between"
+                    style={{ animation: "screen-enter 360ms ease-out both" }}
+                  >
+                    {leftFor()}
+                  </div>
+                </div>
+
+                {/* Right column — preview area (transparent over the wash). */}
+                <div className="flex h-full w-1/2 flex-col items-center justify-center px-[100px] pb-[100px] pt-[140px]">
+                  {previewFor()}
+                </div>
+              </>
+            )}
+          </div>
         )}
       </div>
     </main>

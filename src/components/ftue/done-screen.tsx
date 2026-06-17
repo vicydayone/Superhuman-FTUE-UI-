@@ -1,8 +1,5 @@
 "use client";
 
-import { Stepper } from "./stepper";
-import type { FlowStep } from "@/lib/types";
-
 /** White sparkle that trails the primary CTA label. */
 function Sparkle() {
   return (
@@ -20,30 +17,20 @@ function Sparkle() {
 }
 
 /**
- * Final completion screen — all three stepper steps are checked. A centered
- * glass card celebrates the finish with two CTAs.
+ * Final completion card — centered glass panel celebrating the finish. The
+ * stepper (all three steps checked) is rendered by the persistent shell.
  */
-export function DoneScreen({
-  onRestart,
-  onNavigate,
-}: {
-  onRestart: () => void;
-  onNavigate?: (step: FlowStep) => void;
-}) {
+export function DoneCard({ onRestart }: { onRestart: () => void }) {
   return (
-    <div className="relative flex h-full w-full items-center justify-center">
-      <Stepper
-        activeStep="done"
-        onNavigate={onNavigate}
-        className="absolute inset-x-0 top-0 z-10"
-      />
-
-      <div className="flex flex-col items-center gap-12 rounded-[12px] border border-[#e2e2e2] bg-white/60 px-[96px] pb-[56px] pt-[64px] shadow-[0px_0px_55px_rgba(107,72,134,0.1)] backdrop-blur-sm">
+    <div className="flex h-full w-full items-center justify-center">
+      <div
+        className="flex flex-col items-center gap-12 rounded-[12px] border border-[#e2e2e2] bg-white/60 px-[96px] pb-[56px] pt-[64px] shadow-[0px_0px_55px_rgba(107,72,134,0.1)] backdrop-blur-sm"
+        style={{ animation: "screen-enter 420ms ease-out both" }}
+      >
         <h1
           className="bg-clip-text text-center text-[34px] font-semibold leading-[1.35] text-transparent"
           style={{
-            backgroundImage:
-              "linear-gradient(95deg, #1ca5d7 8%, #8655d6 88%)",
+            backgroundImage: "linear-gradient(95deg, #1ca5d7 8%, #8655d6 88%)",
           }}
         >
           Everything&rsquo;s set.

@@ -98,13 +98,13 @@ export function Stepper({
             <span className="text-[14px] font-bold tracking-[-0.2px] text-stepper">
               {step.label}
             </span>
-            <div className="flex items-center gap-0.5">
+            <div className="flex w-[68px] items-center gap-0.5">
               {targets.map((target, seg) => {
                 const filled = seg < progress;
                 const bar = (
                   <span
                     className={cn(
-                      "block h-[5px] w-[12px]",
+                      "block h-[5px] w-full",
                       seg === 0 && "rounded-l-[3px] rounded-r-[1px]",
                       seg > 0 && seg < count - 1 && "rounded-[1px]",
                       seg === count - 1 && "rounded-l-[1px] rounded-r-[3px]",
@@ -117,7 +117,7 @@ export function Stepper({
                   />
                 );
 
-                if (!onNavigate || !target) return <span key={seg}>{bar}</span>;
+                if (!onNavigate || !target) return <span key={seg} className="flex-1">{bar}</span>;
 
                 return (
                   <button
@@ -125,7 +125,7 @@ export function Stepper({
                     type="button"
                     onClick={() => onNavigate(target)}
                     aria-label={`Go to ${target}`}
-                    className="-my-2 flex items-center py-2 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
+                    className="-my-2 flex flex-1 items-center py-2 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
                   >
                     {bar}
                   </button>

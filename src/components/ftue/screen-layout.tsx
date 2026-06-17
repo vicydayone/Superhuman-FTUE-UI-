@@ -29,10 +29,16 @@ export function ScreenLayout({
       />
       {/* Full-height columns; the absolute stepper overlaps their top edge,
           matching the Figma frame's coordinate system. */}
-      <div className="flex h-full w-1/2 flex-col justify-between bg-white px-[100px] pb-[30px] pt-[100px]">
+      <div
+        className="flex h-full w-1/2 flex-col justify-between bg-white px-[100px] pb-[30px] pt-[100px]"
+        style={{ animation: "screen-enter 380ms ease-out both" }}
+      >
         {left}
       </div>
-      <div className="flex h-full w-1/2 flex-col items-center justify-center px-[100px] pb-[100px] pt-[140px]">
+      <div
+        className="flex h-full w-1/2 flex-col items-center justify-center px-[100px] pb-[100px] pt-[140px]"
+        style={{ animation: "screen-enter 380ms ease-out 60ms both" }}
+      >
         {preview}
       </div>
     </div>
