@@ -335,13 +335,13 @@ const TAB_ORDER: { key: SplitCategory; label: string }[] = [
   { key: "other", label: "Other" },
 ];
 
-// Entrance phases (Important view stays active throughout):
-// 0 = Important tab only, full list (important + calendar + jira rows visible)
-// 1 = Calendar tab slides in, calendar emails collapse
-// 2 = Jira tab slides in, jira emails collapse
-// 3 = Other tab slides in
+// Entrance phases:
+// 0 = "Inbox" header (identical to Auto Archive end-state), all mails visible
+// 1 = Tab bar slides in, Calendar tab claims its mails
+// 2 = Jira tab slides in, jira mails collapse
+// 3 = Other tab slides in, other mails collapse
 // 4 = animation done — normal interactive state
-const ENTRANCE_DELAYS = [500, 1100, 1700, 2400]; // ms for phases 1–4
+const ENTRANCE_DELAYS = [800, 1500, 2100, 2800]; // ms for phases 1–4
 
 function SplitInboxContent({
   mails,
@@ -410,13 +410,14 @@ function SplitInboxContent({
         ).length;
       }
       // During animation the Important counter ticks down as tabs claim emails.
+      // Phase 0 has no Important tab (header shows "Inbox N" instead), so the
+      // value only matters from phase 1 onward.
       if (tab === "important") {
         const imp = byCat(mails, "important").length;
         const cal = byCat(mails, "calendar").length;
         const jira = byCat(mails, "jira").length;
         const other = byCat(mails, "other").length;
-        if (phase === 0) return imp + cal + jira + other;
-        if (phase === 1) return imp + jira + other;
+        if (phase <= 1) return imp + jira + other; // calendar has been claimed
         if (phase === 2) return imp + other;
         return imp; // phase 3+
       }
@@ -447,22 +448,13 @@ function SplitInboxContent({
     [animating, phase, effectiveActive, toggles],
   );
 
-  // During animation: phase 0 shows ALL non-archived mails (important + calendar
-  // + jira + other) so the inbox looks identical to the end of the Auto Archive
-  // step. Tabs then claim their mails one by one. After phase 4 the user can
-  // switch freely.
+  // During animation all mails stay in the DOM — isCollapsed handles the visual
+  // collapse so each category smoothly slides out when its tab claims it.
+  // Phase 0 shows every mail (identical to the Auto Archive end-state).
   const shown = useMemo(() => {
     if (!animating) return listFor(effectiveActive);
-    const base = mails.filter(
-      (m) =>
-        m.category === "important" ||
-        m.category === "calendar" ||
-        m.category === "jira",
-    );
-    // Include other mails until the Other tab appears and claims them (phase 3).
-    if (phase < 3) return [...base, ...byCat(mails, "other")];
-    return base;
-  }, [animating, phase, mails, listFor, effectiveActive]);
+    return mails;
+  }, [animating, mails, listFor, effectiveActive]);
 
   // Pre-compute collapse state + stagger delays in render order so that
   // collapsing rows cascade out one-by-one rather than all at once.
@@ -473,50 +465,64 @@ function SplitInboxContent({
     return { mail, collapsed, delay };
   });
 
-  // Which phase a tab first enters the DOM (and plays its slide-in animation).
+  // Important tab now enters at phase 1 (along with Calendar) because phase 0
+  // shows the "Inbox" header — the tab bar only appears once mails start splitting.
   const tabPhaseFor = (key: SplitCategory) =>
-    key === "important" ? 0 : key === "calendar" ? 1 : key === "jira" ? 2 : 3;
+    key === "important" || key === "calendar" ? 1 : key === "jira" ? 2 : 3;
 
   return (
     <>
       <div className="mb-4 flex items-center gap-4">
         <IconHamburger className="size-3 shrink-0" />
-        <div className="flex flex-1 items-center gap-2">
-          {TAB_ORDER.map(({ key, label }) => {
-            const tp = tabPhaseFor(key);
-            // Tabs are not in the DOM until their phase is reached — this
-            // prevents invisible elements from occupying horizontal space.
-            if (phase < tp) return null;
-            // After animation, hide tabs whose category is toggled off.
-            if (!animating && key === "calendar" && !toggles.calendar) return null;
-            if (!animating && key === "jira" && !toggles.jira) return null;
+        {phase === 0 ? (
+          // Phase 0: "Inbox" header — visually identical to Auto Archive end-state
+          // so the user never perceives a hard cut between the two screens.
+          <span className="flex items-baseline gap-1.5 text-[13px] tracking-[-0.15px] text-ink">
+            Inbox
+            <Counter
+              value={mails.length}
+              className="text-[10px] text-[#b5b5b5] tabular-nums"
+            />
+          </span>
+        ) : (
+          // Phase 1+: tab bar slides in replacing the "Inbox" heading.
+          <div
+            className="flex flex-1 items-center gap-2"
+            style={{ animation: phase === 1 ? "tab-enter 500ms ease-out" : undefined }}
+          >
+            {TAB_ORDER.map(({ key, label }) => {
+              const tp = tabPhaseFor(key);
+              // Tabs are not in the DOM until their phase is reached.
+              if (phase < tp) return null;
+              // After animation, hide tabs whose category is toggled off.
+              if (!animating && key === "calendar" && !toggles.calendar) return null;
+              if (!animating && key === "jira" && !toggles.jira) return null;
 
-            const isActive = animating ? key === "important" : effectiveActive === key;
-            // Only Calendar/Jira/Other animate in; Important is always present.
-            const enterAnim = tp > 0 ? "tab-enter 500ms ease-out" : undefined;
+              const isActive = animating ? key === "important" : effectiveActive === key;
 
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => handleTabChange(key)}
-                style={{ animation: enterAnim }}
-                className={cn(
-                  "flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-[12px]",
-                  isActive
-                    ? "bg-white text-black drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)]"
-                    : "text-[#999] hover:bg-black/[0.03]",
-                )}
-              >
-                <span>{label}</span>
-                <Counter
-                  value={countFor(key)}
-                  className="inline-block w-4 text-right tabular-nums text-[10px] text-[#b5b5b5]"
-                />
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleTabChange(key)}
+                  style={{ animation: tp > 1 ? "tab-enter 500ms ease-out" : undefined }}
+                  className={cn(
+                    "flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-[12px]",
+                    isActive
+                      ? "bg-white text-black drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)]"
+                      : "text-[#999] hover:bg-black/[0.03]",
+                  )}
+                >
+                  <span>{label}</span>
+                  <Counter
+                    value={countFor(key)}
+                    className="inline-block w-4 text-right tabular-nums text-[10px] text-[#b5b5b5]"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
       <div className="flex flex-1 flex-col overflow-hidden pl-10">
         {mailItems.map(({ mail, collapsed, delay }) => (
@@ -561,6 +567,22 @@ export function SplitInbox({
 
 // ── Chapter 2 persistent shell ────────────────────────────────────────────────
 
+// Derives a SplitCategory from an AutoArchiveMail so the Split Inbox animation
+// can use the exact same mail objects the user just saw in Auto Archive.
+function toSplitMail(m: AutoArchiveMail): SplitMail {
+  let category: SplitCategory;
+  if (m.label) {
+    category = "other";
+  } else if (m.sender === "Jira") {
+    category = "jira";
+  } else if (/^(Invitation:|Updated invitation:|Tentatively Accepted:|Declined:)/.test(m.subject)) {
+    category = "calendar";
+  } else {
+    category = "important";
+  }
+  return { sender: m.sender, subject: m.subject, date: m.date, category, label: m.label };
+}
+
 /**
  * Keeps the PreviewShell chrome (card, shadow, titlebar) mounted across the
  * auto-archive → split-inbox transition. Only the inner content swaps on step
@@ -570,7 +592,7 @@ export function Chapter2Preview({
   step,
   archivedMails,
   archivedLabels,
-  splitMails,
+  splitMails: _splitMails,
   splits,
 }: {
   step: "auto-archive" | "split-inbox";
@@ -579,18 +601,19 @@ export function Chapter2Preview({
   splitMails: SplitMail[];
   splits: SplitToggles;
 }) {
-  // Strip out mails whose archive label is currently active — so the Split Inbox
-  // only shows mail that survived the Auto Archive step the user just configured.
-  const visibleSplitMails = splitMails.filter(
-    (m) => !m.label || !archivedLabels[m.label],
-  );
+  // Derive the split mail list from the SAME Auto Archive dataset — filtered by
+  // the user's archive selections so Split Inbox starts with the exact same mails
+  // the user saw at the end of Auto Archive (seamless visual continuity).
+  const animMails = archivedMails
+    .filter((m) => !m.label || !archivedLabels[m.label])
+    .map(toSplitMail);
 
   return (
     <PreviewShell>
       {step === "auto-archive" ? (
         <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} />
       ) : (
-        <SplitInboxContent key="split" mails={visibleSplitMails} toggles={splits} />
+        <SplitInboxContent key="split" mails={animMails} toggles={splits} />
       )}
     </PreviewShell>
   );
