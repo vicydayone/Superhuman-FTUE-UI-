@@ -564,12 +564,18 @@ export function Chapter2Preview({
   splitMails: SplitMail[];
   splits: SplitToggles;
 }) {
+  // Strip out mails whose archive label is currently active — so the Split Inbox
+  // only shows mail that survived the Auto Archive step the user just configured.
+  const visibleSplitMails = splitMails.filter(
+    (m) => !m.label || !archivedLabels[m.label],
+  );
+
   return (
     <PreviewShell>
       {step === "auto-archive" ? (
         <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} />
       ) : (
-        <SplitInboxContent key="split" mails={splitMails} toggles={splits} />
+        <SplitInboxContent key="split" mails={visibleSplitMails} toggles={splits} />
       )}
     </PreviewShell>
   );

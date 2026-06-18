@@ -61,6 +61,15 @@ export default function Home() {
     pitch: false,
     social: false,
   });
+  // Snapshot of the user's archive selections at the moment they click Continue —
+  // archivedLabels gets reset to all-false to animate the menu closing, so we
+  // need a separate copy that persists into the Split Inbox filter.
+  const [savedArchivedLabels, setSavedArchivedLabels] = useState<AutoArchiveToggles>({
+    marketing: true,
+    news: false,
+    pitch: false,
+    social: false,
+  });
   const [splits, setSplits] = useState<SplitToggles>({
     calendar: true,
     jira: true,
@@ -72,6 +81,7 @@ export default function Home() {
 
   const restart = () => {
     setArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
+    setSavedArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
     setSplits({ calendar: true, jira: true });
     setDraftDemo("responses");
     setReminder("couple-days");
@@ -95,7 +105,8 @@ export default function Home() {
               setArchivedLabels((prev) => ({ ...prev, [key]: !prev[key] }))
             }
             onContinue={() => {
-              // Close the archive menu first, then advance after the animation.
+              // Snapshot selections before resetting (reset closes the menu animation).
+              setSavedArchivedLabels({ ...archivedLabels });
               setArchivedLabels({ marketing: false, news: false, pitch: false, social: false });
               setTimeout(() => setStep("split-inbox"), 750);
             }}
@@ -150,7 +161,7 @@ export default function Home() {
           <Chapter2Preview
             step={step}
             archivedMails={AUTO_ARCHIVE_MAIL}
-            archivedLabels={archivedLabels}
+            archivedLabels={step === "split-inbox" ? savedArchivedLabels : archivedLabels}
             splitMails={SPLIT_MAIL}
             splits={splits}
           />
