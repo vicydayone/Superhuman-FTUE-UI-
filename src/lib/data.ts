@@ -60,26 +60,25 @@ export const isArchived = (mail: AutoArchiveMail): boolean => mail.label !== und
 // "other" frame draws 7 of the 9; CodeSprint + Medium fill it to the count of 9.)
 // ─────────────────────────────────────────────────────────────────────────────
 export const SPLIT_MAIL: SplitMail[] = [
-  // Important (9)
+  // Important, Calendar and Jira are interleaved so the split animation
+  // scatters mails from across the list rather than only the bottom.
   { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN", category: "important" },
   { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN", category: "important" },
-  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN", category: "important" },
-  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN", category: "important" },
-  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN", category: "important" },
-  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN", category: "important" },
-  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN", category: "important" },
-  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN", category: "important" },
-  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN", category: "important" },
-  // Calendar (5)
   { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "18 JUN", category: "calendar" },
-  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "18 JUN", category: "calendar" },
-  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "17 JUN", category: "calendar" },
-  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "17 JUN", category: "calendar" },
-  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "16 JUN", category: "calendar" },
-  // Jira (4)
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN", category: "important" },
   { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "21 JUN", category: "jira" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN", category: "important" },
+  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "18 JUN", category: "calendar" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN", category: "important" },
   { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "20 JUN", category: "jira" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN", category: "important" },
+  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "17 JUN", category: "calendar" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN", category: "important" },
   { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "19 JUN", category: "jira" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN", category: "important" },
+  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "17 JUN", category: "calendar" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN", category: "important" },
+  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "16 JUN", category: "calendar" },
   { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "19 JUN", category: "jira" },
   // Other (9 — promotional/labelled mail)
   { sender: "CodeGenius", subject: "Check out your new offer!", date: "30 JUN", category: "other", label: "marketing" },
