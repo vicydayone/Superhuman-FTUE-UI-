@@ -11,51 +11,51 @@ import type { AutoArchiveMail, AutoDraftDemo, MailLabel, SplitMail } from "./typ
 // ─────────────────────────────────────────────────────────────────────────────
 export const AUTO_ARCHIVE_MAIL: AutoArchiveMail[] = [
   // 30 JUN
-  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN" },
-  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "30 JUN" },
-  { sender: "CodeGenius", subject: "Check out your new offer!", date: "30 JUN", label: "marketing" },
-  { sender: "TechCrunch", subject: "OpenAI’s new model beats benchmarks across coding, math, and reasoning", date: "30 JUN", label: "news" },
+  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "JUN 30" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "JUN 30" },
+  { sender: "CodeGenius", subject: "Check out your new offer!", date: "JUN 30", label: "marketing" },
+  { sender: "TechCrunch", subject: "OpenAI’s new model beats benchmarks across coding, math, and reasoning", date: "JUN 30", label: "news" },
   // 29 JUN
-  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN" },
-  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "29 JUN", label: "marketing" },
-  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "29 JUN", label: "social" },
-  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "29 JUN" },
-  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "29 JUN", label: "pitch" },
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "JUN 29" },
+  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "JUN 29", label: "marketing" },
+  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "JUN 29", label: "social" },
+  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "JUN 29" },
+  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "JUN 29", label: "pitch" },
   // 28 JUN
-  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "28 JUN" },
-  { sender: "LinkedIn", subject: "Your Weekly Highlights", date: "28 JUN", label: "social" },
-  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "28 JUN" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "JUN 28" },
+  { sender: "LinkedIn", subject: "Your Weekly Highlights", date: "JUN 28", label: "social" },
+  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "JUN 28" },
   // 27 JUN
-  { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "27 JUN", label: "news" },
-  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "27 JUN", label: "pitch" },
-  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "27 JUN" },
+  { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "JUN 27", label: "news" },
+  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "JUN 27", label: "pitch" },
+  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "JUN 27" },
   // 26 JUN
-  { sender: "Maria Howard", subject: "Sales Contract", date: "26 JUN" },
-  { sender: "Lina Morales", subject: "Scale Smarter", date: "26 JUN", label: "pitch" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "JUN 26" },
+  { sender: "Lina Morales", subject: "Scale Smarter", date: "JUN 26", label: "pitch" },
   // 25 JUN
-  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "25 JUN" },
-  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "25 JUN" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "JUN 25" },
+  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "JUN 25" },
   // 24 JUN
-  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "24 JUN" },
-  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "24 JUN" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "JUN 24" },
+  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "JUN 24" },
   // 23 JUN
-  { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "23 JUN", label: "news" },
-  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "23 JUN" },
-  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "23 JUN" },
+  { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "JUN 23", label: "news" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "JUN 23" },
+  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "JUN 23" },
   // 22 JUN
-  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN" },
-  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "22 JUN" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "JUN 22" },
+  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "JUN 22" },
   // 21 JUN
-  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "21 JUN", label: "pitch" },
-  { sender: "Jira", subject: "ITHO-84512 Password Reset Loop on Login Page", date: "21 JUN" },
+  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "JUN 21", label: "pitch" },
+  { sender: "Jira", subject: "ITHO-84512 Password Reset Loop on Login Page", date: "JUN 21" },
   // 20 JUN
-  { sender: "New York Times", subject: "Breaking News: Federal Reserve holds interest rates steady for third straight meeting", date: "20 JUN", label: "news" },
-  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "20 JUN" },
+  { sender: "New York Times", subject: "Breaking News: Federal Reserve holds interest rates steady for third straight meeting", date: "JUN 20", label: "news" },
+  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "JUN 20" },
   // 19 JUN
-  { sender: "Morning Brew", subject: "MARKETS: Dow drops 300 points + What’s driving the selloff", date: "19 JUN", label: "news" },
-  { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "19 JUN" },
+  { sender: "Morning Brew", subject: "MARKETS: Dow drops 300 points + What’s driving the selloff", date: "JUN 19", label: "news" },
+  { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "JUN 19" },
   // 18 JUN
-  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "18 JUN", label: "marketing" },
+  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "JUN 18", label: "marketing" },
 ];
 
 /** Labels surfaced on the "Keep it clean" card. */
@@ -75,34 +75,34 @@ export const isArchived = (mail: AutoArchiveMail): boolean => mail.label !== und
 export const SPLIT_MAIL: SplitMail[] = [
   // Important, Calendar and Jira are interleaved so the split animation
   // scatters mails from across the list rather than only the bottom.
-  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN", category: "important" },
-  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN", category: "important" },
-  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "18 JUN", category: "calendar" },
-  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN", category: "important" },
-  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "21 JUN", category: "jira" },
-  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN", category: "important" },
-  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "18 JUN", category: "calendar" },
-  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN", category: "important" },
-  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "20 JUN", category: "jira" },
-  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN", category: "important" },
-  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "17 JUN", category: "calendar" },
-  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN", category: "important" },
-  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "19 JUN", category: "jira" },
-  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN", category: "important" },
-  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "17 JUN", category: "calendar" },
-  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN", category: "important" },
-  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "16 JUN", category: "calendar" },
-  { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "19 JUN", category: "jira" },
+  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "JUN 30", category: "important" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "JUN 29", category: "important" },
+  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "JUN 18", category: "calendar" },
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "JUN 29", category: "important" },
+  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "JUN 21", category: "jira" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "JUN 25", category: "important" },
+  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "JUN 18", category: "calendar" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "JUN 25", category: "important" },
+  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "JUN 20", category: "jira" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "JUN 24", category: "important" },
+  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "JUN 17", category: "calendar" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "JUN 23", category: "important" },
+  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "JUN 19", category: "jira" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "JUN 22", category: "important" },
+  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "JUN 17", category: "calendar" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "JUN 22", category: "important" },
+  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "JUN 16", category: "calendar" },
+  { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "JUN 19", category: "jira" },
   // Other (9 — promotional/labelled mail)
-  { sender: "CodeGenius", subject: "Check out your new offer!", date: "30 JUN", category: "other", label: "marketing" },
-  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "29 JUN", category: "other", label: "pitch" },
-  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "29 JUN", category: "other", label: "marketing" },
-  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "29 JUN", category: "other", label: "social" },
-  { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "27 JUN", category: "other", label: "news" },
-  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "26 JUN", category: "other", label: "pitch" },
-  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "24 JUN", category: "other", label: "marketing" },
-  { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "23 JUN", category: "other", label: "news" },
-  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "22 JUN", category: "other", label: "pitch" },
+  { sender: "CodeGenius", subject: "Check out your new offer!", date: "JUN 30", category: "other", label: "marketing" },
+  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "JUN 29", category: "other", label: "pitch" },
+  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "JUN 29", category: "other", label: "marketing" },
+  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "JUN 29", category: "other", label: "social" },
+  { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "JUN 27", category: "other", label: "news" },
+  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "JUN 26", category: "other", label: "pitch" },
+  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "JUN 24", category: "other", label: "marketing" },
+  { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "JUN 23", category: "other", label: "news" },
+  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "JUN 22", category: "other", label: "pitch" },
 ];
 
 export interface SplitTabDefinition {
@@ -221,15 +221,15 @@ export const ASK_AI_TABS = [
 
 // The Important list from Split Inbox, shown dimmed behind the Ask AI panel.
 export const ASK_AI_MAIL = [
-  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN" },
-  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN" },
-  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN" },
-  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN" },
-  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN" },
-  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN" },
-  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN" },
-  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN" },
-  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN" },
+  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "JUN 30" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "JUN 29" },
+  { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "JUN 29" },
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "JUN 25" },
+  { sender: "Maria Howard", subject: "Sales Contract", date: "JUN 25" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "JUN 24" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "JUN 23" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "JUN 22" },
+  { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "JUN 22" },
 ];
 
 /** Recommended teammates on the Seats screen. */
