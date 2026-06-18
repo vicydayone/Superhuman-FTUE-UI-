@@ -10,39 +10,53 @@ import type { AutoArchiveMail, AutoDraftDemo, MailLabel, SplitMail } from "./typ
 //   • all on             → Inbox 19 · Auto Archive 14
 // ─────────────────────────────────────────────────────────────────────────────
 export const AUTO_ARCHIVE_MAIL: AutoArchiveMail[] = [
-  { sender: "CodeGenius", subject: "Check out your new offer!", date: "30 JUN", label: "marketing" },
+  // 30 JUN
   { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "30 JUN" },
+  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "30 JUN" },
   { sender: "TechCrunch", subject: "OpenAI’s new model beats benchmarks across coding, math, and reasoning", date: "30 JUN", label: "news" },
-  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "29 JUN", label: "marketing" },
-  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "29 JUN" },
-  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "29 JUN", label: "pitch" },
+  // 29 JUN
   { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "29 JUN" },
-  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "29 JUN", label: "social" },
+  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "29 JUN" },
+  { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "29 JUN", label: "pitch" },
+  // 28 JUN
+  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "28 JUN" },
+  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "28 JUN" },
   { sender: "TechCrunch", subject: "Stripe launches new API for embedded financial products", date: "27 JUN", label: "news" },
-  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "26 JUN", label: "pitch" },
-  { sender: "Kristin Watson", subject: "Final contract signature needed", date: "25 JUN" },
-  { sender: "Maria Howard", subject: "Sales Contract", date: "25 JUN" },
-  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "24 JUN", label: "marketing" },
-  { sender: "Lina Morales", subject: "Scale Smarter", date: "24 JUN", label: "pitch" },
-  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "24 JUN" },
-  { sender: "LinkedIn", subject: "Your Weekly Highlights", date: "23 JUN", label: "social" },
-  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "23 JUN" },
+  // 27 JUN
+  { sender: "Eleanor Bell", subject: "New product launch: GPT for Business Decisions", date: "27 JUN", label: "pitch" },
+  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "27 JUN" },
+  // 26 JUN
+  { sender: "Maria Howard", subject: "Sales Contract", date: "26 JUN" },
+  { sender: "Lina Morales", subject: "Scale Smarter", date: "26 JUN", label: "pitch" },
+  // 25 JUN
+  { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "25 JUN", label: "marketing" },
+  { sender: "United Airlines", subject: "eTicket Itinerary and Receipt for Confirmation CW…", date: "25 JUN" },
+  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "25 JUN" },
+  // 24 JUN
+  { sender: "LinkedIn", subject: "This week in tech – March edition", date: "24 JUN", label: "social" },
+  { sender: "Esther Ruan", subject: "Q3 customer survey results", date: "24 JUN" },
+  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "24 JUN" },
+  // 23 JUN
   { sender: "Medium", subject: "The hidden cost of always-on work culture", date: "23 JUN", label: "news" },
-  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "22 JUN" },
+  { sender: "June Chen", subject: "Pre-read: Campaign Narrative", date: "23 JUN" },
+  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "23 JUN" },
+  // 22 JUN
+  { sender: "LinkedIn", subject: "Your Weekly Highlights", date: "22 JUN", label: "social" },
   { sender: "Hannah Tremblay", subject: "ACME Pilot", date: "22 JUN" },
-  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "22 JUN", label: "pitch" },
-  { sender: "New York Times", subject: "Breaking News: Federal Reserve holds interest rates steady for third straight meeting", date: "21 JUN", label: "news" },
-  { sender: "Morning Brew", subject: "MARKETS: Dow drops 300 points + What’s driving the selloff", date: "21 JUN", label: "news" },
+  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "22 JUN" },
+  // 21 JUN
+  { sender: "Alex Martinez", subject: "Supercharge Your Sales", date: "21 JUN", label: "pitch" },
   { sender: "Jira", subject: "ITHO-84512 Password Reset Loop on Login Page", date: "21 JUN" },
-  { sender: "Jira", subject: "[JIRA] Petra Vanlund mentioned you on ITHO-91034", date: "21 JUN" },
-  { sender: "Jira", subject: "ITHO-76201 VPN Access Request for New Hire", date: "20 JUN" },
-  { sender: "Jira", subject: "ITHO-55839 Slack Notifications Not Syncing", date: "19 JUN" },
+  // 20 JUN
+  { sender: "New York Times", subject: "Breaking News: Federal Reserve holds interest rates steady for third straight meeting", date: "20 JUN", label: "news" },
+  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "20 JUN" },
+  // 19 JUN
+  { sender: "Morning Brew", subject: "MARKETS: Dow drops 300 points + What’s driving the selloff", date: "19 JUN", label: "news" },
   { sender: "Jira", subject: "[JIRA] Tomás Eriksen mentioned you on ITHO-62477", date: "19 JUN" },
-  { sender: "Arlene McCoy", subject: "Invitation: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "18 JUN" },
-  { sender: "Maria Howard", subject: "Tentatively Accepted: Product Roadmap Review @ Mon Jun 22, 2026 3pm…", date: "18 JUN" },
-  { sender: "Jenny Wilson", subject: "Updated invitation: Weekly: Team Standup @ Daily from…", date: "17 JUN" },
-  { sender: "Savannah Nguyen", subject: "Updated invitation: [Optional] Design Sync @ Weekly from…", date: "17 JUN" },
-  { sender: "Kristin Watson", subject: "Declined: Q3 Planning Kickoff @ Fri Jun 19, 2026 10am – 11am…", date: "16 JUN" },
+  // 18 JUN
+  { sender: "FlowSync", subject: "Unlock Your Next Growth Phase", date: "18 JUN", label: "marketing" },
+  // 17 JUN
+  { sender: "CodeGenius", subject: "Check out your new offer!", date: "17 JUN", label: "marketing" },
 ];
 
 /** Labels surfaced on the "Keep it clean" card. */

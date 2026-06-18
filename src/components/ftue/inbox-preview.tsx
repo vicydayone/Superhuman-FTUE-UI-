@@ -335,10 +335,15 @@ const TAB_ORDER: { key: SplitCategory; label: string }[] = [
   { key: "other", label: "Other" },
 ];
 
-// How long to show the "Inbox" state before sorting begins (ms).
-const SORT_START_DELAY = 1400;
-// Time between each mail being sorted out (ms). "langsam" per user request.
-const SORT_INTERVAL = 200;
+// Phase timeline (ms):
+//   0 → "Inbox N" header, all mails (identical to Auto Archive end-state)
+//   1 → Important tab replaces "Inbox" label (count = all)
+//   2 → Calendar tab slides in; calendar mails stagger-collapse
+//   3 → Jira tab slides in; jira mails stagger-collapse
+//   4 → Other tab slides in; other mails stagger-collapse
+//   5 → Done — normal interactive state
+const PHASE_DELAYS = [1400, 2600, 3900, 5200, 6800]; // ms to phases 1–5
+const COLLAPSE_STAGGER = 75; // ms between successive mails within a category
 
 function SplitInboxContent({
   mails,
@@ -349,41 +354,16 @@ function SplitInboxContent({
 }) {
   const [active, setActive] = useState<SplitCategory>("important");
   const [noTransition, setNoTransition] = useState(false);
-  // How many non-important mails have been sorted out so far.
-  const [sortedCount, setSortedCount] = useState(0);
-  // Tab bar becomes visible slightly before the first sort.
-  const [tabBarVisible, setTabBarVisible] = useState(false);
-
-  // Non-important mails in their list order — these are sorted out one by one.
-  const nonImportantMails = useMemo(
-    () => mails.filter((m) => m.category !== "important"),
-    [mails],
-  );
-  const totalToSort = nonImportantMails.length;
-  const animating = sortedCount < totalToSort;
+  const [phase, setPhase] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
 
   useEffect(() => {
-    // Tab bar slides in slightly before the first mail sorts out.
-    const tabTimer = setTimeout(() => setTabBarVisible(true), SORT_START_DELAY - 350);
+    const timers = PHASE_DELAYS.map((delay, i) =>
+      setTimeout(() => setPhase((i + 1) as 1 | 2 | 3 | 4 | 5), delay),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
-    // Sort one mail every SORT_INTERVAL ms.
-    let interval: ReturnType<typeof setInterval>;
-    const startTimer = setTimeout(() => {
-      interval = setInterval(() => {
-        setSortedCount((c) => {
-          const next = c + 1;
-          if (next >= totalToSort) clearInterval(interval);
-          return next;
-        });
-      }, SORT_INTERVAL);
-    }, SORT_START_DELAY);
-
-    return () => {
-      clearTimeout(tabTimer);
-      clearTimeout(startTimer);
-      clearInterval(interval);
-    };
-  }, [totalToSort]);
+  const animating = phase < 5;
 
   // If the selected tab's category gets toggled off fall back to Important.
   const effectiveActive: SplitCategory =
@@ -400,20 +380,6 @@ function SplitInboxContent({
       requestAnimationFrame(() => setNoTransition(false)),
     );
   }
-
-  // Map each non-important mail to its sort position for O(1) lookup.
-  const sortIndexMap = useMemo(() => {
-    const map = new Map<SplitMail, number>();
-    nonImportantMails.forEach((m, i) => map.set(m, i));
-    return map;
-  }, [nonImportantMails]);
-
-  // Categories whose first mail has already been sorted (drives tab appearance).
-  const appearedCats = useMemo(() => {
-    const s = new Set<SplitCategory>();
-    for (let i = 0; i < sortedCount; i++) s.add(nonImportantMails[i].category);
-    return s;
-  }, [sortedCount, nonImportantMails]);
 
   const listFor = useCallback(
     (tab: SplitCategory): SplitMail[] => {
@@ -444,20 +410,28 @@ function SplitInboxContent({
             (m.category === "jira" && !toggles.jira),
         ).length;
       }
-      // During animation Important = remaining unsorted mails;
-      // category tabs show their final total immediately when they appear.
-      if (tab === "important") return mails.length - sortedCount;
-      return byCat(mails, tab).length;
+      // During animation the Important counter decreases naturally as each
+      // category tab appears and claims its mails. Counter tweens smoothly.
+      if (tab !== "important") return byCat(mails, tab).length;
+      const imp = byCat(mails, "important").length;
+      const cal = byCat(mails, "calendar").length;
+      const jira = byCat(mails, "jira").length;
+      const other = byCat(mails, "other").length;
+      if (phase < 2) return imp + cal + jira + other;
+      if (phase < 3) return imp + jira + other;
+      if (phase < 4) return imp + other;
+      return imp;
     },
-    [animating, sortedCount, mails, toggles],
+    [animating, phase, mails, toggles],
   );
 
   const isCollapsed = useCallback(
     (mail: SplitMail): boolean => {
       if (animating) {
-        const sortIdx = sortIndexMap.get(mail);
-        if (sortIdx === undefined) return false; // important mail, never collapses
-        return sortedCount > sortIdx;
+        if (mail.category === "calendar") return phase >= 2;
+        if (mail.category === "jira") return phase >= 3;
+        if (mail.category === "other") return phase >= 4;
+        return false;
       }
       if (effectiveActive === "calendar") return !toggles.calendar;
       if (effectiveActive === "jira") return !toggles.jira;
@@ -467,56 +441,66 @@ function SplitInboxContent({
       }
       return false;
     },
-    [animating, sortedCount, sortIndexMap, effectiveActive, toggles],
+    [animating, phase, effectiveActive, toggles],
   );
 
-  // All mails stay in the DOM during animation; isCollapsed drives visibility.
+  // All mails stay in the DOM during animation; isCollapsed + CSS handle visibility.
   const shown = useMemo(
     () => (animating ? mails : listFor(effectiveActive)),
     [animating, mails, listFor, effectiveActive],
   );
 
-  const mailItems = shown.map((mail) => ({
-    mail,
-    collapsed: isCollapsed(mail),
-  }));
+  // Compute per-mail collapse delay: stagger within each category by list order.
+  const catIdx: Partial<Record<SplitCategory, number>> = {};
+  const mailItems = shown.map((mail) => {
+    const collapsed = isCollapsed(mail);
+    let delay = 0;
+    if (collapsed && animating) {
+      const idx = catIdx[mail.category] ?? 0;
+      catIdx[mail.category] = idx + 1;
+      delay = idx * COLLAPSE_STAGGER;
+    }
+    return { mail, collapsed, delay };
+  });
+
+  // Which phase each tab first enters the DOM.
+  const tabPhase = (key: SplitCategory) =>
+    key === "important" ? 1 : key === "calendar" ? 2 : key === "jira" ? 3 : 4;
 
   return (
     <>
       <div className="mb-4 flex items-center gap-4">
         <IconHamburger className="size-3 shrink-0" />
-        {!tabBarVisible ? (
-          // "Inbox" header — visually identical to Auto Archive end-state so
-          // the user sees the same inbox before anything starts sorting.
-          <span className="flex items-baseline gap-1.5 text-[13px] tracking-[-0.15px] text-ink">
+        {phase === 0 ? (
+          // "Inbox" — same pill shape/padding/shadow as the active Important tab
+          // so there's no positional jump when phase 1 swaps it for the tab bar.
+          <span className="flex items-center gap-1 rounded-[6px] bg-white px-2.5 py-1.5 text-[12px] text-black drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)]">
             Inbox
             <Counter
               value={mails.length}
-              className="text-[10px] text-[#b5b5b5] tabular-nums"
+              className="inline-block w-4 text-right tabular-nums text-[10px] text-[#b5b5b5]"
             />
           </span>
         ) : (
-          // Tab bar slides in; category tabs appear as their first mail is claimed.
+          // Tab bar: Important appears at phase 1, then Calendar/Jira/Other slide in.
           <div
             className="flex flex-1 items-center gap-2"
-            style={{ animation: "tab-enter 400ms ease-out" }}
+            style={phase === 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
           >
             {TAB_ORDER.map(({ key, label }) => {
-              // Important tab: visible as soon as the tab bar appears.
-              // Other tabs: visible once their first mail has been sorted out.
-              if (animating && key !== "important" && !appearedCats.has(key)) return null;
+              const tp = tabPhase(key);
+              if (phase < tp) return null;
               if (!animating && key === "calendar" && !toggles.calendar) return null;
               if (!animating && key === "jira" && !toggles.jira) return null;
 
               const isActive = animating ? key === "important" : effectiveActive === key;
-              const justAppeared = animating && key !== "important" && appearedCats.has(key);
 
               return (
                 <button
                   key={key}
                   type="button"
                   onClick={() => handleTabChange(key)}
-                  style={{ animation: justAppeared ? "tab-enter 400ms ease-out" : undefined }}
+                  style={tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
                   className={cn(
                     "flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-[12px]",
                     isActive
@@ -536,7 +520,7 @@ function SplitInboxContent({
         )}
       </div>
       <div className="flex flex-1 flex-col overflow-hidden pl-10">
-        {mailItems.map(({ mail, collapsed }) => (
+        {mailItems.map(({ mail, collapsed, delay }) => (
           <div
             key={`${mail.sender}-${mail.subject}`}
             style={{
@@ -547,8 +531,7 @@ function SplitInboxContent({
               ...(noTransition
                 ? {}
                 : {
-                    transition:
-                      "grid-template-rows 380ms ease, opacity 280ms ease, transform 280ms ease",
+                    transition: `grid-template-rows 420ms ease-out ${delay}ms, opacity 320ms ease-out ${delay}ms, transform 320ms ease-out ${delay}ms`,
                   }),
             }}
           >
