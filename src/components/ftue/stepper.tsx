@@ -7,7 +7,7 @@ import type { FlowStep } from "@/lib/types";
  * double as navigation. Chapter 2 has 3 segments, Chapter 3 has 5.
  */
 const SEGMENT_TARGETS: Record<2 | 3, (FlowStep | undefined)[]> = {
-  2: ["auto-archive", "split-inbox", undefined],
+  2: ["auto-archive", "split-inbox"],
   3: ["auto-draft", "auto-reminder", "ask-ai", "seats", "done"],
 };
 

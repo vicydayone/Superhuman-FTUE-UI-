@@ -44,8 +44,8 @@ const STEPPER_META: Record<
   Exclude<FlowStep, "intro" | Chapter1Step>,
   { activeStep: 2 | 3 | "done"; progress: number }
 > = {
-  "auto-archive": { activeStep: 2, progress: 2 },
-  "split-inbox": { activeStep: 2, progress: 3 },
+  "auto-archive": { activeStep: 2, progress: 1 },
+  "split-inbox": { activeStep: 2, progress: 2 },
   "auto-draft": { activeStep: 3, progress: 1 },
   "auto-reminder": { activeStep: 3, progress: 2 },
   "ask-ai": { activeStep: 3, progress: 3 },
