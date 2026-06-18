@@ -281,7 +281,7 @@ function AutoArchiveContent({
               anyArchived ? "opacity-0" : "opacity-100",
             )}
           />
-          <span className="flex items-baseline gap-1.5 pl-[28px] text-[13px] tracking-[-0.15px] text-ink">
+          <span className="flex items-center gap-1.5 py-1.5 pl-[28px] text-[13px] tracking-[-0.15px] text-ink">
             Inbox
             <Counter value={anyArchived ? inboxCount : mails.length} className="text-[10px] text-[#b5b5b5] tabular-nums" />
           </span>
