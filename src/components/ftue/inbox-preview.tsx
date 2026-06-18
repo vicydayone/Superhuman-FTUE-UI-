@@ -414,9 +414,11 @@ function SplitInboxContent({
         const imp = byCat(mails, "important").length;
         const cal = byCat(mails, "calendar").length;
         const jira = byCat(mails, "jira").length;
-        if (phase === 0) return imp + cal + jira;
-        if (phase === 1) return imp + jira;
-        return imp; // phase 2+
+        const other = byCat(mails, "other").length;
+        if (phase === 0) return imp + cal + jira + other;
+        if (phase === 1) return imp + jira + other;
+        if (phase === 2) return imp + other;
+        return imp; // phase 3+
       }
       if (tab === "calendar") return byCat(mails, "calendar").length;
       if (tab === "jira") return byCat(mails, "jira").length;
@@ -431,6 +433,7 @@ function SplitInboxContent({
         // Collapse a row the moment its tab has appeared and claimed it.
         if (mail.category === "calendar") return phase >= 1;
         if (mail.category === "jira") return phase >= 2;
+        if (mail.category === "other") return phase >= 3;
         return false;
       }
       if (effectiveActive === "calendar") return !toggles.calendar;
@@ -444,10 +447,22 @@ function SplitInboxContent({
     [animating, phase, effectiveActive, toggles],
   );
 
-  // Always show the Important view during animation. After phase 4 the user
-  // can switch tabs freely — the list is already in the correct final state
-  // (calendar/jira collapsed) so there's no visual jump.
-  const shown = animating ? listFor("important") : listFor(effectiveActive);
+  // During animation: phase 0 shows ALL non-archived mails (important + calendar
+  // + jira + other) so the inbox looks identical to the end of the Auto Archive
+  // step. Tabs then claim their mails one by one. After phase 4 the user can
+  // switch freely.
+  const shown = useMemo(() => {
+    if (!animating) return listFor(effectiveActive);
+    const base = mails.filter(
+      (m) =>
+        m.category === "important" ||
+        m.category === "calendar" ||
+        m.category === "jira",
+    );
+    // Include other mails until the Other tab appears and claims them (phase 3).
+    if (phase < 3) return [...base, ...byCat(mails, "other")];
+    return base;
+  }, [animating, phase, mails, listFor, effectiveActive]);
 
   // Pre-compute collapse state + stagger delays in render order so that
   // collapsing rows cascade out one-by-one rather than all at once.
