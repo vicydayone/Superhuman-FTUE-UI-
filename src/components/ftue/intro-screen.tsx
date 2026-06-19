@@ -72,9 +72,8 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
         >
           Welcome, let’s get things set up.
         </h1>
-        <p className="max-w-[440px] text-[15px] leading-normal text-ink-subdued">
-          Now that your account is connected, we’ll help you get your inbox
-          organized.
+        <p className="whitespace-nowrap text-[15px] leading-normal text-ink-subdued">
+          Now that your account is connected, we’ll help you get your inbox organized.
         </p>
       </div>
 
