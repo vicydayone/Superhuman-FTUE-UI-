@@ -85,7 +85,10 @@ function ConversationContent({
   const badge = isReminder ? undefined : demo.incoming.badge;
 
   return (
-    <div className="flex h-[490px] flex-col items-center gap-4 px-[25px] pt-[40px]">
+    <div
+      className="flex h-[490px] flex-col items-center gap-4 px-[25px] pt-[40px]"
+      style={{ animation: "screen-enter 420ms ease-out both" }}
+    >
       {/* Back-arrow row */}
       <div className="flex w-[512px] max-w-full items-center gap-4">
         <ArrowLeft className="size-4 shrink-0" />
@@ -417,7 +420,10 @@ function CommentBubble({
 
 export function SeatsPreview() {
   return (
-    <div className="relative h-[520px] w-[570px] max-w-full">
+    <div
+      className="relative h-[520px] w-[570px] max-w-full"
+      style={{ animation: "screen-enter 420ms ease-out both" }}
+    >
       {/* Composed email card, tucked behind the bubbles. */}
       <div className="absolute left-[40px] top-[70px] w-[430px] overflow-hidden rounded-[10px] border border-white/40 bg-white/95 px-7 py-6 shadow-[0px_13px_38px_rgba(104,212,235,0.3),0px_6.5px_32px_rgba(226,138,226,0.4),0px_0.6px_2.6px_rgba(0,0,0,0.3)]">
         <p

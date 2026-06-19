@@ -48,7 +48,10 @@ function TitleBar() {
 
 function PreviewShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex h-[533px] w-[570px] max-w-full flex-col overflow-hidden rounded-[16px] bg-white px-6 pt-16 shadow-[0_0_2px_rgba(20,20,19,0.12),0_6px_24px_rgba(20,20,19,0.12)]">
+    <div
+      className="relative flex h-[533px] w-[570px] max-w-full flex-col overflow-hidden rounded-[16px] bg-white px-6 pt-16 shadow-[0_0_2px_rgba(20,20,19,0.12),0_6px_24px_rgba(20,20,19,0.12)]"
+      style={{ animation: "screen-enter 420ms ease-out both" }}
+    >
       <TitleBar />
       {children}
     </div>
