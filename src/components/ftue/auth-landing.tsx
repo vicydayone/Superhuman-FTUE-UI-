@@ -11,10 +11,11 @@ import { cn } from "@/lib/utils";
 function AuthLanding({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
-      {/* Lake Wanaka dusk photo (purple-toned). */}
+      {/* Lake Wanaka dusk photo. Swap this file (public/auth-bg.png) for the
+          new purple-toned shot — no code change needed. */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url(/login-bg.png)" }}
+        style={{ backgroundImage: "url(/auth-bg.png)" }}
       />
       {/* Soft top-down darkening for wordmark contrast (image is already tinted). */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/12 via-black/5 to-transparent" />
