@@ -268,7 +268,7 @@ function AutoArchiveContent({
 
       <div
         className={cn(
-          "flex h-full flex-col transition-transform duration-[1000ms] ease-out",
+          "flex h-full flex-col transition-transform duration-700 ease-out",
           showMenu ? "translate-x-[159px]" : "translate-x-0",
         )}
       >
