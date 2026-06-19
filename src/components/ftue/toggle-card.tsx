@@ -48,8 +48,8 @@ export function ToggleCard({
       className={cn(
         "flex w-full items-center gap-2.5 rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] px-5 py-3.5 transition-all duration-300",
         highlighted
-          ? "bg-[rgba(174,177,221,0.1)] shadow-[0px_2px_8px_rgba(0,0,0,0.12)]"
-          : "bg-white shadow-[0px_2px_4px_rgba(0,0,0,0.12)] hover:bg-[rgba(174,177,221,0.1)] hover:shadow-[0px_2px_8px_rgba(0,0,0,0.12)]",
+          ? "bg-[rgba(174,177,221,0.1)] shadow-[0px_2px_20px_rgba(0,0,0,0.10)]"
+          : "bg-white shadow-[0px_2px_12px_rgba(0,0,0,0.10)] hover:bg-[rgba(174,177,221,0.1)] hover:shadow-[0px_2px_20px_rgba(0,0,0,0.10)]",
       )}
     >
       <div className="flex min-w-0 flex-1 flex-col gap-[5px] text-[14px]">
