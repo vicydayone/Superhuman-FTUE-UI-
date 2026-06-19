@@ -237,9 +237,11 @@ function AccountMenu({
 function AutoArchiveContent({
   mails,
   archivedLabels,
+  closing = false,
 }: {
   mails: AutoArchiveMail[];
   archivedLabels: AutoArchiveToggles;
+  closing?: boolean;
 }) {
   // Phase 1: menu slides in + content shifts right.
   // Phase 2: marketing mails collapse (starts after menu has settled).
@@ -254,7 +256,10 @@ function AutoArchiveContent({
   }, []);
 
   const hasArchivable = Object.values(archivedLabels).some(Boolean);
-  const showMenu = menuOpen && hasArchivable;
+  // On Continue the menu slides out (content shifts back to x-0) so the Split
+  // Inbox can pick up seamlessly — but the archived mails stay collapsed, so
+  // nothing reloads: the visible list is identical to Split's opening frame.
+  const showMenu = menuOpen && hasArchivable && !closing;
 
   const { inboxCount, archivedCount } = useMemo(() => ({
     inboxCount: collapseActive
@@ -627,6 +632,7 @@ export function Chapter2Preview({
   archivedLabels,
   splitMails: _splitMails,
   splits,
+  closing = false,
   hovering = false,
   transitioning = false,
 }: {
@@ -635,6 +641,7 @@ export function Chapter2Preview({
   archivedLabels: AutoArchiveToggles;
   splitMails: SplitMail[];
   splits: SplitToggles;
+  closing?: boolean;
   hovering?: boolean;
   transitioning?: boolean;
 }) {
@@ -652,7 +659,7 @@ export function Chapter2Preview({
     >
       <PreviewShell>
         {step === "auto-archive" ? (
-          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} />
+          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} closing={closing} />
         ) : (
           <SplitInboxContent key="split" mails={animMails} toggles={splits} hovering={hovering} transitioning={transitioning} />
         )}

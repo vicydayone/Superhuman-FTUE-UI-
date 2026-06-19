@@ -74,6 +74,7 @@ export default function Home() {
     calendar: true,
     jira: true,
   });
+  const [archiveClosing, setArchiveClosing] = useState(false);
   const [splitHovering, setSplitHovering] = useState(false);
   const [splitTransitioning, setSplitTransitioning] = useState(false);
   const [draftDemo, setDraftDemo] = useState<AutoDraftDemo>("responses");
@@ -88,6 +89,7 @@ export default function Home() {
     setDraftDemo("responses");
     setReminder("couple-days");
     setAskDemo(0);
+    setArchiveClosing(false);
     setSplitHovering(false);
     setSplitTransitioning(false);
     setStep("welcome");
@@ -109,9 +111,12 @@ export default function Home() {
               setArchivedLabels((prev) => ({ ...prev, [key]: !prev[key] }))
             }
             onContinue={() => {
-              // Snapshot selections before resetting (reset closes the menu animation).
+              // Snapshot the user's selection for the Split filter.
               setSavedArchivedLabels({ ...archivedLabels });
-              setArchivedLabels({ marketing: false, news: false, pitch: false, social: false });
+              // Slide the menu out (content shifts back to x-0) WITHOUT
+              // un-archiving — the visible mails stay exactly as configured,
+              // so the Split Inbox picks up seamlessly with no reload.
+              setArchiveClosing(true);
               setTimeout(() => setStep("split-inbox"), 750);
             }}
           />
@@ -175,6 +180,7 @@ export default function Home() {
             archivedLabels={step === "split-inbox" ? savedArchivedLabels : archivedLabels}
             splitMails={SPLIT_MAIL}
             splits={splits}
+            closing={archiveClosing}
             hovering={splitHovering}
             transitioning={splitTransitioning}
           />
@@ -291,7 +297,7 @@ export default function Home() {
             <Stepper
               activeStep={meta!.activeStep}
               progress={meta!.progress}
-              onNavigate={(s) => { setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
+              onNavigate={(s) => { setArchiveClosing(false); setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
               className="absolute inset-x-0 top-0 z-10"
             />
 
