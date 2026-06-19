@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 // ── Brand marks ───────────────────────────────────────────────────────────────
@@ -405,46 +404,66 @@ export function GoogleScopesScreen({
   );
 }
 
-// ── Screen 6 — Signing in (hand-off to Chapter 2) ─────────────────────────────
+// ── Screen 6 — Browser "Open Superhuman?" app hand-off ────────────────────────
 
+/** The OS/browser dialog asking to open the native app — the final login step. */
 export function SigningInScreen({ onContinue }: { onContinue: () => void }) {
-  // Auto-advance into Chapter 2 once "sign-in" completes; clicking skips ahead.
-  useEffect(() => {
-    const id = setTimeout(onContinue, 1900);
-    return () => clearTimeout(id);
-  }, [onContinue]);
-
   return (
-    <button
-      type="button"
-      onClick={onContinue}
-      aria-label="Continue"
-      className="relative flex h-full w-full cursor-pointer items-center justify-center overflow-hidden"
-    >
-      {/* Dimmed mountain backdrop */}
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/auth-bg.png)" }} />
-      <div className="absolute inset-0 bg-[#1a1730]/55 backdrop-blur-[2px]" />
-
-      {/* Sign-in card */}
-      <div className="relative z-10 flex flex-col items-center gap-5 rounded-[14px] bg-white/95 px-12 py-10 shadow-[0_24px_70px_rgba(20,18,50,0.35)]">
-        <div
-          aria-hidden
-          className="animate-spin"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: "50%",
-            background:
-              "conic-gradient(from 90deg, #7ba4d8 0%, #b8a8e0 30%, rgba(212,184,232,0) 86%, rgba(212,184,232,0) 100%)",
-            WebkitMask:
-              "radial-gradient(circle, transparent 15px, black 15.5px, black 20px, transparent 20.5px)",
-            mask: "radial-gradient(circle, transparent 15px, black 15.5px, black 20px, transparent 20.5px)",
-            animationDuration: "1.2s",
-            animationTimingFunction: "linear",
-          }}
-        />
-        <p className="text-[15px] font-medium text-ink">Signing you in&hellip;</p>
+    <div className="relative flex h-full w-full items-start justify-center overflow-hidden bg-[#f0f1f3]">
+      {/* Faint Google page behind, so the dialog reads as browser-anchored. */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.45]">
+        <GoogleChrome>
+          <GoogleColumns
+            title="Superhuman wants access to your Google Account"
+            account={
+              <div className="mt-5 inline-flex items-center gap-2">
+                <Avatar tone="rose" className="size-6" />
+                <span className="text-[13px] text-[#3c4043]">sample.inbox@superhuman.com</span>
+              </div>
+            }
+          >
+            <p className="text-[16px] text-[#202124]">
+              Select what <span className="text-[#1a73e8]">Superhuman</span> can access
+            </p>
+          </GoogleColumns>
+        </GoogleChrome>
       </div>
-    </button>
+
+      {/* Browser dialog — anchored just below the address bar, top-center. */}
+      <div
+        className="relative z-10 mt-[14px] w-full max-w-[620px] rounded-[14px] bg-white px-7 py-6 shadow-[0_12px_48px_rgba(20,20,19,0.22),0_2px_6px_rgba(20,20,19,0.12)]"
+        style={{ animation: "screen-enter 320ms ease-out both" }}
+      >
+        <h1 className="text-[21px] font-semibold tracking-[-0.2px] text-[#202124]">
+          Open Superhuman?
+        </h1>
+        <p className="mt-3 text-[15px] leading-[1.5] text-[#3c4043]">
+          https://mail.superhuman.com wants to open this application.
+        </p>
+
+        <label className="mt-5 flex cursor-pointer items-center gap-3">
+          <span className="flex size-[18px] shrink-0 items-center justify-center rounded-[3px] border-[1.5px] border-[#9aa0a6] bg-white" />
+          <span className="text-[15px] text-[#3c4043]">
+            Always allow mail.superhuman.com to open links of this type in the associated app
+          </span>
+        </label>
+
+        <div className="mt-7 flex justify-end gap-3">
+          <button
+            type="button"
+            className="rounded-full bg-[#e8eef7] px-6 py-2.5 text-[15px] font-medium text-[#1a3766] transition-colors hover:bg-[#dde6f4]"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onContinue}
+            className="rounded-full bg-[#c9ddff] px-6 py-2.5 text-[15px] font-semibold text-[#174ea6] transition-colors hover:bg-[#b6d1ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8]/40"
+          >
+            Open Superhuman
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

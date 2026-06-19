@@ -44,8 +44,8 @@ const STEPPER_META: Record<
   Exclude<FlowStep, "intro" | Chapter1Step>,
   { activeStep: 2 | 3 | "done"; progress: number }
 > = {
-  "auto-archive": { activeStep: 2, progress: 2 },
-  "split-inbox": { activeStep: 2, progress: 3 },
+  "auto-archive": { activeStep: 2, progress: 1 },
+  "split-inbox": { activeStep: 2, progress: 2 },
   "auto-draft": { activeStep: 3, progress: 1 },
   "auto-reminder": { activeStep: 3, progress: 2 },
   "ask-ai": { activeStep: 3, progress: 3 },
@@ -280,14 +280,8 @@ export default function Home() {
             </div>
           </div>
         ) : step === "intro" ? (
-          // Intro/welcome is step 1 of "Organize your Inbox" — show the stepper
-          // (non-interactive) with the first of three segments filled.
+          // Intro/welcome is a loading screen — no progress bar.
           <div className="relative h-full w-full">
-            <Stepper
-              activeStep={2}
-              progress={1}
-              className="absolute inset-x-0 top-0 z-10"
-            />
             <IntroScreen onContinue={() => setStep("auto-archive")} />
           </div>
         ) : (
