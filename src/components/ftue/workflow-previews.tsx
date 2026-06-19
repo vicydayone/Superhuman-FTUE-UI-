@@ -318,8 +318,9 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
         </div>
       </div>
 
-      {/* Inbox behind, slightly dimmed (the inbox keeps running) */}
-      <div className="flex flex-1 flex-col gap-4 pt-2.5 opacity-80">
+      {/* Inbox behind, slightly dimmed (the inbox keeps running). Spacing
+          mirrors Split Inbox: tabs 64px from card top, 40px gap to the list. */}
+      <div className="flex flex-1 flex-col gap-10 pt-8 opacity-80">
         <div className="flex items-center gap-[13px] overflow-hidden">
           <IconHamburger className="size-4 shrink-0" />
           {ASK_AI_TABS.map((tab) => (
@@ -338,7 +339,7 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
 
         <div className="flex flex-col pl-[30px]">
           {ASK_AI_MAIL.map((m, i) => (
-            <div key={i} className="flex items-center py-2">
+            <div key={i} className="flex items-center py-[10px]">
               <p className="w-[175px] shrink-0 truncate pr-6 text-[12px] font-semibold leading-4 tracking-[-0.15px] text-mail">
                 {m.sender}
               </p>

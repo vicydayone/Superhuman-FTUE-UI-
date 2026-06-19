@@ -129,7 +129,7 @@ function Counter({
     <span className={className}>
       <span
         key={animKey}
-        style={animKey ? { display: "inline-block", animation: "count-pop 320ms ease-out" } : undefined}
+        style={animKey ? { display: "inline-block", animation: "count-pop 450ms ease-out" } : undefined}
       >
         {display}
       </span>
@@ -558,7 +558,9 @@ function SplitInboxContent({
               <div
                 style={{ overflow: "hidden", minHeight: 0 }}
                 className={cn(
-                  "rounded-[4px] transition-colors duration-500",
+                  // px+(-mx) lets the highlight bleed further left & right than
+                  // the mail content without shifting the rows.
+                  "-mx-5 rounded-[4px] px-5 transition-colors duration-500",
                   isFeatured && transitioning ? "bg-[rgba(174,177,221,0.28)]" : "",
                   isFeatured && hovering && !transitioning ? "bg-[rgba(174,177,221,0.15)] cursor-pointer" : "",
                 )}

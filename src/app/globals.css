@@ -272,8 +272,8 @@
   50%       { opacity: 0; }
 }
 
-/* A changed counter value pops in (no step-by-step counting). */
+/* A changed counter value fades in smoothly (no counting, no direction). */
 @keyframes count-pop {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
