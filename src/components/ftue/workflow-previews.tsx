@@ -112,7 +112,7 @@ function ConversationContent({
           are always at the same vertical position regardless of which card is
           hovered. flex-1 spacer absorbs the variable height of the incoming section. */}
       <div
-        className="flex w-[436px] max-w-full flex-col rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 pt-[30px] pb-5 shadow-[0px_0px_4.5px_rgba(0,0,0,0.15)] transition-[height] duration-500 ease-out"
+        className="flex w-[436px] max-w-full flex-col rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 pt-[30px] pb-5 transition-[height] duration-500 ease-out"
         style={{ height: isReminder ? "auto" : 290 }}
       >
         {/* Incoming email — always anchored at the top */}
@@ -363,11 +363,15 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
  * content behind it stays clipped to the card.
  */
 function AskAiAnswerCard({ askDemo }: { askDemo: number }) {
+  // The query card in the panel grows one 16px line per prompt (demo 0/1/2 =
+  // 1/2/3 lines), so push the answer down by the same amount to keep a
+  // constant gap between the two cards across all three options.
+  const top = 244 + askDemo * 16;
   return (
     <div
       key={askDemo}
-      className="absolute top-[244px] left-[-20px] w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
-      style={{ animation: "highlight-pop 420ms ease-out both" }}
+      className="absolute left-[-20px] w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
+      style={{ top, animation: "highlight-pop 420ms ease-out both" }}
     >
       <AskAiAnswer index={askDemo} />
       <p className="text-[11px] font-semibold leading-[23px] text-[rgba(0,0,0,0.4)]">Sources</p>
