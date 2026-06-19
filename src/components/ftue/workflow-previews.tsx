@@ -125,7 +125,7 @@ function ConversationContent({
 
         {/* AUTO REMINDER: sent "Me" reply thread + reminder confirmation */}
         {isReminder && (
-          <div className="flex w-full shrink-0 flex-col gap-6 mt-6">
+          <div className="flex w-full shrink-0 flex-col gap-[20px] mt-6">
             <div
               className="flex w-full flex-col items-start gap-2.5"
               style={{ animation: "reply-rise 500ms ease-out 200ms both" }}
