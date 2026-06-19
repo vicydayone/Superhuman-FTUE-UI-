@@ -271,3 +271,9 @@
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
+
+/* A changed counter value pops in (no step-by-step counting). */
+@keyframes count-pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

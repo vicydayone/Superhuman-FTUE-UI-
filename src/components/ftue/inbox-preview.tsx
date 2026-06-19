@@ -108,38 +108,33 @@ function Counter({
   delay?: number;
   className?: string;
 }) {
+  // No step-by-step count — when the value changes we just swap to the new
+  // number and pop it in (fade + slight rise). Mounts showing the target so
+  // only actual changes animate.
   const [display, setDisplay] = useState(value);
-  const current = useRef(value);
+  const [animKey, setAnimKey] = useState(0);
+  const prev = useRef(value);
 
   useEffect(() => {
-    const from = current.current;
-    if (from === value) return;
-
-    const duration = 600;
-    let rafId = 0;
-    let startTs = 0;
-    const tick = (ts: number) => {
-      if (!startTs) startTs = ts;
-      const p = Math.min((ts - startTs) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      const next = from + (value - from) * eased;
-      current.current = next;
-      setDisplay(Math.round(next));
-      if (p < 1) rafId = requestAnimationFrame(tick);
-      else current.current = value;
-    };
-
+    if (prev.current === value) return;
+    prev.current = value;
     const timer = window.setTimeout(() => {
-      rafId = requestAnimationFrame(tick);
+      setDisplay(value);
+      setAnimKey((k) => k + 1);
     }, delay);
-
-    return () => {
-      window.clearTimeout(timer);
-      cancelAnimationFrame(rafId);
-    };
+    return () => window.clearTimeout(timer);
   }, [value, delay]);
 
-  return <span className={className}>{display}</span>;
+  return (
+    <span className={className}>
+      <span
+        key={animKey}
+        style={animKey ? { display: "inline-block", animation: "count-pop 320ms ease-out" } : undefined}
+      >
+        {display}
+      </span>
+    </span>
+  );
 }
 
 // ── Account menu (slides in on "Keep it clean") ──────────────────────────────
@@ -343,16 +338,8 @@ const TAB_ORDER: { key: SplitCategory; label: string }[] = [
   { key: "other", label: "Other" },
 ];
 
-// "Inbox" erases right-to-left down to "I", then "Important" types out left-to-right.
-const TYPEWRITER_FRAMES = [
-  'Inbo', 'Inb', 'In', 'I',
-  'Im', 'Imp', 'Impo', 'Impor',
-  'Import', 'Importa', 'Importan', 'Important',
-];
-const TW_CHAR_MS = 50;       // ms per character step — faster feels smoother
-const TW_START_MS = 1000;    // ms after mount to begin erasing
-// "Important" fully typed at: TW_START_MS + (frames-1)*TW_CHAR_MS
-const PHASE1_AT = TW_START_MS + (TYPEWRITER_FRAMES.length - 1) * TW_CHAR_MS + 100;
+// After a brief beat the "Inbox" header cross-fades to the "Important" tab.
+const PHASE1_AT = 800;
 // Phase offsets from PHASE1_AT: Calendar immediately, then slightly longer for Jira/Other
 const PHASE_OFFSETS = [600, 1500, 2400, 2900]; // phases 2→5
 const COLLAPSE_STAGGER = 100; // ms between successive mails within a category
@@ -371,15 +358,10 @@ function SplitInboxContent({
   const [active, setActive] = useState<SplitCategory>("important");
   const [noTransition, setNoTransition] = useState(false);
   const [phase, setPhase] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
-  const [headerText, setHeaderText] = useState('Inbox');
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
-    // Typewriter: erase "nbox" right-to-left → "I" → type "mportant" left-to-right
-    TYPEWRITER_FRAMES.forEach((text, i) => {
-      timers.push(setTimeout(() => setHeaderText(text), TW_START_MS + i * TW_CHAR_MS));
-    });
-    // Phase 1 fires once "Important" is fully typed
+    // Phase 1: "Inbox" cross-fades into the "Important" tab.
     timers.push(setTimeout(() => setPhase(1), PHASE1_AT));
     // Calendar immediately after, Jira + Other with slightly longer pauses
     ([2, 3, 4, 5] as const).forEach((p, i) => {
@@ -498,61 +480,62 @@ function SplitInboxContent({
           exact same Y — no vertical jump when switching from Auto Archive. */}
       <div className="mb-10 flex items-center gap-[13px]">
         <IconHamburger className="size-4 shrink-0" />
-        {phase === 0 ? (
-          // Typewriter: "Inbox" erases to "I", then "Important" types out.
-          // Blinking cursor runs for the duration of the animation.
-          // Counter only shows while still "Inbox" (before erasing starts).
-          <span className="flex items-center gap-[5px] text-[16px] text-ink">
-            <span>{headerText}</span>
-            {headerText !== 'Inbox' && headerText !== 'Important' && (
-              <span
-                aria-hidden
-                className="inline-block text-[16px] text-ink"
-                style={{ animation: "cursor-blink 500ms step-start infinite" }}
-              >|</span>
+        {/* "Inbox" cross-fades into the tab bar — both sit at the same left
+            edge, so as "Inbox" fades out "Important" fades in over it. */}
+        <div className="relative flex flex-1 items-center">
+          <div
+            className={cn(
+              "flex items-center gap-[5px] text-[16px] text-ink",
+              phase >= 1 && "pointer-events-none absolute inset-y-0 left-0",
             )}
-            {headerText === 'Inbox' && (
-              <Counter
-                value={mails.length}
-                className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
-              />
-            )}
-          </span>
-        ) : (
-          // Tab bar: flat 16px text — active tab darker (0.9), others 0.4.
-          // Important fades in at phase 1; Calendar/Jira/Other slide in (tab-enter).
-          <div className="flex flex-1 items-center">
-            {TAB_ORDER.map(({ key, label }) => {
-              const tp = tabPhase(key);
-              if (phase < tp) return null;
-              if (!animating && key === "calendar" && !toggles.calendar) return null;
-              if (!animating && key === "jira" && !toggles.jira) return null;
-
-              const isActive = animating ? key === "important" : effectiveActive === key;
-
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => handleTabChange(key)}
-                  style={tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
-                  className={cn(
-                    "flex items-center gap-[5px] pr-6 text-[16px] transition-colors",
-                    isActive
-                      ? "text-ink"
-                      : "text-[rgba(0,0,0,0.4)] hover:text-[rgba(0,0,0,0.65)]",
-                  )}
-                >
-                  <span>{label}</span>
-                  <Counter
-                    value={countFor(key)}
-                    className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
-                  />
-                </button>
-              );
-            })}
+            style={{ opacity: phase === 0 ? 1 : 0, transition: "opacity 350ms ease-out" }}
+          >
+            <span>Inbox</span>
+            <Counter
+              value={mails.length}
+              className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
+            />
           </div>
-        )}
+
+          {phase >= 1 && (
+            // Tab bar: flat 16px text — active tab darker (0.9), others 0.4.
+            // Fades in over "Inbox"; Calendar/Jira/Other slide in (tab-enter).
+            <div
+              className="flex flex-1 items-center"
+              style={{ animation: "preview-fade 350ms ease-out both" }}
+            >
+              {TAB_ORDER.map(({ key, label }) => {
+                const tp = tabPhase(key);
+                if (phase < tp) return null;
+                if (!animating && key === "calendar" && !toggles.calendar) return null;
+                if (!animating && key === "jira" && !toggles.jira) return null;
+
+                const isActive = animating ? key === "important" : effectiveActive === key;
+
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleTabChange(key)}
+                    style={tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
+                    className={cn(
+                      "flex items-center gap-[5px] pr-6 text-[16px] transition-colors",
+                      isActive
+                        ? "text-ink"
+                        : "text-[rgba(0,0,0,0.4)] hover:text-[rgba(0,0,0,0.65)]",
+                    )}
+                  >
+                    <span>{label}</span>
+                    <Counter
+                      value={countFor(key)}
+                      className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex flex-1 flex-col overflow-hidden pl-[30px]">
         {mailItems.map(({ mail, collapsed, delay }) => {
