@@ -509,10 +509,7 @@ function SplitInboxContent({
         ) : (
           // Tab bar: flat 16px text — active tab darker (0.9), others 0.4.
           // Important fades in at phase 1; Calendar/Jira/Other slide in (tab-enter).
-          <div
-            className="flex flex-1 items-center"
-            style={phase === 1 ? { animation: "preview-fade 300ms ease-out both" } : undefined}
-          >
+          <div className="flex flex-1 items-center">
             {TAB_ORDER.map(({ key, label }) => {
               const tp = tabPhase(key);
               if (phase < tp) return null;
