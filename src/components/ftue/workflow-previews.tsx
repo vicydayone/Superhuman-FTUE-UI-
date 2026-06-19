@@ -366,7 +366,7 @@ function AskAiAnswerCard({ askDemo }: { askDemo: number }) {
   // The query card in the panel grows one 16px line per prompt (demo 0/1/2 =
   // 1/2/3 lines), so push the answer down by the same amount to keep a
   // constant gap between the two cards across all three options.
-  const top = 244 + askDemo * 16;
+  const top = 224 + askDemo * 16;
   return (
     <div
       key={askDemo}
