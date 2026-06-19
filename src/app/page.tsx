@@ -234,13 +234,28 @@ export default function Home() {
   };
 
   const isChapter1 = (CHAPTER1 as string[]).includes(step);
-  const chapter1Idx = isChapter1 ? (CHAPTER1 as string[]).indexOf(step) : -1;
-  const goChapter1Back = () => {
-    if (chapter1Idx > 0) setStep(CHAPTER1[chapter1Idx - 1]);
-  };
-  const goChapter1Forward = () => {
-    if (chapter1Idx < CHAPTER1.length - 1) setStep(CHAPTER1[chapter1Idx + 1]);
-    else setStep("intro");
+
+  // Full linear order across the whole onboarding, so the prototype nav arrows
+  // can step forward/back through every screen (resetting transient transition
+  // state so jumps land cleanly).
+  const FLOW_ORDER: FlowStep[] = [
+    ...CHAPTER1,
+    "intro",
+    "auto-archive",
+    "split-inbox",
+    "auto-draft",
+    "auto-reminder",
+    "ask-ai",
+    "seats",
+    "done",
+  ];
+  const flowIdx = FLOW_ORDER.indexOf(step);
+  const goTo = (i: number) => {
+    if (i < 0 || i >= FLOW_ORDER.length) return;
+    setArchiveClosing(false);
+    setSplitHovering(false);
+    setSplitTransitioning(false);
+    setStep(FLOW_ORDER[i]);
   };
 
   const meta =
@@ -250,34 +265,10 @@ export default function Home() {
 
   return (
     <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
-      <div className="h-full w-full">
+      <div className="relative h-full w-full">
         {isChapter1 ? (
           <div className="relative h-full w-full">
             {renderChapter1()}
-            {/* Prototype nav arrows — top-left overlay */}
-            <div className="absolute left-4 top-4 z-50 flex gap-1.5">
-              <button
-                type="button"
-                onClick={goChapter1Back}
-                disabled={chapter1Idx === 0}
-                aria-label="Previous screen"
-                className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-opacity hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-30"
-              >
-                <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden>
-                  <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={goChapter1Forward}
-                aria-label="Next screen"
-                className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-opacity hover:bg-white/30"
-              >
-                <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden>
-                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            </div>
           </div>
         ) : step === "intro" ? (
           // Intro/welcome is a loading screen — no progress bar.
@@ -318,6 +309,33 @@ export default function Home() {
             )}
           </div>
         )}
+
+        {/* Prototype nav arrows — top-left overlay, available on every screen
+            so you can step forward/back through the whole flow quickly. */}
+        <div className="absolute left-4 top-4 z-50 flex gap-1.5">
+          <button
+            type="button"
+            onClick={() => goTo(flowIdx - 1)}
+            disabled={flowIdx <= 0}
+            aria-label="Previous screen"
+            className="flex size-8 items-center justify-center rounded-full border border-black/10 bg-white/85 text-[#5f6368] shadow-[0_1px_3px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden>
+              <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => goTo(flowIdx + 1)}
+            disabled={flowIdx >= FLOW_ORDER.length - 1}
+            aria-label="Next screen"
+            className="flex size-8 items-center justify-center rounded-full border border-black/10 bg-white/85 text-[#5f6368] shadow-[0_1px_3px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <svg viewBox="0 0 16 16" className="size-4" fill="none" aria-hidden>
+              <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
       </div>
     </main>
   );

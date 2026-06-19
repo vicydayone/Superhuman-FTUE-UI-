@@ -49,7 +49,7 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
           height: 72,
           borderRadius: "50%",
           background:
-            "conic-gradient(from 90deg, #7ba4d8 0%, #b8a8e0 30%, rgba(212,184,232,0) 86%, rgba(212,184,232,0) 100%)",
+            "conic-gradient(from 90deg, #1ca5d7 0%, #8655d6 35%, rgba(134,85,214,0) 86%, rgba(134,85,214,0) 100%)",
           WebkitMask:
             "radial-gradient(circle, transparent 26px, black 26.5px, black 32.5px, transparent 33px)",
           mask: "radial-gradient(circle, transparent 26px, black 26.5px, black 32.5px, transparent 33px)",
@@ -63,7 +63,8 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
         <h1
           className="text-[34px] font-semibold leading-tight"
           style={{
-            background: "linear-gradient(135deg, #aeb1dd 0%, #5f74aa 100%)",
+            // Exact Figma gradient (node 1838:12704) — vibrant cyan → violet.
+            background: "linear-gradient(95.71deg, rgb(28, 165, 215) 7.86%, rgb(134, 85, 214) 87.96%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",

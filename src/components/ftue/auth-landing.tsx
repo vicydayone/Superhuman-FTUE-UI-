@@ -11,27 +11,25 @@ import { cn } from "@/lib/utils";
 function AuthLanding({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
-      {/* Mountain photo */}
+      {/* Lake Wanaka dusk photo (purple-toned). */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url(/auth-bg.png)" }}
+        style={{ backgroundImage: "url(/login-bg.png)" }}
       />
-      {/* Blue→violet wash (Figma: linear 180deg #1d5e9a/.5 → #9226e8/.1) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#1d5e9a]/45 via-[#6a5bb5]/20 to-[#9226e8]/15" />
+      {/* Soft top-down darkening for wordmark contrast (image is already tinted). */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/12 via-black/5 to-transparent" />
 
       {/* Content column */}
-      <div className="relative z-10 flex w-full max-w-[560px] flex-col items-center gap-9 px-6 sm:gap-11">
-        {/* SUPERHUMAN MAIL wordmark (white). Dimensions pinned to the Figma
-            271.64 × 16.85 ratio — the SVG declares width/height 100% so an
-            auto dimension won't track the viewBox reliably. */}
+      <div className="relative z-10 flex w-full max-w-[460px] flex-col items-center gap-7 px-6 sm:gap-9">
+        {/* SUPERHUMAN MAIL wordmark (white). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/superhuman-logo.svg"
           alt="SUPERHUMAN MAIL"
-          className="h-[14px] w-[226px] sm:h-[15px] sm:w-[242px]"
+          className="h-[12px] w-[190px] sm:h-[13px] sm:w-[205px]"
         />
 
-        <div className="w-full rounded-[6px] bg-white px-8 py-8 shadow-[0_24px_70px_rgba(30,24,70,0.22)] sm:px-[60px] sm:py-12">
+        <div className="w-full rounded-[6px] bg-white px-7 py-7 shadow-[0_24px_70px_rgba(30,24,70,0.22)] sm:px-[48px] sm:py-10">
           {children}
         </div>
       </div>
@@ -52,9 +50,9 @@ function AuthButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "h-[54px] w-full rounded-[6px] bg-[#8797cd] text-[16px] font-semibold text-white",
+        "h-[46px] w-full rounded-[6px] bg-[#8797cd] text-[15px] font-semibold text-white",
         "shadow-[0px_12px_23px_rgba(0,0,0,0.15)] transition-colors duration-200",
-        "hover:bg-[#7888c4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:h-[62px] sm:text-[18px]",
+        "hover:bg-[#7888c4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 sm:h-[52px] sm:text-[16px]",
       )}
     >
       {children}
@@ -65,15 +63,15 @@ function AuthButton({
 const HEADING = "The most productive email app ever made.";
 
 const headingClass =
-  "text-center text-[23px] font-normal leading-[1.15] text-black/60 sm:text-[31px]";
+  "text-center text-[20px] font-normal leading-[1.15] text-black/60 sm:text-[26px]";
 
 /** Screen 1 — welcome. Single "Get Started Now" CTA + a download link. */
 export function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
   return (
     <AuthLanding>
-      <div className="flex flex-col items-center gap-8 sm:gap-10">
+      <div className="flex flex-col items-center gap-6 sm:gap-8">
         <h1 className={headingClass}>{HEADING}</h1>
-        <div className="flex w-full max-w-[407px] flex-col items-center gap-4">
+        <div className="flex w-full max-w-[340px] flex-col items-center gap-4">
           <AuthButton onClick={onContinue}>Get Started Now</AuthButton>
           <button
             type="button"
@@ -92,9 +90,9 @@ export function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
 export function SignInScreen({ onContinue }: { onContinue: () => void }) {
   return (
     <AuthLanding>
-      <div className="flex flex-col items-center gap-8 sm:gap-10">
+      <div className="flex flex-col items-center gap-6 sm:gap-8">
         <h1 className={headingClass}>{HEADING}</h1>
-        <div className="flex w-full max-w-[407px] flex-col gap-[15px]">
+        <div className="flex w-full max-w-[340px] flex-col gap-[13px]">
           <AuthButton onClick={onContinue}>Sign in with Google</AuthButton>
           <AuthButton onClick={onContinue}>Sign in with Microsoft</AuthButton>
         </div>
