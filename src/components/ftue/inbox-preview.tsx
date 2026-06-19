@@ -494,7 +494,9 @@ function SplitInboxContent({
 
   return (
     <>
-      <div className="mb-4 flex items-center gap-[13px]">
+      {/* mb-10 matches Auto Archive's header gap so the mail list sits at the
+          exact same Y — no vertical jump when switching from Auto Archive. */}
+      <div className="mb-10 flex items-center gap-[13px]">
         <IconHamburger className="size-4 shrink-0" />
         {phase === 0 ? (
           // Typewriter: "Inbox" erases to "I", then "Important" types out.
