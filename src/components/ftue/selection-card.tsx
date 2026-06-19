@@ -46,7 +46,7 @@ export function SelectionCard({
       onClick={onSelect}
       onMouseEnter={onHover}
       className={cn(
-        "flex w-full items-center gap-2.5 rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] px-5 py-3.5 text-left transition-all duration-300",
+        "flex -ml-5 w-[calc(100%_+_20px)] items-center gap-2.5 rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] px-5 py-3.5 text-left transition-all duration-300",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
         selected
           ? "bg-[rgba(174,177,221,0.1)] shadow-[0px_2px_20px_rgba(0,0,0,0.10)]"

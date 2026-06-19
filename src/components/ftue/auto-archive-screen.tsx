@@ -75,7 +75,7 @@ export function AutoArchiveLeft({
                 type="button"
                 onClick={() => onToggle(key)}
                 className={cn(
-                  "flex w-full items-center gap-[10px] rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] px-5 py-[10px] text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50",
+                  "flex -ml-5 w-[calc(100%_+_20px)] items-center gap-[10px] rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] px-5 py-[10px] text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50",
                   checked
                     ? "bg-[rgba(174,177,221,0.1)] shadow-[0px_2px_20px_rgba(0,0,0,0.10)]"
                     : "bg-white shadow-[0px_2px_12px_rgba(0,0,0,0.10)] hover:bg-[rgba(174,177,221,0.1)] hover:shadow-[0px_2px_20px_rgba(0,0,0,0.10)]",
