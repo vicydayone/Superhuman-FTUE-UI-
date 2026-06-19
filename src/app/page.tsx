@@ -74,6 +74,7 @@ export default function Home() {
     calendar: true,
     jira: true,
   });
+  const [splitHovering, setSplitHovering] = useState(false);
   const [splitTransitioning, setSplitTransitioning] = useState(false);
   const [draftDemo, setDraftDemo] = useState<AutoDraftDemo>("responses");
   const [reminder, setReminder] = useState<ReminderChoice>("couple-days");
@@ -87,6 +88,7 @@ export default function Home() {
     setDraftDemo("responses");
     setReminder("couple-days");
     setAskDemo(0);
+    setSplitHovering(false);
     setSplitTransitioning(false);
     setStep("welcome");
   };
@@ -120,10 +122,12 @@ export default function Home() {
             toggles={splits}
             onToggle={(key, value) => setSplits((s) => ({ ...s, [key]: value }))}
             onContinue={() => {
-              setSplitTransitioning(true);
+              setSplitHovering(true);
               setTimeout(() => {
-                setStep("auto-draft");
-              }, 800);
+                setSplitHovering(false);
+                setSplitTransitioning(true);
+                setTimeout(() => setStep("auto-draft"), 800);
+              }, 1400);
             }}
           />
         );
@@ -171,6 +175,7 @@ export default function Home() {
             archivedLabels={step === "split-inbox" ? savedArchivedLabels : archivedLabels}
             splitMails={SPLIT_MAIL}
             splits={splits}
+            hovering={splitHovering}
             transitioning={splitTransitioning}
           />
         );
@@ -286,7 +291,7 @@ export default function Home() {
             <Stepper
               activeStep={meta!.activeStep}
               progress={meta!.progress}
-              onNavigate={(s) => { setSplitTransitioning(false); setStep(s as FlowStep); }}
+              onNavigate={(s) => { setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
               className="absolute inset-x-0 top-0 z-10"
             />
 

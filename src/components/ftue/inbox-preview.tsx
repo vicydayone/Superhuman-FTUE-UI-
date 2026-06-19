@@ -352,10 +352,12 @@ const COLLAPSE_STAGGER = 100; // ms between successive mails within a category
 function SplitInboxContent({
   mails,
   toggles,
+  hovering = false,
   transitioning = false,
 }: {
   mails: SplitMail[];
   toggles: SplitToggles;
+  hovering?: boolean;
   transitioning?: boolean;
 }) {
   const [active, setActive] = useState<SplitCategory>("important");
@@ -563,8 +565,9 @@ function SplitInboxContent({
               <div
                 style={{ overflow: "hidden", minHeight: 0 }}
                 className={cn(
-                  "rounded-[4px] transition-colors duration-300",
-                  isFeatured && transitioning ? "bg-[rgba(174,177,221,0.18)]" : "",
+                  "rounded-[4px] transition-colors duration-500",
+                  isFeatured && transitioning ? "bg-[rgba(174,177,221,0.28)]" : "",
+                  isFeatured && hovering && !transitioning ? "bg-[rgba(174,177,221,0.15)] cursor-pointer" : "",
                 )}
               >
                 <MailRow sender={mail.sender} subject={mail.subject} date={mail.date} label={mail.label} />
@@ -621,6 +624,7 @@ export function Chapter2Preview({
   archivedLabels,
   splitMails: _splitMails,
   splits,
+  hovering = false,
   transitioning = false,
 }: {
   step: "auto-archive" | "split-inbox";
@@ -628,6 +632,7 @@ export function Chapter2Preview({
   archivedLabels: AutoArchiveToggles;
   splitMails: SplitMail[];
   splits: SplitToggles;
+  hovering?: boolean;
   transitioning?: boolean;
 }) {
   const animMails = archivedMails
@@ -646,7 +651,7 @@ export function Chapter2Preview({
         {step === "auto-archive" ? (
           <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} />
         ) : (
-          <SplitInboxContent key="split" mails={animMails} toggles={splits} transitioning={transitioning} />
+          <SplitInboxContent key="split" mails={animMails} toggles={splits} hovering={hovering} transitioning={transitioning} />
         )}
       </PreviewShell>
     </div>
