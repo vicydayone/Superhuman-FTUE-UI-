@@ -44,8 +44,8 @@ const STEPPER_META: Record<
   Exclude<FlowStep, "intro" | Chapter1Step>,
   { activeStep: 2 | 3 | "done"; progress: number }
 > = {
-  "auto-archive": { activeStep: 2, progress: 1 },
-  "split-inbox": { activeStep: 2, progress: 2 },
+  "auto-archive": { activeStep: 2, progress: 2 },
+  "split-inbox": { activeStep: 2, progress: 3 },
   "auto-draft": { activeStep: 3, progress: 1 },
   "auto-reminder": { activeStep: 3, progress: 2 },
   "ask-ai": { activeStep: 3, progress: 3 },
@@ -74,6 +74,7 @@ export default function Home() {
     calendar: true,
     jira: true,
   });
+  const [splitTransitioning, setSplitTransitioning] = useState(false);
   const [draftDemo, setDraftDemo] = useState<AutoDraftDemo>("responses");
   const [reminder, setReminder] = useState<ReminderChoice>("couple-days");
   const [reminderHover, setReminderHover] = useState<ReminderChoice | null>(null);
@@ -86,6 +87,7 @@ export default function Home() {
     setDraftDemo("responses");
     setReminder("couple-days");
     setAskDemo(0);
+    setSplitTransitioning(false);
     setStep("welcome");
   };
 
@@ -117,7 +119,12 @@ export default function Home() {
           <SplitInboxLeft
             toggles={splits}
             onToggle={(key, value) => setSplits((s) => ({ ...s, [key]: value }))}
-            onContinue={() => setStep("auto-draft")}
+            onContinue={() => {
+              setSplitTransitioning(true);
+              setTimeout(() => {
+                setStep("auto-draft");
+              }, 800);
+            }}
           />
         );
       case "auto-draft":
@@ -164,6 +171,7 @@ export default function Home() {
             archivedLabels={step === "split-inbox" ? savedArchivedLabels : archivedLabels}
             splitMails={SPLIT_MAIL}
             splits={splits}
+            transitioning={splitTransitioning}
           />
         );
       case "auto-draft":
@@ -261,7 +269,16 @@ export default function Home() {
             </div>
           </div>
         ) : step === "intro" ? (
-          <IntroScreen onContinue={() => setStep("auto-archive")} />
+          // Intro/welcome is step 1 of "Organize your Inbox" — show the stepper
+          // (non-interactive) with the first of three segments filled.
+          <div className="relative h-full w-full">
+            <Stepper
+              activeStep={2}
+              progress={1}
+              className="absolute inset-x-0 top-0 z-10"
+            />
+            <IntroScreen onContinue={() => setStep("auto-archive")} />
+          </div>
         ) : (
           <div className="relative flex h-full w-full">
             {/* Persistent stepper — stays mounted across every non-intro step,
@@ -269,7 +286,7 @@ export default function Home() {
             <Stepper
               activeStep={meta!.activeStep}
               progress={meta!.progress}
-              onNavigate={setStep}
+              onNavigate={(s) => { setSplitTransitioning(false); setStep(s as FlowStep); }}
               className="absolute inset-x-0 top-0 z-10"
             />
 

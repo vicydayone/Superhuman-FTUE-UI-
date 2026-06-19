@@ -43,7 +43,7 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           Bring your team into Superhuman.
         </h1>
         <p className="text-[14px] leading-normal">
-          Invite teammates now. Seats will be added automatically for everyone
+          Invite teammates now. Seats are added automatically for everyone
           you bring in.
         </p>
       </div>

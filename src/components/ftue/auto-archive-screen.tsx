@@ -53,17 +53,18 @@ export function AutoArchiveLeft({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2.5 text-ink">
           <h1 className="text-[22px] font-semibold leading-normal">
-            Clear the clutter with Auto Archive.
+            Clear out the clutter with Auto Archive.
           </h1>
           <p className="text-[14px] leading-normal">
-            First, let’s decide what skips your inbox to help cut through the
-            noise. Everything saved and searchable, just out of your way.
+            First, let’s decide what to move out of your inbox. Superhuman
+            filters out the automated noise so you can focus on the messages
+            that matter.
           </p>
         </div>
 
         <div className="flex flex-col gap-[14px]">
           <p className="text-[14px] text-ink-subdued">
-            Which emails do you want to skip your inbox?
+            New messages with these labels will be safely archived:
           </p>
 
           {CATEGORIES.map(({ key, color, description }) => {

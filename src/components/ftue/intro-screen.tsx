@@ -5,9 +5,9 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
-  "Getting to know your inbox",
-  "Picking up on your patterns",
-  "Drafting a setup that fits",
+  "Sorting your emails",
+  "Learning your patterns",
+  "Crafting a setup that fits",
 ];
 
 /**
@@ -59,19 +59,23 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
       />
 
       {/* Gradient heading — lavender → stepper-blue */}
-      <h1
-        className="text-[34px] font-semibold leading-tight"
-        style={{
-          background: "linear-gradient(135deg, #aeb1dd 0%, #5f74aa 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        }}
-      >
-        Connected.
-        <br />
-        Now we make it yours.
-      </h1>
+      <div className="flex flex-col items-center gap-3">
+        <h1
+          className="text-[34px] font-semibold leading-tight"
+          style={{
+            background: "linear-gradient(135deg, #aeb1dd 0%, #5f74aa 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
+          Welcome, let’s get things set up.
+        </h1>
+        <p className="max-w-[440px] text-[15px] leading-normal text-ink-subdued">
+          Now that your account is connected, we’ll help you get your inbox
+          organized.
+        </p>
+      </div>
 
       {/* Checklist pills */}
       <div className="flex flex-col gap-2.5">
@@ -85,7 +89,7 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
                 complete ? "text-ink" : "text-ink-subdued opacity-60",
               )}
             >
-              <span>{label}</span>
+              <span>{label}…</span>
               <Check
                 className={cn(
                   "size-3.5 shrink-0 text-stepper transition-opacity duration-300",

@@ -29,7 +29,7 @@ function TitleBar() {
  */
 function PreviewCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative h-[490px] w-[570px] max-w-full overflow-hidden rounded-[16px] bg-[rgba(247,247,252,0.7)] shadow-[0_0_2px_rgba(20,20,19,0.12),0_6px_24px_rgba(20,20,19,0.12)]">
+    <div className="relative h-[490px] w-[570px] max-w-full rounded-[16px] bg-[rgba(247,247,252,0.7)] shadow-[0_0_2px_rgba(20,20,19,0.12),0_6px_24px_rgba(20,20,19,0.12)]">
       <TitleBar />
       {children}
     </div>
@@ -97,7 +97,7 @@ function ConversationContent({
           hovered. flex-1 spacer absorbs the variable height of the incoming section. */}
       <div
         className="flex w-[436px] max-w-full flex-col rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 pt-[30px] pb-5 shadow-[0px_0px_4.5px_rgba(0,0,0,0.15)] transition-[height] duration-500 ease-out"
-        style={{ height: isReminder ? 313 : 290 }}
+        style={{ height: isReminder ? "auto" : 290 }}
       >
         {/* Incoming email — always anchored at the top */}
         <div className="flex w-full shrink-0 flex-col items-start gap-2.5">
@@ -120,13 +120,12 @@ function ConversationContent({
         {/* Divider — always immediately after incoming, visible on every variant */}
         <div className="mt-6 h-px w-full shrink-0 bg-black/[0.08]" />
 
-        {/* Spacer — absorbs the height difference between incoming content variants
-            so the highlight card and send row stay at a consistent Y position */}
-        <div className="flex-1" />
+        {/* Spacer — only for Auto Draft to keep highlight card at consistent Y as demos switch */}
+        {!isReminder && <div className="flex-1" />}
 
         {/* AUTO REMINDER: sent "Me" reply thread + reminder confirmation */}
         {isReminder && (
-          <div className="flex w-full shrink-0 flex-col gap-6">
+          <div className="flex w-full shrink-0 flex-col gap-6 mt-6">
             <div
               className="flex w-full flex-col items-start gap-2.5"
               style={{ animation: "reply-rise 500ms ease-out 200ms both" }}
@@ -139,19 +138,17 @@ function ConversationContent({
               </p>
             </div>
             <div
-              className="flex w-[467px] max-w-none self-center items-center justify-between gap-[11px] rounded-[12px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
+              className="flex w-[467px] max-w-none self-center items-center gap-2 rounded-[12px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
               style={{ animation: "highlight-pop 450ms ease-out 720ms both" }}
             >
+              <Sparkle className="size-4 shrink-0" />
               <p className="text-[13px] leading-[20px] tracking-[-0.15px] text-[rgba(0,0,0,0.75)]">
-                Reminder set:{" "}
-                <span className="font-bold tracking-[0.1px] text-[#26a258]">
+                We’ll remind you{" "}
+                <span className="font-semibold text-[#4a7fd0]">
                   {reminderWait}
                 </span>{" "}
                 if no reply
               </p>
-              <span className="shrink-0 text-[13px] font-semibold tracking-[-0.15px] text-[rgba(0,0,0,0.55)]">
-                Undo
-              </span>
             </div>
           </div>
         )}
@@ -160,11 +157,14 @@ function ConversationContent({
         {!isReminder && (
           <div
             key={draftDemo}
-            className="flex w-[467px] max-w-none self-center shrink-0 flex-col gap-[10px] rounded-[12px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
+            className="flex w-[467px] max-w-none self-center shrink-0 flex-col gap-[10px] rounded-[4px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
             style={{ animation: "highlight-pop 380ms ease-out both" }}
           >
             <p className="leading-[20px] tracking-[-0.15px]">
-              <span className="text-[12.9px] font-bold tracking-[0.1px] text-[#26a258]">
+              <span
+                className="text-[12.9px] font-bold tracking-[0.1px] bg-clip-text text-transparent"
+                style={{ backgroundImage: "linear-gradient(91.75deg, rgb(28, 165, 215) 7.86%, rgb(134, 85, 214) 87.96%)" }}
+              >
                 Auto Draft
               </span>
               <span className="text-[11.9px] text-[#29323d]"> to Maria</span>
@@ -304,34 +304,34 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
 
       {/* Inbox behind, slightly dimmed (the inbox keeps running) */}
       <div className="flex flex-1 flex-col gap-4 pt-2.5 opacity-80">
-        <div className="flex items-center gap-3 overflow-hidden">
+        <div className="flex items-center gap-[13px] overflow-hidden">
           <IconHamburger className="size-4 shrink-0" />
           {ASK_AI_TABS.map((tab) => (
             <div
               key={tab.label}
               className={cn(
-                "flex shrink-0 items-center gap-1 rounded-[6px] px-2 py-1.5 text-[12px]",
-                tab.active
-                  ? "bg-[#fbfbfe] text-black drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)]"
-                  : "text-[#999]",
+                "flex shrink-0 items-center gap-[5px] text-[16px]",
+                tab.active ? "text-ink" : "text-[rgba(0,0,0,0.4)]",
               )}
             >
               <span>{tab.label}</span>
-              <span className="text-[10px] text-[#b5b5b5]">{tab.count}</span>
+              <span className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]">{tab.count}</span>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col pl-10">
+        <div className="flex flex-col pl-[30px]">
           {ASK_AI_MAIL.map((m, i) => (
-            <div key={i} className="flex items-center gap-5 py-2">
-              <p className="w-[120px] shrink-0 truncate text-[11px] font-semibold tracking-[-0.15px] text-[#262626]">
+            <div key={i} className="flex items-center py-2">
+              <p className="w-[175px] shrink-0 truncate pr-6 text-[12px] font-semibold leading-4 tracking-[-0.15px] text-mail">
                 {m.sender}
               </p>
-              <p className="min-w-0 flex-1 truncate text-[11px] tracking-[-0.15px] text-[#262626]">
+              <p className="min-w-0 flex-1 truncate pr-6 text-[12px] leading-4 tracking-[-0.15px] text-mail">
                 {m.subject}
               </p>
-              <p className="shrink-0 text-[10px] text-[#999]">{m.date}</p>
+              <p className="shrink-0 whitespace-nowrap text-right text-[12px] leading-4 tracking-[-0.15px] uppercase text-mail-meta">
+                {m.date}
+              </p>
             </div>
           ))}
         </div>
@@ -340,10 +340,11 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
       {/* Floating AI answer card — content swaps per selected prompt. */}
       <div
         key={askDemo}
-        className="absolute top-[221px] left-[38px] w-[214px] rounded-[12px] bg-white px-5 py-4 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
+        className="absolute top-[244px] left-[8px] w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
         style={{ animation: "highlight-pop 420ms ease-out both" }}
       >
         <AskAiAnswer index={askDemo} />
+        <p className="text-[11px] font-semibold leading-[23px] text-[rgba(0,0,0,0.4)]">Sources</p>
       </div>
     </div>
   );

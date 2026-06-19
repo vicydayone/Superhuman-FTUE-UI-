@@ -69,17 +69,19 @@ function MailRow({
   label?: AutoArchiveMail["label"];
 }) {
   return (
-    <div className="flex items-center gap-5 py-2">
-      <p className="w-[120px] shrink-0 truncate text-[11px] font-semibold tracking-[-0.15px] text-mail">
-        {sender}
-      </p>
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+    <div className="flex items-center py-[10px]">
+      <div className="flex w-[175px] shrink-0 items-center pr-6">
+        <p className="min-w-0 flex-1 truncate text-[12px] font-semibold leading-4 tracking-[-0.15px] text-mail">
+          {sender}
+        </p>
+      </div>
+      <div className="flex min-w-0 flex-1 items-center gap-2 pr-6">
         {label && <LabelChip label={label} />}
-        <p className="min-w-0 flex-1 truncate text-[11px] tracking-[-0.15px] text-mail">
+        <p className="min-w-0 flex-1 truncate text-[12px] leading-4 tracking-[-0.15px] text-mail">
           {subject}
         </p>
       </div>
-      <p className="shrink-0 text-right text-[10px] leading-4 text-mail-meta">
+      <p className="shrink-0 whitespace-nowrap text-right text-[12px] leading-4 tracking-[-0.15px] uppercase text-mail-meta">
         {date}
       </p>
     </div>
@@ -212,12 +214,12 @@ function AccountMenu({
             replays each time the archived total changes (no setState effect). */}
         <span
           key={archivedCount}
-          style={{ display: "inline-block", animation: archivedCount > 0 ? "label-pop 700ms ease-out 500ms both" : "none" }}
+          style={{ display: "inline-block", animation: archivedCount > 0 ? "label-pop 700ms ease-out 1400ms both" : "none" }}
           className="text-[11px] font-semibold"
         >Auto Archived</span>
         <Counter
           value={open ? archivedCount : 0}
-          delay={750}
+          delay={1400}
           className="text-[10px] text-[#b5b5b5]"
         />
       </div>
@@ -236,75 +238,73 @@ function AutoArchiveContent({
   mails: AutoArchiveMail[];
   archivedLabels: AutoArchiveToggles;
 }) {
-  const [ready, setReady] = useState(false);
+  // Phase 1: menu slides in + content shifts right.
+  // Phase 2: marketing mails collapse (starts after menu has settled).
+  // Phase 3: "Auto Archived" counter tweens up (after mails are gone).
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [collapseActive, setCollapseActive] = useState(false);
+
   useEffect(() => {
-    const id = setTimeout(() => setReady(true), 700);
-    return () => clearTimeout(id);
+    const t1 = setTimeout(() => setMenuOpen(true), 1000);
+    const t2 = setTimeout(() => setCollapseActive(true), 2200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
-  const effective = useMemo(
-    () => ready ? archivedLabels : { marketing: false, news: false, pitch: false, social: false },
-    [ready, archivedLabels],
-  );
-  const anyArchived = Object.values(effective).some(Boolean);
+  const hasArchivable = Object.values(archivedLabels).some(Boolean);
+  const showMenu = menuOpen && hasArchivable;
 
-  const { inboxCount, archivedCount } = useMemo(
-    () => ({
-      inboxCount: mails.filter((m) => !m.label || !effective[m.label]).length,
-      archivedCount: mails.filter((m) => !!m.label && effective[m.label]).length,
-    }),
-    [mails, effective],
-  );
+  const { inboxCount, archivedCount } = useMemo(() => ({
+    inboxCount: collapseActive
+      ? mails.filter((m) => !m.label || !archivedLabels[m.label]).length
+      : mails.length,
+    archivedCount: collapseActive
+      ? mails.filter((m) => !!m.label && !!archivedLabels[m.label]).length
+      : 0,
+  }), [mails, archivedLabels, collapseActive]);
 
   return (
     <>
-      <AccountMenu
-        open={anyArchived}
-        inboxCount={inboxCount}
-        archivedCount={archivedCount}
-      />
+      <AccountMenu open={showMenu} inboxCount={inboxCount} archivedCount={archivedCount} />
 
-      {/* When the menu slides in, the whole inbox (header + list) shifts right
-          to sit in the content area beside the menu (clipping on the right edge,
-          matching the Figma storyboard). The "Inbox" title is padded to share the
-          mail list's left edge so the two stay left-aligned in both states. */}
       <div
         className={cn(
-          "flex h-full flex-col transition-transform duration-700 ease-out",
-          anyArchived ? "translate-x-[135px]" : "translate-x-0",
+          "flex h-full flex-col transition-transform duration-[1000ms] ease-out",
+          showMenu ? "translate-x-[159px]" : "translate-x-0",
         )}
       >
-        <div className="mb-4 flex items-center">
+        <div className="mb-10 flex items-center gap-[13px]">
           <IconHamburger
             className={cn(
-              "size-3 shrink-0 transition-opacity duration-300",
-              anyArchived ? "opacity-0" : "opacity-100",
+              "size-4 shrink-0 transition-opacity duration-300",
+              showMenu ? "opacity-0" : "opacity-100",
             )}
           />
-          <span className="flex items-center gap-1.5 py-1.5 pl-[28px] text-[13px] tracking-[-0.15px] text-ink">
+          <span className="flex items-center gap-[5px] text-[16px] tracking-[-0.15px] text-ink">
             Inbox
-            <Counter value={anyArchived ? inboxCount : mails.length} className="text-[10px] text-[#b5b5b5] tabular-nums" />
+            <Counter value={inboxCount} className="text-[16px] text-[rgba(0,0,0,0.4)] tabular-nums" />
           </span>
         </div>
 
-        {/* Every mail stays mounted; labelled rows collapse out (and back in)
-            so the list visibly empties into Auto Archive. */}
-        <div className="flex flex-col pl-10">
-          {mails.map((m, i) => {
-            const collapsed = !!m.label && !!effective[m.label];
-            return (
-              <div
-                key={i}
-                style={{ transitionDelay: collapsed ? "350ms" : "0ms" }}
-                className={cn(
-                  "overflow-hidden transition-all duration-500 ease-out",
-                  collapsed ? "max-h-0 opacity-0" : "max-h-[44px] opacity-100",
-                )}
-              >
-                <MailRow {...m} />
-              </div>
-            );
-          })}
+        <div className="flex flex-col pl-[30px]">
+          {(() => {
+            let archivedSeq = 0;
+            return mails.map((m, i) => {
+              const collapsed = !!m.label && !!archivedLabels[m.label] && collapseActive;
+              const delay = collapsed ? 200 + archivedSeq++ * 120 : 0;
+              return (
+                <div
+                  key={i}
+                  style={{ transitionDelay: `${delay}ms` }}
+                  className={cn(
+                    "overflow-hidden transition-all duration-[900ms] ease-out",
+                    collapsed ? "max-h-0 opacity-0" : "max-h-[44px] opacity-100",
+                  )}
+                >
+                  <MailRow {...m} />
+                </div>
+              );
+            });
+          })()}
         </div>
       </div>
     </>
@@ -335,31 +335,46 @@ const TAB_ORDER: { key: SplitCategory; label: string }[] = [
   { key: "other", label: "Other" },
 ];
 
-// Phase timeline (ms):
-//   0 → "Inbox N" header, all mails (identical to Auto Archive end-state)
-//   1 → Important tab replaces "Inbox" label (count = all)
-//   2 → Calendar tab slides in; calendar mails stagger-collapse
-//   3 → Jira tab slides in; jira mails stagger-collapse
-//   4 → Other tab slides in; other mails stagger-collapse
-//   5 → Done — normal interactive state
-const PHASE_DELAYS = [1400, 2600, 3900, 5200, 6800]; // ms to phases 1–5
-const COLLAPSE_STAGGER = 75; // ms between successive mails within a category
+// "Inbox" erases right-to-left down to "I", then "Important" types out left-to-right.
+const TYPEWRITER_FRAMES = [
+  'Inbo', 'Inb', 'In', 'I',
+  'Im', 'Imp', 'Impo', 'Impor',
+  'Import', 'Importa', 'Importan', 'Important',
+];
+const TW_CHAR_MS = 50;       // ms per character step — faster feels smoother
+const TW_START_MS = 1000;    // ms after mount to begin erasing
+// "Important" fully typed at: TW_START_MS + (frames-1)*TW_CHAR_MS
+const PHASE1_AT = TW_START_MS + (TYPEWRITER_FRAMES.length - 1) * TW_CHAR_MS + 100;
+// Phase offsets from PHASE1_AT: Calendar immediately, then slightly longer for Jira/Other
+const PHASE_OFFSETS = [600, 1500, 2400, 2900]; // phases 2→5
+const COLLAPSE_STAGGER = 100; // ms between successive mails within a category
 
 function SplitInboxContent({
   mails,
   toggles,
+  transitioning = false,
 }: {
   mails: SplitMail[];
   toggles: SplitToggles;
+  transitioning?: boolean;
 }) {
   const [active, setActive] = useState<SplitCategory>("important");
   const [noTransition, setNoTransition] = useState(false);
   const [phase, setPhase] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+  const [headerText, setHeaderText] = useState('Inbox');
 
   useEffect(() => {
-    const timers = PHASE_DELAYS.map((delay, i) =>
-      setTimeout(() => setPhase((i + 1) as 1 | 2 | 3 | 4 | 5), delay),
-    );
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    // Typewriter: erase "nbox" right-to-left → "I" → type "mportant" left-to-right
+    TYPEWRITER_FRAMES.forEach((text, i) => {
+      timers.push(setTimeout(() => setHeaderText(text), TW_START_MS + i * TW_CHAR_MS));
+    });
+    // Phase 1 fires once "Important" is fully typed
+    timers.push(setTimeout(() => setPhase(1), PHASE1_AT));
+    // Calendar immediately after, Jira + Other with slightly longer pauses
+    ([2, 3, 4, 5] as const).forEach((p, i) => {
+      timers.push(setTimeout(() => setPhase(p), PHASE1_AT + PHASE_OFFSETS[i]));
+    });
     return () => timers.forEach(clearTimeout);
   }, []);
 
@@ -469,23 +484,34 @@ function SplitInboxContent({
 
   return (
     <>
-      <div className="mb-4 flex items-center gap-4">
-        <IconHamburger className="size-3 shrink-0" />
+      <div className="mb-4 flex items-center gap-[13px]">
+        <IconHamburger className="size-4 shrink-0" />
         {phase === 0 ? (
-          // "Inbox" — same pill shape/padding/shadow as the active Important tab
-          // so there's no positional jump when phase 1 swaps it for the tab bar.
-          <span className="flex items-center gap-1 rounded-[6px] bg-white px-2.5 py-1.5 text-[12px] text-black drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)]">
-            Inbox
-            <Counter
-              value={mails.length}
-              className="inline-block w-4 text-right tabular-nums text-[10px] text-[#b5b5b5]"
-            />
+          // Typewriter: "Inbox" erases to "I", then "Important" types out.
+          // Blinking cursor runs for the duration of the animation.
+          // Counter only shows while still "Inbox" (before erasing starts).
+          <span className="flex items-center gap-[5px] text-[16px] text-ink">
+            <span>{headerText}</span>
+            {headerText !== 'Inbox' && headerText !== 'Important' && (
+              <span
+                aria-hidden
+                className="inline-block text-[16px] text-ink"
+                style={{ animation: "cursor-blink 500ms step-start infinite" }}
+              >|</span>
+            )}
+            {headerText === 'Inbox' && (
+              <Counter
+                value={mails.length}
+                className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
+              />
+            )}
           </span>
         ) : (
-          // Tab bar: Important appears at phase 1, then Calendar/Jira/Other slide in.
+          // Tab bar: flat 16px text — active tab darker (0.9), others 0.4.
+          // Important fades in at phase 1; Calendar/Jira/Other slide in (tab-enter).
           <div
-            className="flex flex-1 items-center gap-2"
-            style={phase === 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
+            className="flex flex-1 items-center"
+            style={phase === 1 ? { animation: "preview-fade 300ms ease-out both" } : undefined}
           >
             {TAB_ORDER.map(({ key, label }) => {
               const tp = tabPhase(key);
@@ -502,16 +528,16 @@ function SplitInboxContent({
                   onClick={() => handleTabChange(key)}
                   style={tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
                   className={cn(
-                    "flex items-center gap-1 rounded-[6px] px-2.5 py-1.5 text-[12px]",
+                    "flex items-center gap-[5px] pr-6 text-[16px] transition-colors",
                     isActive
-                      ? "bg-white text-black drop-shadow-[0px_2px_4px_rgba(0,0,0,0.12)]"
-                      : "text-[#999] hover:bg-black/[0.03]",
+                      ? "text-ink"
+                      : "text-[rgba(0,0,0,0.4)] hover:text-[rgba(0,0,0,0.65)]",
                   )}
                 >
                   <span>{label}</span>
                   <Counter
                     value={countFor(key)}
-                    className="inline-block w-4 text-right tabular-nums text-[10px] text-[#b5b5b5]"
+                    className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
                   />
                 </button>
               );
@@ -519,27 +545,36 @@ function SplitInboxContent({
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col overflow-hidden pl-10">
-        {mailItems.map(({ mail, collapsed, delay }) => (
-          <div
-            key={`${mail.sender}-${mail.subject}`}
-            style={{
-              display: "grid",
-              gridTemplateRows: collapsed ? "0fr" : "1fr",
-              opacity: collapsed ? 0 : 1,
-              transform: collapsed ? "translateY(-4px)" : "translateY(0)",
-              ...(noTransition
-                ? {}
-                : {
-                    transition: `grid-template-rows 420ms ease-out ${delay}ms, opacity 320ms ease-out ${delay}ms, transform 320ms ease-out ${delay}ms`,
-                  }),
-            }}
-          >
-            <div style={{ overflow: "hidden", minHeight: 0 }}>
-              <MailRow sender={mail.sender} subject={mail.subject} date={mail.date} label={mail.label} />
+      <div className="flex flex-1 flex-col overflow-hidden pl-[30px]">
+        {mailItems.map(({ mail, collapsed, delay }) => {
+          const isFeatured = !animating && mail.sender === "Maria Howard" && mail.subject === "Sales Contract";
+          return (
+            <div
+              key={`${mail.sender}-${mail.subject}`}
+              style={{
+                display: "grid",
+                gridTemplateRows: collapsed ? "0fr" : "1fr",
+                opacity: collapsed ? 0 : 1,
+                transform: collapsed ? "translateY(-4px)" : "translateY(0)",
+                ...(noTransition
+                  ? {}
+                  : {
+                      transition: `grid-template-rows 420ms ease-out ${delay}ms, opacity 320ms ease-out ${delay}ms, transform 320ms ease-out ${delay}ms`,
+                    }),
+              }}
+            >
+              <div
+                style={{ overflow: "hidden", minHeight: 0 }}
+                className={cn(
+                  "rounded-[4px] transition-colors duration-300",
+                  isFeatured && transitioning ? "bg-[rgba(174,177,221,0.18)]" : "",
+                )}
+              >
+                <MailRow sender={mail.sender} subject={mail.subject} date={mail.date} label={mail.label} />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );
@@ -589,28 +624,35 @@ export function Chapter2Preview({
   archivedLabels,
   splitMails: _splitMails,
   splits,
+  transitioning = false,
 }: {
   step: "auto-archive" | "split-inbox";
   archivedMails: AutoArchiveMail[];
   archivedLabels: AutoArchiveToggles;
   splitMails: SplitMail[];
   splits: SplitToggles;
+  transitioning?: boolean;
 }) {
-  // Derive the split mail list from the SAME Auto Archive dataset — filtered by
-  // the user's archive selections so Split Inbox starts with the exact same mails
-  // the user saw at the end of Auto Archive (seamless visual continuity).
   const animMails = archivedMails
     .filter((m) => !m.label || !archivedLabels[m.label])
     .map(toSplitMail);
 
   return (
-    <PreviewShell>
-      {step === "auto-archive" ? (
-        <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} />
-      ) : (
-        <SplitInboxContent key="split" mails={animMails} toggles={splits} />
-      )}
-    </PreviewShell>
+    <div
+      style={{
+        opacity: transitioning ? 0 : 1,
+        transform: transitioning ? "scale(0.97)" : "scale(1)",
+        transition: "opacity 400ms ease-out 300ms, transform 400ms ease-out 300ms",
+      }}
+    >
+      <PreviewShell>
+        {step === "auto-archive" ? (
+          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} />
+        ) : (
+          <SplitInboxContent key="split" mails={animMails} toggles={splits} transitioning={transitioning} />
+        )}
+      </PreviewShell>
+    </div>
   );
 }
 

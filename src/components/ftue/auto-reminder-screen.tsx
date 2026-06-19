@@ -26,11 +26,12 @@ export function AutoReminderLeft({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2.5 text-ink">
           <h1 className="text-[22px] font-semibold leading-normal">
-            Follow up on time with Auto Reminders.
+            Follow up every time with Auto Reminders.
           </h1>
           <p className="text-[14px] leading-normal">
-            If your email needs a response, we&apos;ll remind you to follow up.
-            You&apos;ll never drop the ball again.
+            If the email you&apos;ve sent needs a response, we&apos;ll remind you
+            to follow up. We&apos;ll even write the email for you, so all you
+            need to do is hit send.
           </p>
         </div>
 
@@ -40,7 +41,7 @@ export function AutoReminderLeft({
           onMouseLeave={() => onHover(null)}
         >
           <p className="text-[14px] text-ink-subdued">
-            Remind me if I don&apos;t hear back after:
+            Remind me if I don&apos;t hear back
           </p>
           {REMINDER_OPTIONS.map((option) => (
             <SelectionCard

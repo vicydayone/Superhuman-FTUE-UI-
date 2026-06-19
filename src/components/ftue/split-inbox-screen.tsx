@@ -20,11 +20,11 @@ export function SplitInboxLeft({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2.5 text-ink">
           <h1 className="text-[22px] font-semibold leading-normal">
-            Organize your inbox with Split Inbox.
+            Focus on what matters with Split Inbox.
           </h1>
           <p className="text-[14px] leading-normal">
-            Now let’s organize what’s left. We create views of your inbox so you
-            can focus on what needs your attention most.
+            Next let’s organize your email into focused views, so you can see
+            what needs your attention the most.
           </p>
         </div>
 

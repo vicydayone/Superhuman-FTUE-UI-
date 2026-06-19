@@ -31,14 +31,15 @@ export function AutoDraftLeft({
             Respond faster with Auto Drafts.
           </h1>
           <p className="text-[14px] leading-normal">
-            Every email that needs a reply has one waiting – written in your
+            With everything organized, we can take action on what matters most.
+            Every email that needs a reply has one waiting — written in your
             voice.
           </p>
         </div>
 
         <div className="flex flex-col gap-[14px]">
           <p className="text-[14px] text-ink-subdued">
-            Choose which emails should we draft replies for:
+            Choose which emails we draft replies for:
           </p>
           {AUTO_DRAFT_CARDS.map((card) => (
             <ToggleCard
