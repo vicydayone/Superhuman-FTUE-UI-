@@ -27,11 +27,24 @@ function TitleBar() {
  * shared across Auto Draft / Auto Reminder / Ask AI so the background never
  * reloads as the user moves between those steps — only the children swap.
  */
-function PreviewCard({ children }: { children: React.ReactNode }) {
+function PreviewCard({
+  children,
+  overlay,
+}: {
+  children: React.ReactNode;
+  /** Rendered outside the clipped card surface, so it may extend past the
+   *  card edges (e.g. the Ask AI answer card). */
+  overlay?: React.ReactNode;
+}) {
   return (
-    <div className="relative h-[490px] w-[570px] max-w-full rounded-[16px] bg-[rgba(247,247,252,0.7)] shadow-[0_0_2px_rgba(20,20,19,0.12),0_6px_24px_rgba(20,20,19,0.12)]">
-      <TitleBar />
-      {children}
+    <div className="relative h-[490px] w-[570px] max-w-full">
+      {/* Clipped card surface — inbox/panel content is masked to the rounded
+          card so nothing spills past its edges. */}
+      <div className="absolute inset-0 overflow-hidden rounded-[16px] bg-[rgba(247,247,252,0.7)] shadow-[0_0_2px_rgba(20,20,19,0.12),0_6px_24px_rgba(20,20,19,0.12)]">
+        <TitleBar />
+        {children}
+      </div>
+      {overlay}
     </div>
   );
 }
@@ -128,7 +141,7 @@ function ConversationContent({
 
         {/* AUTO REMINDER: sent "Me" reply thread + reminder confirmation */}
         {isReminder && (
-          <div className="flex w-full shrink-0 flex-col gap-[20px] mt-6">
+          <div className="flex w-full shrink-0 flex-col gap-[16px] mt-6">
             <div
               className="flex w-full flex-col items-start gap-2.5"
               style={{ animation: "reply-rise 500ms ease-out 200ms both" }}
@@ -339,16 +352,24 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Floating AI answer card — content swaps per selected prompt. */}
-      <div
-        key={askDemo}
-        className="absolute top-[244px] left-[8px] w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
-        style={{ animation: "highlight-pop 420ms ease-out both" }}
-      >
-        <AskAiAnswer index={askDemo} />
-        <p className="text-[11px] font-semibold leading-[23px] text-[rgba(0,0,0,0.4)]">Sources</p>
-      </div>
+/**
+ * Floating AI answer card. Rendered as the PreviewCard overlay (outside the
+ * clipped surface) so it may extend past the card edges, while the inbox
+ * content behind it stays clipped to the card.
+ */
+function AskAiAnswerCard({ askDemo }: { askDemo: number }) {
+  return (
+    <div
+      key={askDemo}
+      className="absolute top-[244px] left-[-20px] w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
+      style={{ animation: "highlight-pop 420ms ease-out both" }}
+    >
+      <AskAiAnswer index={askDemo} />
+      <p className="text-[11px] font-semibold leading-[23px] text-[rgba(0,0,0,0.4)]">Sources</p>
     </div>
   );
 }
@@ -373,7 +394,7 @@ export function WorkflowPreview({
   askDemo: number;
 }) {
   return (
-    <PreviewCard>
+    <PreviewCard overlay={step === "ask-ai" ? <AskAiAnswerCard askDemo={askDemo} /> : undefined}>
       {step === "ask-ai" ? (
         <div key="askai" style={{ animation: "preview-fade 360ms ease-out both" }}>
           <AskAiContent askDemo={askDemo} />
@@ -391,69 +412,19 @@ export function WorkflowPreview({
 
 // ── Seats preview ────────────────────────────────────────────────────────────
 
-/** Small frosted comment bubble with a gradient avatar + gradient text. */
-function CommentBubble({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "absolute flex items-center gap-2 rounded-[8px] border border-white/40 bg-white/85 px-2.5 py-2 backdrop-blur-md",
-        "shadow-[0px_13px_39px_rgba(104,212,235,0.3),0px_6.6px_33px_rgba(226,138,226,0.4),0px_0.6px_2.6px_rgba(0,0,0,0.3)]",
-        className,
-      )}
-    >
-      <span className="size-[22px] shrink-0 rounded-full bg-[linear-gradient(135deg,#f6b8c8,#b48ce0)]" />
-      <span
-        className="whitespace-nowrap bg-clip-text text-[14px] font-semibold text-transparent"
-        style={{ backgroundImage: "linear-gradient(90deg,#6eacf4,#9e6ee5)" }}
-      >
-        {text}
-      </span>
-    </div>
-  );
-}
-
+/** Static Figma export of the live-collaboration scene (draft + comment bubbles). */
 export function SeatsPreview() {
   return (
     <div
-      className="relative h-[520px] w-[570px] max-w-full"
+      className="flex w-[620px] max-w-full items-center justify-center"
       style={{ animation: "screen-enter 420ms ease-out both" }}
     >
-      {/* Composed email card, tucked behind the bubbles. */}
-      <div className="absolute left-[40px] top-[70px] w-[430px] overflow-hidden rounded-[10px] border border-white/40 bg-white/95 px-7 py-6 shadow-[0px_13px_38px_rgba(104,212,235,0.3),0px_6.5px_32px_rgba(226,138,226,0.4),0px_0.6px_2.6px_rgba(0,0,0,0.3)]">
-        <p
-          className="bg-clip-text text-[21px] font-semibold text-transparent"
-          style={{ backgroundImage: "linear-gradient(90deg,#5cc3fa,#fa75f8 46%,#fab266)" }}
-        >
-          New message
-        </p>
-        <div className="my-4 h-px w-full bg-black/10" />
-        <p className="text-[15px] leading-[28px] text-[rgba(93,112,137,0.6)]">
-          Hi team,
-        </p>
-        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.6)]">
-          I am thrilled about our recent product launch! As you all know,
-          ProductHunt is a great platform for tapping into the tech community and
-          gaining exposure. If you haven&apos;t already, please take a moment to
-          upvote our launch — it only takes a few clicks. Thank you for your
-          support, and let&apos;s keep up the great work.
-        </p>
-        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.6)]">
-          Best,
-          <br />
-          Nicole
-        </p>
-      </div>
-
-      {/* Live collaboration — teammates reacting in real time. */}
-      <CommentBubble text="How do these edits look?" className="right-[20px] top-[40px]" />
-      <CommentBubble text="I added the attachments." className="left-[10px] bottom-[120px]" />
-      <CommentBubble text="Looks good to me!" className="right-[60px] bottom-[60px]" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/seats-preview.png"
+        alt="Teammates collaborating on a draft in real time"
+        className="h-auto w-full"
+      />
     </div>
   );
 }
