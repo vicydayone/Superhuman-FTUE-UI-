@@ -11,7 +11,7 @@ import type { AutoArchiveMail, AutoDraftDemo, MailLabel, SplitMail } from "./typ
 //   • all on             → Inbox 19 · Auto Archive 14
 //
 // Split Inbox derives from this list (cumulative state): after the default
-// marketing archive, toSplitMail() yields Important 9 · Calendar 5 · Jira 5 ·
+// marketing archive, toSplitMail() yields Important 7 · Calendar 6 · Jira 6 ·
 // Other 11. (Figma's static Split badges drift between frames — this master
 // list is the single internally-consistent source of truth.)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -19,11 +19,11 @@ export const AUTO_ARCHIVE_MAIL: AutoArchiveMail[] = [
   // JUN 30
   { sender: "CodeGenius", subject: "Check out your new offer!", date: "JUN 30", label: "marketing" },
   { sender: "Maria Howard", subject: "Sales Contract", date: "JUN 30" },
-  { sender: "Arlene McCoy", subject: "Application for Product Manager position", date: "JUN 30" },
+  { sender: "Arlene McCoy", subject: "Invitation: Design Review @ Wed Jul 2, 2026 1pm – 2pm…", date: "JUN 30" },
   { sender: "TechCrunch", subject: "OpenAI’s new model beats benchmarks across coding, math, and reasoning", date: "JUN 30", label: "news" },
   // JUN 29
   { sender: "Daniel Foster", subject: "Let’s Elevate Your Brand Today!", date: "JUN 29", label: "marketing" },
-  { sender: "Savannah Nguyen", subject: "ACME <> Hyperfusion Q2 Review", date: "JUN 29" },
+  { sender: "Jira", subject: "ITHO-90412 SSO redirect fails after password reset", date: "JUN 29" },
   { sender: "CodeSprint", subject: "Mobile Development Partnership", date: "JUN 29", label: "pitch" },
   { sender: "Jenny Wilson", subject: "Your Weekly Highlights", date: "JUN 29" },
   { sender: "LinkedIn", subject: "This week in tech – March edition", date: "JUN 29", label: "social" },
