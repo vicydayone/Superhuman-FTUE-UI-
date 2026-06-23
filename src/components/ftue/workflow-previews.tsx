@@ -428,7 +428,7 @@ export function SeatsPreview() {
       <img
         src="/seats-preview.png"
         alt="Teammates collaborating on a draft in real time"
-        className="h-auto w-full"
+        className="h-auto w-full mix-blend-multiply"
       />
     </div>
   );
