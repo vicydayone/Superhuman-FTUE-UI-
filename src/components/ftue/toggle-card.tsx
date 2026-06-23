@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 function GradientBadge({ children }: { children: React.ReactNode }) {
   return (
     <span
-      className="inline-flex items-center rounded-[2px] px-1.5 pb-[5px] pt-[3px] text-[10.67px] font-semibold leading-none text-black/75"
+      className="inline-block rounded-[2px] px-1.5 py-[5px] text-[10.67px] font-semibold leading-none text-black/75 [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]"
       style={{
         backgroundImage:
           "linear-gradient(-82deg, rgb(217, 227, 255) 0%, rgb(255, 232, 255) 100%)",
