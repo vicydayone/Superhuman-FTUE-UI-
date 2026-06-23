@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, Check } from "lucide-react";
+import { UserPlus, X } from "lucide-react";
 import { SEATS_PEOPLE, SEATS_TEAM } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
@@ -26,18 +26,28 @@ function Avatar({ className }: { className?: string }) {
 
 /** Seats left column — invite teammates; tracks local invite state. */
 export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
-  // Start with the one teammate already on the team; invites add more.
-  const [team, setTeam] = useState<string[]>(SEATS_TEAM.map((t) => t.name));
-  // Track which recommended rows were invited (by index, since names repeat).
-  const [invited, setInvited] = useState<Set<number>>(new Set());
+  // Which recommended rows were added (by index). Added people leave the
+  // recommended list and appear as removable tags under "Your team".
+  const [added, setAdded] = useState<Set<number>>(new Set());
 
-  const addPerson = (index: number, name: string) => {
-    if (invited.has(index) || team.length >= SEAT_LIMIT) return;
-    setInvited((prev) => new Set(prev).add(index));
-    setTeam((prev) => [...prev, name]);
+  const teamCount = SEATS_TEAM.length + added.size;
+
+  const addPerson = (index: number) => {
+    if (teamCount >= SEAT_LIMIT) return;
+    setAdded((prev) => new Set(prev).add(index));
+  };
+  const removePerson = (index: number) => {
+    setAdded((prev) => {
+      const next = new Set(prev);
+      next.delete(index);
+      return next;
+    });
   };
 
-  const canAddSeats = team.length > SEATS_TEAM.length;
+  const remaining = SEATS_PEOPLE.map((p, i) => ({ ...p, i })).filter(
+    (p) => !added.has(p.i),
+  );
+  const canAddSeats = added.size > 0;
 
   return (
     <>
@@ -67,15 +77,14 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           </div>
         </div>
 
-        {/* Recommended list */}
-        <div className="flex flex-col">
-          <p className="py-[5px] text-[12px] font-semibold tracking-[0.06px] text-[#a6a6a6]">
-            Recommended
-          </p>
-          {SEATS_PEOPLE.map((person, i) => {
-            const added = invited.has(i);
-            return (
-              <div key={i} className="flex items-center py-2">
+        {/* Recommended list — added people drop out (they show under Your team). */}
+        {remaining.length > 0 && (
+          <div className="flex flex-col">
+            <p className="py-[5px] text-[12px] font-semibold tracking-[0.06px] text-[#a6a6a6]">
+              Recommended
+            </p>
+            {remaining.map((person) => (
+              <div key={person.i} className="flex items-center py-2">
                 <Avatar className="size-5" />
                 <div className="flex flex-1 items-center gap-2 pl-3.5">
                   <span className="w-[148px] shrink-0 text-[12px] font-semibold tracking-[0.06px] text-black/85">
@@ -87,34 +96,53 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addPerson(i, person.name)}
+                  onClick={() => addPerson(person.i)}
                   aria-label={`Invite ${person.name}`}
                   className="flex size-5 shrink-0 items-center justify-center text-[#8a8f99] transition-colors hover:text-stepper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
                 >
-                  {added ? (
-                    <Check className="size-[18px] text-stepper" strokeWidth={2.2} />
-                  ) : (
-                    <UserPlus className="size-[18px]" strokeWidth={1.6} />
-                  )}
+                  <UserPlus className="size-[18px]" strokeWidth={1.6} />
                 </button>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Your team — pulled up so the divider sits closer to the last row. */}
         <div className="-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4">
           <p className="text-[14px] text-ink">
-            Your team ({team.length}/{SEAT_LIMIT})
+            Your team ({teamCount}/{SEAT_LIMIT})
           </p>
           <div className="flex flex-wrap gap-2.5">
-            {team.map((name, i) => (
+            {/* Base teammate — not removable. */}
+            {SEATS_TEAM.map((t) => (
               <div
-                key={`${name}-${i}`}
-                className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] px-2.5 py-[5px]"
+                key={t.name}
+                className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] py-[5px] pl-2.5 pr-2.5"
               >
                 <Avatar className="size-6" />
-                <span className="text-[14px] text-ink">{name}</span>
+                <span className="text-[14px] text-ink [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                  {t.name}
+                </span>
+              </div>
+            ))}
+            {/* Added teammates — removable via the cancel icon. */}
+            {[...added].map((i) => (
+              <div
+                key={`added-${i}`}
+                className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] py-[5px] pl-2.5 pr-2"
+              >
+                <Avatar className="size-6" />
+                <span className="text-[14px] text-ink [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                  {SEATS_PEOPLE[i].name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removePerson(i)}
+                  aria-label={`Remove ${SEATS_PEOPLE[i].name}`}
+                  className="flex size-4 shrink-0 items-center justify-center rounded-full text-black/35 transition-colors hover:text-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
+                >
+                  <X className="size-3.5" strokeWidth={2} />
+                </button>
               </div>
             ))}
           </div>
