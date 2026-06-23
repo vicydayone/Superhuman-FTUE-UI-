@@ -7,16 +7,19 @@ import { cn } from "@/lib/utils";
 
 const SEAT_LIMIT = 5;
 
-/** Generic round avatar — soft grey, like the recommended-list placeholders. */
-function Avatar({ name, className }: { name: string; className?: string }) {
+/** Gray "no photo" avatar — a soft silhouette, matching the Figma placeholders. */
+function Avatar({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#e3e5e9,#d9dce1)] text-[9px] font-semibold text-[#8a8f99]",
+        "flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ededed]",
         className,
       )}
     >
-      {name.charAt(0)}
+      <svg viewBox="0 0 20 20" fill="none" className="size-full" aria-hidden>
+        <circle cx="10" cy="7.6" r="3.05" fill="#c4c7ce" />
+        <path d="M3.7 17.6c.85-3.15 3.25-4.8 6.3-4.8s5.45 1.65 6.3 4.8" fill="#c4c7ce" />
+      </svg>
     </span>
   );
 }
@@ -51,10 +54,12 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
       <div className="flex min-h-0 flex-1 flex-col justify-center gap-5">
         {/* People to invite */}
         <div className="flex flex-col gap-2.5">
-          <p className="pl-[18px] text-[14px] text-ink-subdued">
+          <p className="text-[14px] text-ink-subdued">
             People to invite
           </p>
-          <div className="relative flex h-10 items-center rounded-[4px] border border-[#c8ccda] bg-white pl-[18px] pr-3">
+          {/* Input bleeds 18px left of the column so its text aligns with the
+              labels/list while the box edge sits further out (matches Figma). */}
+          <div className="relative -ml-[18px] flex h-10 w-[calc(100%+18px)] items-center rounded-[4px] border border-[#c8ccda] bg-white pl-[18px] pr-3">
             <span className="text-[14px] text-black/40">
               Enter name or email
             </span>
@@ -63,7 +68,7 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
         </div>
 
         {/* Recommended list */}
-        <div className="flex flex-col px-[18px]">
+        <div className="flex flex-col">
           <p className="py-[5px] text-[12px] font-semibold tracking-[0.06px] text-[#a6a6a6]">
             Recommended
           </p>
@@ -71,9 +76,9 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
             const added = invited.has(i);
             return (
               <div key={i} className="flex items-center py-2">
-                <Avatar name={person.name} className="size-5" />
+                <Avatar className="size-5" />
                 <div className="flex flex-1 items-center gap-2 pl-3.5">
-                  <span className="w-[140px] shrink-0 text-[12px] font-semibold tracking-[0.06px] text-black/85">
+                  <span className="w-[148px] shrink-0 text-[12px] font-semibold tracking-[0.06px] text-black/85">
                     {person.name}
                   </span>
                   <span className="truncate text-[12px] tracking-[0.06px] text-[#737373]">
@@ -98,7 +103,7 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
         </div>
 
         {/* Your team */}
-        <div className="flex flex-col gap-4 border-t border-[#ededed] px-[18px] pt-4">
+        <div className="flex flex-col gap-4 border-t border-[#ededed] pt-4">
           <p className="text-[14px] text-ink">
             Your team ({team.length}/{SEAT_LIMIT})
           </p>
@@ -108,7 +113,7 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
                 key={`${name}-${i}`}
                 className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] px-2.5 py-[5px]"
               >
-                <Avatar name={name} className="size-6" />
+                <Avatar className="size-6" />
                 <span className="text-[14px] text-ink">{name}</span>
               </div>
             ))}
