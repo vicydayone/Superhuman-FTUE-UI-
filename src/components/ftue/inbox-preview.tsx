@@ -541,7 +541,7 @@ function SplitInboxContent({
                   >
                     {/* Inner wrapper pulses when the matching left card is hovered. */}
                     <span
-                      className="flex origin-left items-center gap-[5px]"
+                      className="flex items-center gap-[5px]"
                       style={hoverTab === key ? { animation: "tab-pulse 700ms ease-in-out" } : undefined}
                     >
                       <span>{label}</span>
