@@ -250,11 +250,17 @@ export const ASK_AI_MAIL = [
 ];
 
 /** Recommended teammates on the Seats screen. */
+// Pool of suggestions — the list always shows the first 4 not-yet-added, so
+// picking one pulls the next up from below (the visible count stays at 4).
 export const SEATS_PEOPLE = [
   { name: "Gertrude Smith", email: "gertrude@superhuman.com" },
   { name: "Teresa Man", email: "averylongemailaddress@sprh.mn" },
   { name: "Conrad Irwin", email: "conrad@superhuman.com" },
   { name: "Emuye Reynolds", email: "emuye@superhuman.com" },
+  { name: "Marcus Chen", email: "marcus@superhuman.com" },
+  { name: "Priya Patel", email: "priya@superhuman.com" },
+  { name: "Jordan Lee", email: "jordan@superhuman.com" },
+  { name: "Sofia Rossi", email: "sofia@superhuman.com" },
 ];
 
 /** Teammate already on the user's team (the "Your team (1/5)" chip). */

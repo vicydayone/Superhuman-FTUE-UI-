@@ -44,9 +44,11 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
     });
   };
 
-  const remaining = SEATS_PEOPLE.map((p, i) => ({ ...p, i })).filter(
-    (p) => !added.has(p.i),
-  );
+  // Always show 4 suggestions: picking one drops it out and the next pool
+  // member slides up into its place, so the list height never changes.
+  const visible = SEATS_PEOPLE.map((p, i) => ({ ...p, i }))
+    .filter((p) => !added.has(p.i))
+    .slice(0, 4);
   const canAddSeats = added.size > 0;
 
   return (
@@ -77,14 +79,19 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           </div>
         </div>
 
-        {/* Recommended list — added people drop out (they show under Your team). */}
-        {remaining.length > 0 && (
+        {/* Recommended list — always 4; a picked row is replaced by the next
+            pool member sliding up, so nothing below shifts. */}
+        {visible.length > 0 && (
           <div className="flex flex-col">
             <p className="py-[5px] text-[12px] font-semibold tracking-[0.06px] text-[#a6a6a6]">
               Recommended
             </p>
-            {remaining.map((person) => (
-              <div key={person.i} className="flex items-center py-2">
+            {visible.map((person) => (
+              <div
+                key={person.i}
+                className="flex items-center py-2"
+                style={{ animation: "reply-rise 320ms ease-out both" }}
+              >
                 <Avatar className="size-5" />
                 <div className="flex flex-1 items-center gap-2 pl-3.5">
                   <span className="w-[148px] shrink-0 text-[12px] font-semibold tracking-[0.06px] text-black/85">
@@ -112,7 +119,8 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           <p className="text-[14px] text-ink">
             Your team ({teamCount}/{SEAT_LIMIT})
           </p>
-          <div className="flex flex-wrap gap-2.5">
+          {/* Reserve two rows so the layout doesn't shift as tags wrap. */}
+          <div className="flex min-h-[78px] flex-wrap content-start gap-2.5">
             {/* Base teammate — not removable. */}
             {SEATS_TEAM.map((t) => (
               <div
