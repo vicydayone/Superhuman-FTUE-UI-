@@ -160,7 +160,10 @@ function ConversationContent({
               <Sparkle className="size-4 shrink-0" />
               <p className="text-[13px] leading-[20px] tracking-[-0.15px] text-[rgba(0,0,0,0.75)]">
                 We’ll remind you{" "}
-                <span className="font-semibold text-[#4a7fd0]">
+                <span
+                  className="bg-clip-text font-bold text-transparent"
+                  style={{ backgroundImage: "linear-gradient(97.6deg, rgb(28, 165, 215) 23%, rgb(134, 85, 214) 88%)" }}
+                >
                   {reminderWait}
                 </span>{" "}
                 if no reply
