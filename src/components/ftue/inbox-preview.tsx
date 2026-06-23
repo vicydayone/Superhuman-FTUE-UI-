@@ -343,10 +343,12 @@ const TAB_ORDER: { key: SplitCategory; label: string }[] = [
   { key: "other", label: "Other" },
 ];
 
-// After a brief beat the "Inbox" header cross-fades to the "Important" tab.
-const PHASE1_AT = 800;
-// Phase offsets from PHASE1_AT: Calendar immediately, then slightly longer for Jira/Other
-const PHASE_OFFSETS = [600, 1500, 2400, 2900]; // phases 2→5
+// "Inbox" cross-fades to "Important" almost instantly — imperceptible.
+const PHASE1_AT = 150;
+// Each folder appears clearly, waits for its emails to collapse, then the
+// next one follows. Gaps: ~900ms to establish "Important", then 1400ms
+// between each folder so the collapse animation finishes with a short pause.
+const PHASE_OFFSETS = [900, 2300, 3700, 4900]; // phases 2→5
 const COLLAPSE_STAGGER = 100; // ms between successive mails within a category
 
 function SplitInboxContent({
@@ -495,7 +497,7 @@ function SplitInboxContent({
               "flex items-center gap-[5px] text-[16px] text-ink",
               phase >= 1 && "pointer-events-none absolute inset-y-0 left-0",
             )}
-            style={{ opacity: phase === 0 ? 1 : 0, transition: "opacity 350ms ease-out" }}
+            style={{ opacity: phase === 0 ? 1 : 0, transition: "opacity 180ms ease-out" }}
           >
             <span>Inbox</span>
             <Counter
@@ -590,7 +592,7 @@ function SplitInboxContent({
                 ...(noTransition
                   ? {}
                   : {
-                      transition: `grid-template-rows 420ms ease-out ${delay}ms, opacity 320ms ease-out ${delay}ms, transform 320ms ease-out ${delay}ms`,
+                      transition: `grid-template-rows 550ms ease-out ${delay}ms, opacity 400ms ease-out ${delay}ms, transform 400ms ease-out ${delay}ms`,
                     }),
               }}
             >
