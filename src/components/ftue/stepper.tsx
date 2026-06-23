@@ -55,51 +55,37 @@ export function Stepper({
         const state =
           i < activeIndex ? "done" : i === activeIndex ? "active" : "upcoming";
 
-        if (state === "done") {
-          const target = step.doneTarget;
-          const inner = (
-            <>
-              <span className="text-[14px] tracking-[-0.2px] text-stepper">
-                {step.label}
-              </span>
-              <Check className="size-3 text-stepper" strokeWidth={2.5} />
-            </>
-          );
-          return onNavigate && target ? (
-            <button
-              key={step.label}
-              type="button"
-              onClick={() => onNavigate(target)}
-              className="flex items-center gap-1.5 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
-            >
-              {inner}
-            </button>
-          ) : (
-            <div key={step.label} className="flex items-center gap-1.5">
-              {inner}
-            </div>
-          );
-        }
-
-        if (state === "upcoming") {
-          return (
-            <div key={step.label} className="flex items-center">
-              <span className="text-[14px] tracking-[-0.2px] text-ink-subdued">
-                {step.label}
-              </span>
-            </div>
-          );
-        }
-
-        // Active step — bold label + progress segments.
-        const targets = SEGMENT_TARGETS[activeStep as 2 | 3];
-        const count = targets.length;
-
-        return (
-          <div key={step.label} className="flex items-center gap-2.5">
-            <span className="text-[14px] font-bold tracking-[-0.2px] text-stepper">
+        // Label keeps a constant width (a hidden bold copy is the sizer) so it
+        // never shifts when the weight changes between active and done.
+        const label = (
+          <span className="relative inline-block whitespace-nowrap text-[14px] tracking-[-0.2px]">
+            <span aria-hidden className="invisible font-bold">
               {step.label}
             </span>
+            <span
+              className={cn(
+                "absolute inset-0",
+                state === "active"
+                  ? "font-bold text-stepper"
+                  : state === "done"
+                    ? "text-stepper"
+                    : "text-ink-subdued",
+              )}
+            >
+              {step.label}
+            </span>
+          </span>
+        );
+
+        // Add-on (checkmark or progress segments) sits ABSOLUTELY to the right
+        // of the label, so it never pushes the label out of position.
+        let addon: React.ReactNode = null;
+        if (state === "done") {
+          addon = <Check className="size-3 text-stepper" strokeWidth={2.5} />;
+        } else if (state === "active") {
+          const targets = SEGMENT_TARGETS[activeStep as 2 | 3];
+          const count = targets.length;
+          addon = (
             <div className="flex items-center gap-0.5">
               {targets.map((target, seg) => {
                 const filled = seg < progress;
@@ -118,9 +104,7 @@ export function Stepper({
                     )}
                   />
                 );
-
                 if (!onNavigate || !target) return <span key={seg} className="w-3">{bar}</span>;
-
                 return (
                   <button
                     key={seg}
@@ -134,6 +118,29 @@ export function Stepper({
                 );
               })}
             </div>
+          );
+        }
+
+        const navTarget = state === "done" ? step.doneTarget : undefined;
+
+        return (
+          <div key={step.label} className="relative flex items-center">
+            {onNavigate && navTarget ? (
+              <button
+                type="button"
+                onClick={() => onNavigate(navTarget)}
+                className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50"
+              >
+                {label}
+              </button>
+            ) : (
+              label
+            )}
+            {addon && (
+              <span className="absolute left-full top-1/2 ml-2 flex -translate-y-1/2 items-center">
+                {addon}
+              </span>
+            )}
           </div>
         );
       })}
