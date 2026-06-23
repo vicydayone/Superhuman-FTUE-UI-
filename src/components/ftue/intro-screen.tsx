@@ -1,13 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/** Gradient checkmark (cyan → violet) matching the Figma loading-step check. */
+function GradientCheck({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <defs>
+        <linearGradient id="intro-check-grad" x1="3" y1="6" x2="21" y2="18" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#1ca5d7" />
+          <stop offset="1" stopColor="#8655d6" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M5 12.5l4.2 4.2L19 7"
+        stroke="url(#intro-check-grad)"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const STEPS = [
-  "Sorting your emails",
+  "Sorting your email",
   "Learning your patterns",
-  "Crafting a setup that fits",
+  "Personalizing your setup",
 ];
 
 /**
@@ -70,10 +90,10 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
             backgroundClip: "text",
           }}
         >
-          Welcome, let’s get things set up.
+          Welcome, let’s set up your inbox.
         </h1>
         <p className="whitespace-nowrap text-[15px] leading-normal text-ink-subdued">
-          Now that your account is connected, we’ll help you get your inbox organized.
+          Now that your account is connected, we’ll help you get organized.
         </p>
       </div>
 
@@ -90,12 +110,11 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
               )}
             >
               <span>{label}…</span>
-              <Check
+              <GradientCheck
                 className={cn(
-                  "size-3.5 shrink-0 text-stepper transition-opacity duration-300",
+                  "size-[18px] shrink-0 transition-opacity duration-300",
                   complete ? "opacity-100" : "opacity-0",
                 )}
-                strokeWidth={2.5}
               />
             </div>
           );
