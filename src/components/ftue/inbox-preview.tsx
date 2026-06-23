@@ -514,17 +514,22 @@ function SplitInboxContent({
               {TAB_ORDER.map(({ key, label }) => {
                 const tp = tabPhase(key);
                 if (phase < tp) return null;
-                if (!animating && key === "calendar" && !toggles.calendar) return null;
-                if (!animating && key === "jira" && !toggles.jira) return null;
 
                 const isActive = animating ? key === "important" : effectiveActive === key;
+                const toggleable = key === "calendar" || key === "jira";
+                // Settled state: a toggled-off tab collapses horizontally instead
+                // of unmounting, so re-enabling eases it back in smoothly (and the
+                // neighbouring tabs slide over rather than jumping).
+                const collapsed =
+                  !animating &&
+                  ((key === "calendar" && !toggles.calendar) ||
+                    (key === "jira" && !toggles.jira));
 
-                return (
+                const button = (
                   <button
-                    key={key}
                     type="button"
                     onClick={() => handleTabChange(key)}
-                    style={tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
+                    style={animating && tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
                     className={cn(
                       "flex items-center gap-[5px] pr-6 text-[16px] transition-colors",
                       isActive
@@ -544,6 +549,27 @@ function SplitInboxContent({
                       />
                     </span>
                   </button>
+                );
+
+                // Non-toggleable tabs (Important, Other) and the intro phase render
+                // the button directly; toggleable tabs get a collapsing wrapper.
+                if (animating || !toggleable) {
+                  return <div key={key} className="flex shrink-0 items-center">{button}</div>;
+                }
+
+                return (
+                  <div
+                    key={key}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: collapsed ? "0fr" : "1fr",
+                      opacity: collapsed ? 0 : 1,
+                      transition:
+                        "grid-template-columns 400ms ease-out, opacity 300ms ease-out",
+                    }}
+                  >
+                    <div style={{ overflow: "hidden", minWidth: 0 }}>{button}</div>
+                  </div>
                 );
               })}
             </div>
