@@ -417,70 +417,19 @@ export function WorkflowPreview({
 
 // ── Seats preview ────────────────────────────────────────────────────────────
 
-/** Small frosted comment bubble with a gradient avatar + gradient text. */
-function CommentBubble({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "absolute flex items-center gap-2 rounded-[8px] border border-white/40 bg-white/85 px-2.5 py-2 backdrop-blur-md",
-        "shadow-[0px_13px_39px_rgba(104,212,235,0.3),0px_6.6px_33px_rgba(226,138,226,0.4),0px_0.6px_2.6px_rgba(0,0,0,0.3)]",
-        className,
-      )}
-    >
-      <span className="size-[22px] shrink-0 rounded-full bg-[linear-gradient(135deg,#f6b8c8,#b48ce0)]" />
-      <span
-        className="whitespace-nowrap bg-clip-text text-[14px] font-semibold text-transparent"
-        style={{ backgroundImage: "linear-gradient(90deg,#6eacf4,#9e6ee5)" }}
-      >
-        {text}
-      </span>
-    </div>
-  );
-}
-
-/** Live-collaboration scene — a composed draft with teammates reacting. */
+/** Live-collaboration scene — Figma export (draft + teammates reacting). */
 export function SeatsPreview() {
   return (
     <div
-      className="relative h-[520px] w-[570px] max-w-full"
+      className="flex w-[560px] max-w-full items-center justify-center"
       style={{ animation: "screen-enter 420ms ease-out both" }}
     >
-      {/* Composed email card, tucked behind the bubbles. */}
-      <div className="absolute left-[40px] top-[70px] w-[430px] overflow-hidden rounded-[10px] border border-white/40 bg-white/95 px-7 py-6 shadow-[0px_13px_38px_rgba(104,212,235,0.3),0px_6.5px_32px_rgba(226,138,226,0.4),0px_0.6px_2.6px_rgba(0,0,0,0.3)]">
-        <p
-          className="bg-clip-text text-[21px] font-semibold text-transparent"
-          style={{ backgroundImage: "linear-gradient(90deg,#5cc3fa,#fa75f8 46%,#fab266)" }}
-        >
-          New message
-        </p>
-        <div className="my-4 h-px w-full bg-black/10" />
-        <p className="text-[15px] leading-[28px] text-[rgba(93,112,137,0.6)]">
-          Hi team,
-        </p>
-        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.6)]">
-          I am thrilled about our recent product launch! As you all know,
-          ProductHunt is a great platform for tapping into the tech community and
-          gaining exposure. If you haven&apos;t already, please take a moment to
-          upvote our launch — it only takes a few clicks. Thank you for your
-          support, and let&apos;s keep up the great work.
-        </p>
-        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.6)]">
-          Best,
-          <br />
-          Nicole
-        </p>
-      </div>
-
-      {/* Live collaboration — teammates reacting in real time. */}
-      <CommentBubble text="How do these edits look?" className="right-[20px] top-[40px]" />
-      <CommentBubble text="I added the attachments." className="left-[10px] bottom-[120px]" />
-      <CommentBubble text="Looks good to me!" className="right-[60px] bottom-[60px]" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/seats-preview.png"
+        alt="Teammates collaborating on a draft in real time"
+        className="h-auto w-full"
+      />
     </div>
   );
 }

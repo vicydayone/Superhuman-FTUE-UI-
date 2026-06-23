@@ -255,8 +255,6 @@ export const SEATS_PEOPLE = [
   { name: "Teresa Man", email: "averylongemailaddress@sprh.mn" },
   { name: "Conrad Irwin", email: "conrad@superhuman.com" },
   { name: "Emuye Reynolds", email: "emuye@superhuman.com" },
-  { name: "Teresa Man", email: "averylongemailaddress@sprh.mn" },
-  { name: "Gertrude Smith", email: "gertrude@superhuman.com" },
 ];
 
 /** Teammate already on the user's team (the "Your team (1/5)" chip). */
