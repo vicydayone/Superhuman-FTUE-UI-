@@ -221,7 +221,7 @@ function AccountMenu({
         <Counter
           value={open ? archivedCount : 0}
           delay={1400}
-          className="text-[10px] text-[#555]"
+          className="text-[12px] font-bold text-[rgba(0,0,0,0.4)]"
         />
       </div>
 
