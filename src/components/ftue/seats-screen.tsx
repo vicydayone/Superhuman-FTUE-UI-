@@ -102,8 +102,8 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           })}
         </div>
 
-        {/* Your team */}
-        <div className="flex flex-col gap-4 border-t border-[#ededed] pt-4">
+        {/* Your team — pulled up so the divider sits closer to the last row. */}
+        <div className="-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4">
           <p className="text-[14px] text-ink">
             Your team ({team.length}/{SEAT_LIMIT})
           </p>
