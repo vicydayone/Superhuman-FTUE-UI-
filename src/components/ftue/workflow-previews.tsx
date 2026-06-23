@@ -420,19 +420,74 @@ export function WorkflowPreview({
 
 // ── Seats preview ────────────────────────────────────────────────────────────
 
-/** Live-collaboration scene — Figma export (draft + teammates reacting). */
+/** Frosted comment bubble with a real teammate photo + gradient text. */
+function SeatBubble({
+  text,
+  avatar,
+  className,
+}: {
+  text: string;
+  avatar: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "absolute flex items-center gap-2 rounded-[8px] border border-white/50 bg-white/85 px-2.5 py-2 backdrop-blur-md",
+        "shadow-[0px_13px_39px_rgba(104,212,235,0.3),0px_6.6px_33px_rgba(226,138,226,0.4),0px_0.6px_2.6px_rgba(0,0,0,0.3)]",
+        className,
+      )}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={avatar} alt="" className="size-[28px] shrink-0 rounded-full object-cover" />
+      <span
+        className="whitespace-nowrap bg-clip-text text-[14px] font-semibold text-transparent"
+        style={{ backgroundImage: "linear-gradient(90deg,#6eacf4,#9e6ee5)" }}
+      >
+        {text}
+      </span>
+    </div>
+  );
+}
+
+/** Live-collaboration scene — a frosted draft with teammates reacting. */
 export function SeatsPreview() {
   return (
     <div
-      className="flex w-[560px] max-w-full items-center justify-center"
+      className="relative h-[520px] w-[570px] max-w-full"
       style={{ animation: "screen-enter 420ms ease-out both" }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/seats-preview.png"
-        alt="Teammates collaborating on a draft in real time"
-        className="h-auto w-full mix-blend-multiply"
-      />
+      {/* Frosted compose card — semi-transparent so the wash shows through
+          (no opaque white block). */}
+      <div className="absolute left-[40px] top-[70px] w-[440px] overflow-hidden rounded-[10px] border border-white/40 bg-white/40 px-7 py-6 backdrop-blur-md shadow-[0px_13px_38px_rgba(104,212,235,0.25),0px_6.5px_32px_rgba(226,138,226,0.3),0px_0.6px_2.6px_rgba(0,0,0,0.22)]">
+        <p
+          className="bg-clip-text text-[21px] font-semibold text-transparent"
+          style={{ backgroundImage: "linear-gradient(90deg,#5cc3fa,#fa75f8 46%,#fab266)" }}
+        >
+          New message
+        </p>
+        <div className="my-4 h-px w-full bg-black/10" />
+        <p className="text-[15px] leading-[28px] text-[rgba(93,112,137,0.55)]">
+          Hi team,
+        </p>
+        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.55)]">
+          I am thrilled about our recent product launch! As you all know,
+          ProductHunt is a great platform for tapping into the tech community and
+          gaining exposure. If you haven&apos;t already, please take a moment to
+          upvote our launch — it only takes a few clicks. Thank you for your
+          support, and let&apos;s keep up the great work.
+        </p>
+        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.55)]">
+          Best,
+          <br />
+          Nicole
+        </p>
+      </div>
+
+      {/* Teammates reacting in real time. */}
+      <SeatBubble text="How do these edits look?" avatar="/seats-av-edits.png" className="right-[16px] top-[40px]" />
+      <SeatBubble text="I added the attachments." avatar="/seats-av-attach.png" className="left-[6px] bottom-[150px]" />
+      <SeatBubble text="Looks good to me!" avatar="/seats-av-looks.png" className="right-[44px] bottom-[64px]" />
     </div>
   );
 }
