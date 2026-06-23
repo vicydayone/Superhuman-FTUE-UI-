@@ -59,9 +59,8 @@ export function AutoArchiveLeft({
             Clear out the clutter with Auto Archive.
           </h1>
           <p className="text-[14px] leading-normal">
-            First, let’s decide what to move out of your inbox. Superhuman
-            filters out the automated noise so you can focus on the messages
-            that matter.
+            First, let’s make space for the important messages. We’ll move the
+            automated noise out of your inbox so it’s not in your way.
           </p>
         </div>
 

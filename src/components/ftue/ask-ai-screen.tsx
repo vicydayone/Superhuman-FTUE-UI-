@@ -32,8 +32,8 @@ export function AskAiLeft({
             Stop searching, start asking with Ask AI.
           </h1>
           <p className="text-[14px] leading-normal">
-            Use Ask AI to find, write, schedule, or ask anything. What took
-            minutes now takes seconds.
+            Get work done without having to remember senders or scan subject
+            lines. Ask AI will find what you need, and even do the work for you.
           </p>
         </div>
 

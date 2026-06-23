@@ -31,9 +31,9 @@ export function AutoDraftLeft({
             Respond faster with Auto Drafts.
           </h1>
           <p className="text-[14px] leading-normal">
-            With everything organized, we can take action on what matters most.
-            Every email that needs a reply has one waiting — written in your
-            voice.
+            With everything organized, we can respond to faster to what’s
+            important. We automatically draft replies for you — written in your
+            own voice and tone.
           </p>
         </div>
 
