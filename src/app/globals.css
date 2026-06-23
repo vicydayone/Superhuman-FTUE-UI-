@@ -277,3 +277,18 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* Hovering a label card pulses the matching inbox tags — grow + brighten,
+   then ease back (a smooth fade-in/out emphasis). */
+@keyframes tag-pulse {
+  0%   { transform: scale(1);    filter: brightness(1) saturate(1); }
+  35%  { transform: scale(1.15); filter: brightness(1.12) saturate(1.25); }
+  100% { transform: scale(1);    filter: brightness(1) saturate(1); }
+}
+
+/* Hovering a Split category card pulses the matching tab larger, then back. */
+@keyframes tab-pulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}

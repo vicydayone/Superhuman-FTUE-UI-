@@ -25,7 +25,9 @@ import type {
   AutoDraftDemo,
   Chapter1Step,
   FlowStep,
+  MailLabel,
   ReminderChoice,
+  SplitCategory,
   SplitToggles,
 } from "@/lib/types";
 
@@ -75,6 +77,9 @@ export default function Home() {
     jira: true,
   });
   const [archiveClosing, setArchiveClosing] = useState(false);
+  // Which left-column card is hovered → pulse the matching tag / tab in preview.
+  const [archiveHoverLabel, setArchiveHoverLabel] = useState<MailLabel | null>(null);
+  const [splitHoverTab, setSplitHoverTab] = useState<SplitCategory | null>(null);
   const [splitHovering, setSplitHovering] = useState(false);
   const [splitTransitioning, setSplitTransitioning] = useState(false);
   const [draftDemo, setDraftDemo] = useState<AutoDraftDemo>("responses");
@@ -90,6 +95,8 @@ export default function Home() {
     setReminder("couple-days");
     setAskDemo(0);
     setArchiveClosing(false);
+    setArchiveHoverLabel(null);
+    setSplitHoverTab(null);
     setSplitHovering(false);
     setSplitTransitioning(false);
     setStep("welcome");
@@ -110,6 +117,7 @@ export default function Home() {
             onToggle={(key) =>
               setArchivedLabels((prev) => ({ ...prev, [key]: !prev[key] }))
             }
+            onHover={setArchiveHoverLabel}
             onContinue={() => {
               // Snapshot the user's selection for the Split filter.
               setSavedArchivedLabels({ ...archivedLabels });
@@ -126,6 +134,7 @@ export default function Home() {
           <SplitInboxLeft
             toggles={splits}
             onToggle={(key, value) => setSplits((s) => ({ ...s, [key]: value }))}
+            onHover={setSplitHoverTab}
             onContinue={() => {
               setSplitHovering(true);
               setTimeout(() => {
@@ -183,6 +192,8 @@ export default function Home() {
             closing={archiveClosing}
             hovering={splitHovering}
             transitioning={splitTransitioning}
+            hoverLabel={archiveHoverLabel}
+            hoverTab={splitHoverTab}
           />
         );
       case "auto-draft":

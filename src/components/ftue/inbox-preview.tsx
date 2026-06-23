@@ -65,11 +65,14 @@ function MailRow({
   subject,
   date,
   label,
+  pulseLabel = false,
 }: {
   sender: string;
   subject: string;
   date: string;
   label?: AutoArchiveMail["label"];
+  /** Pulse this row's label chip (matching label card hovered). */
+  pulseLabel?: boolean;
 }) {
   return (
     <div className="flex items-center py-[10px]">
@@ -79,7 +82,7 @@ function MailRow({
         </p>
       </div>
       <div className="flex min-w-0 flex-1 items-center gap-2 pr-6">
-        {label && <LabelChip label={label} />}
+        {label && <LabelChip label={label} pulse={pulseLabel} />}
         <p className="min-w-0 flex-1 truncate text-[12px] leading-4 tracking-[-0.15px] text-mail">
           {subject}
         </p>
@@ -233,10 +236,12 @@ function AutoArchiveContent({
   mails,
   archivedLabels,
   closing = false,
+  hoverLabel = null,
 }: {
   mails: AutoArchiveMail[];
   archivedLabels: AutoArchiveToggles;
   closing?: boolean;
+  hoverLabel?: AutoArchiveMail["label"] | null;
 }) {
   // Phase 1: menu slides in + content shifts right.
   // Phase 2: marketing mails collapse (starts after menu has settled).
@@ -303,7 +308,7 @@ function AutoArchiveContent({
                     collapsed ? "max-h-0 opacity-0" : "max-h-[44px] opacity-100",
                   )}
                 >
-                  <MailRow {...m} />
+                  <MailRow {...m} pulseLabel={!!m.label && m.label === hoverLabel} />
                 </div>
               );
             });
@@ -349,11 +354,13 @@ function SplitInboxContent({
   toggles,
   hovering = false,
   transitioning = false,
+  hoverTab = null,
 }: {
   mails: SplitMail[];
   toggles: SplitToggles;
   hovering?: boolean;
   transitioning?: boolean;
+  hoverTab?: SplitCategory | null;
 }) {
   const [active, setActive] = useState<SplitCategory>("important");
   const [noTransition, setNoTransition] = useState(false);
@@ -525,11 +532,17 @@ function SplitInboxContent({
                         : "text-[rgba(0,0,0,0.4)] hover:text-[rgba(0,0,0,0.65)]",
                     )}
                   >
-                    <span>{label}</span>
-                    <Counter
-                      value={countFor(key)}
-                      className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
-                    />
+                    {/* Inner wrapper pulses when the matching left card is hovered. */}
+                    <span
+                      className="flex origin-left items-center gap-[5px]"
+                      style={hoverTab === key ? { animation: "tab-pulse 700ms ease-in-out" } : undefined}
+                    >
+                      <span>{label}</span>
+                      <Counter
+                        value={countFor(key)}
+                        className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
+                      />
+                    </span>
                   </button>
                 );
               })}
@@ -622,6 +635,8 @@ export function Chapter2Preview({
   closing = false,
   hovering = false,
   transitioning = false,
+  hoverLabel = null,
+  hoverTab = null,
 }: {
   step: "auto-archive" | "split-inbox";
   archivedMails: AutoArchiveMail[];
@@ -631,6 +646,8 @@ export function Chapter2Preview({
   closing?: boolean;
   hovering?: boolean;
   transitioning?: boolean;
+  hoverLabel?: AutoArchiveMail["label"] | null;
+  hoverTab?: SplitCategory | null;
 }) {
   const animMails = archivedMails
     .filter((m) => !m.label || !archivedLabels[m.label])
@@ -646,9 +663,9 @@ export function Chapter2Preview({
     >
       <PreviewShell>
         {step === "auto-archive" ? (
-          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} closing={closing} />
+          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} closing={closing} hoverLabel={hoverLabel} />
         ) : (
-          <SplitInboxContent key="split" mails={animMails} toggles={splits} hovering={hovering} transitioning={transitioning} />
+          <SplitInboxContent key="split" mails={animMails} toggles={splits} hovering={hovering} transitioning={transitioning} hoverTab={hoverTab} />
         )}
       </PreviewShell>
     </div>

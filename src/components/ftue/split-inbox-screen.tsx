@@ -3,16 +3,19 @@
 import { ToggleCard } from "./toggle-card";
 import { ContinueButton } from "./continue-button";
 import { SPLIT_TABS } from "@/lib/data";
-import type { SplitToggles } from "@/lib/types";
+import type { SplitCategory, SplitToggles } from "@/lib/types";
 
 /** Split Inbox left column — choose which categories get their own tab. */
 export function SplitInboxLeft({
   toggles,
   onToggle,
+  onHover,
   onContinue,
 }: {
   toggles: SplitToggles;
   onToggle: (key: "calendar" | "jira", value: boolean) => void;
+  /** Hovering a category card pulses its tab in the preview; null on leave. */
+  onHover?: (key: SplitCategory | null) => void;
   onContinue: () => void;
 }) {
   return (
@@ -28,7 +31,10 @@ export function SplitInboxLeft({
           </p>
         </div>
 
-        <div className="flex flex-col gap-[14px]">
+        <div
+          className="flex flex-col gap-[14px]"
+          onMouseLeave={() => onHover?.(null)}
+        >
           <p className="text-[14px] text-ink-subdued">
             Based on your inbox, we’ve made some suggestions:
           </p>
@@ -39,6 +45,7 @@ export function SplitInboxLeft({
               description={tab.description}
               badge={tab.badge}
               toggleable={tab.toggleable}
+              onMouseEnter={() => onHover?.(tab.key)}
               checked={
                 tab.key === "calendar"
                   ? toggles.calendar

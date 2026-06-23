@@ -42,10 +42,13 @@ function Checkbox({ checked }: { checked: boolean }) {
 export function AutoArchiveLeft({
   archivedLabels,
   onToggle,
+  onHover,
   onContinue,
 }: {
   archivedLabels: AutoArchiveToggles;
   onToggle: (key: MailLabel) => void;
+  /** Hovering a label card pulses its tags in the preview; null on leave. */
+  onHover?: (key: MailLabel | null) => void;
   onContinue: () => void;
 }) {
   return (
@@ -62,7 +65,10 @@ export function AutoArchiveLeft({
           </p>
         </div>
 
-        <div className="flex flex-col gap-[14px]">
+        <div
+          className="flex flex-col gap-[14px]"
+          onMouseLeave={() => onHover?.(null)}
+        >
           <p className="text-[14px] text-ink-subdued">
             New messages with these labels will be safely archived:
           </p>
@@ -74,6 +80,7 @@ export function AutoArchiveLeft({
                 key={key}
                 type="button"
                 onClick={() => onToggle(key)}
+                onMouseEnter={() => onHover?.(key)}
                 className={cn(
                   "flex -ml-5 w-[calc(100%_+_20px)] items-center gap-[10px] rounded-[6px] border-[0.5px] border-[rgba(236,236,236,0.3)] px-5 py-[10px] text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stepper/50",
                   checked
