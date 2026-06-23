@@ -213,9 +213,9 @@ export const REMINDER_OPTIONS: {
   wait: string;
   recommended?: boolean;
 }[] = [
-  { key: "asap", label: "Next business day", wait: "the next business day" },
+  { key: "asap", label: "Next business day", wait: "1 day later" },
   { key: "couple-days", label: "In a couple days", wait: "2 days later", recommended: true },
-  { key: "week", label: "Within a week", wait: "in a week" },
+  { key: "week", label: "Within a week", wait: "5 days later" },
 ];
 
 /** Example prompts shown on the Ask AI screen (also drive the preview answer). */

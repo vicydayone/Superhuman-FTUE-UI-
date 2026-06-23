@@ -289,7 +289,7 @@ function AutoArchiveContent({
           />
           <span className="flex items-center gap-[5px] text-[16px] tracking-[-0.15px] text-ink">
             Inbox
-            <Counter value={inboxCount} className="text-[16px] text-[rgba(0,0,0,0.4)] tabular-nums" />
+            <Counter value={inboxCount} className="text-[13px] text-[rgba(0,0,0,0.4)] tabular-nums" />
           </span>
         </div>
 
@@ -542,12 +542,16 @@ function SplitInboxContent({
                     {/* Inner wrapper pulses when the matching left card is hovered. */}
                     <span
                       className="flex items-center gap-[5px]"
-                      style={hoverTab === key ? { animation: "tab-pulse 700ms ease-in-out" } : undefined}
+                      style={
+                        hoverTab === key
+                          ? { animation: "tab-pulse 700ms ease-in-out", transformOrigin: "center center" }
+                          : { transformOrigin: "center center" }
+                      }
                     >
                       <span>{label}</span>
                       <Counter
                         value={countFor(key)}
-                        className="tabular-nums text-[16px] text-[rgba(0,0,0,0.4)]"
+                        className="tabular-nums text-[13px] text-[rgba(0,0,0,0.4)]"
                       />
                     </span>
                   </button>
@@ -599,9 +603,9 @@ function SplitInboxContent({
               <div
                 style={{ overflow: "hidden", minHeight: 0 }}
                 className={cn(
-                  // px+(-mx) lets the highlight bleed further left & right than
-                  // the mail content without shifting the rows.
-                  "-mx-5 rounded-[4px] px-5 transition-colors duration-500",
+                  // Left bleed matches the -mx-5 offset; right bleed extends
+                  // further past the date column per design spec.
+                  "-ml-5 -mr-8 rounded-[4px] pl-5 pr-8 transition-colors duration-500",
                   isFeatured && transitioning ? "bg-[rgba(174,177,221,0.28)]" : "",
                   isFeatured && hovering && !transitioning ? "bg-[rgba(174,177,221,0.15)] cursor-pointer" : "",
                 )}
