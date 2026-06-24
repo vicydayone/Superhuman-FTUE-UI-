@@ -80,8 +80,8 @@ export function SeatsLeft({
         </p>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col justify-between">
-        {/* Top block: People to invite + Recommended — fixed at top of middle area */}
+      <div className="flex min-h-0 flex-1 flex-col gap-3">
+        {/* Top block: People to invite + Recommended */}
         <div className="flex flex-col gap-5">
         {/* People to invite */}
         <div className="flex flex-col gap-2.5">
@@ -138,7 +138,7 @@ export function SeatsLeft({
             position. In no-seats mode the count+banner only appear once the
             first person is added; the tag area (min-h-[78px]) is always present
             so the section height is stable. */}
-        <div className={`-mt-3 flex flex-col gap-4 pt-4 ${(!noSeats || added.size > 0) ? "border-t border-[#ededed]" : ""}`}>
+        <div className={`flex flex-col gap-4 pt-1 ${(!noSeats || added.size > 0) ? "border-t border-[#ededed]" : ""}`}>
           {/* Count line — only show when there's someone to count. */}
           {(!noSeats || added.size > 0) && (
             noSeats ? (
@@ -158,15 +158,15 @@ export function SeatsLeft({
             )
           )}
           {/* Reserve two rows so the layout doesn't shift as tags wrap. */}
-          <div className="flex min-h-[78px] flex-wrap content-start gap-2.5">
+          <div className="flex min-h-[56px] flex-wrap content-start gap-2">
             {/* Base teammate — not removable. */}
             {baseTeam.map((t) => (
               <div
                 key={t.name}
-                className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] py-[5px] pl-2.5 pr-2.5"
+                className="flex items-center gap-1.5 rounded-[4px] border border-[#e6e8f0] py-1 pl-2 pr-2"
               >
-                <Avatar className="size-6" />
-                <span className="text-[14px] text-ink [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <Avatar className="size-5" />
+                <span className="text-[12px] text-ink [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   {t.name}
                 </span>
               </div>
@@ -175,10 +175,10 @@ export function SeatsLeft({
             {[...added].map((i) => (
               <div
                 key={`added-${i}`}
-                className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] py-[5px] pl-2.5 pr-2"
+                className="flex items-center gap-1.5 rounded-[4px] border border-[#e6e8f0] py-1 pl-2 pr-1.5"
               >
-                <Avatar className="size-6" />
-                <span className="text-[14px] text-ink [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <Avatar className="size-5" />
+                <span className="text-[12px] text-ink [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   {SEATS_PEOPLE[i].name}
                 </span>
                 <button
