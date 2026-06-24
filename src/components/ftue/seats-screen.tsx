@@ -138,7 +138,7 @@ export function SeatsLeft({
             position. In no-seats mode the count+banner only appear once the
             first person is added; the tag area (min-h-[78px]) is always present
             so the section height is stable. */}
-        <div className="-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4">
+        <div className={`-mt-3 flex flex-col gap-4 pt-4 ${(!noSeats || added.size > 0) ? "border-t border-[#ededed]" : ""}`}>
           {/* Count line — only show when there's someone to count. */}
           {(!noSeats || added.size > 0) && (
             noSeats ? (
