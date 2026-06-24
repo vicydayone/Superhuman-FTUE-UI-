@@ -3,14 +3,16 @@
 import { ContinueButton } from "./continue-button";
 import { ASK_AI_PROMPTS } from "@/lib/data";
 
-// eslint-disable-next-line @next/next/no-img-element
 const PromptSparkle = () => (
-  <img
-    src="https://www.figma.com/api/mcp/asset/90c1ebdb-8b22-4a90-9f3c-0d905786ec36"
-    alt=""
-    aria-hidden
-    className="size-4 shrink-0"
-  />
+  <svg viewBox="0 0 20 20" fill="none" aria-hidden className="size-4 shrink-0">
+    <defs>
+      <linearGradient id="pspk-grad" x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#1ca5d7" />
+        <stop offset="1" stopColor="#8655d6" />
+      </linearGradient>
+    </defs>
+    <path d="M10 0L11.8 8.2L20 10L11.8 11.8L10 20L8.2 11.8L0 10L8.2 8.2Z" fill="url(#pspk-grad)" />
+  </svg>
 );
 
 /**
