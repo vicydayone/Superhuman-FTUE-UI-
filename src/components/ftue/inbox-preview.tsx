@@ -287,7 +287,7 @@ function AutoArchiveContent({
               showMenu ? "opacity-0" : "opacity-100",
             )}
           />
-          <span className="flex items-center gap-[5px] text-[16px] tracking-[-0.15px] text-ink">
+          <span className="flex items-baseline gap-[5px] text-[16px] tracking-[-0.15px] text-ink">
             Inbox
             <Counter value={inboxCount} className="text-[13px] text-[rgba(0,0,0,0.4)] tabular-nums" />
           </span>
@@ -494,7 +494,7 @@ function SplitInboxContent({
         <div className="relative flex flex-1 items-center">
           <div
             className={cn(
-              "flex items-center gap-[5px] text-[16px] text-ink",
+              "flex items-baseline gap-[5px] text-[16px] text-ink",
               phase >= 1 && "pointer-events-none absolute inset-y-0 left-0",
             )}
             style={{ opacity: phase === 0 ? 1 : 0, transition: "opacity 180ms ease-out" }}
@@ -533,7 +533,7 @@ function SplitInboxContent({
                     onClick={() => handleTabChange(key)}
                     style={animating && tp > 1 ? { animation: "tab-enter 500ms ease-out" } : undefined}
                     className={cn(
-                      "flex items-center gap-[5px] pr-6 text-[16px] transition-colors",
+                      "flex items-baseline gap-[5px] pr-6 text-[16px] transition-colors",
                       isActive
                         ? "text-ink"
                         : "text-[rgba(0,0,0,0.4)] hover:text-[rgba(0,0,0,0.65)]",
@@ -541,7 +541,7 @@ function SplitInboxContent({
                   >
                     {/* Inner wrapper pulses when the matching left card is hovered. */}
                     <span
-                      className="flex items-center gap-[5px]"
+                      className="flex items-baseline gap-[5px]"
                       style={
                         hoverTab === key
                           ? { animation: "tab-pulse 700ms ease-in-out", transformOrigin: "center center" }
