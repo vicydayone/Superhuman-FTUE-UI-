@@ -52,9 +52,8 @@ function PreviewCard({
 
 function ArrowLeft({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className={cn("shrink-0", className)}>
-      <path d="M10 3L5 8l5 5" stroke="#29323d" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5 8h9" stroke="#29323d" strokeWidth="1.6" strokeLinecap="round" />
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden className={cn("shrink-0", className)}>
+      <path d="M7.99995 14.5L1.5 8.00005L8.00005 1.5M1.5 8.00005L14.4999 7.99995" stroke="black" strokeOpacity="0.3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
