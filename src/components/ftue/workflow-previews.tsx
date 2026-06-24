@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ASK_AI_TABS, ASK_AI_MAIL, ASK_AI_PROMPTS, AUTO_DRAFT_DEMOS } from "@/lib/data";
 import type { AutoDraftDemo, FlowStep } from "@/lib/types";
@@ -274,11 +275,19 @@ function AskAiAnswer({ index }: { index: number }) {
   );
 }
 
-function AskAiContent({ askDemo }: { askDemo: number }) {
+function AskAiContent({ askDemo, entered }: { askDemo: number; entered: boolean }) {
   return (
-    <div className="relative flex h-[490px] gap-4 pr-[25px] pt-8">
-      {/* Ask AI side panel */}
-      <div className="flex w-[237px] shrink-0 flex-col gap-[18px] border-r-[0.5px] border-[#edecec] bg-white px-5 pb-[31px] pt-[17px]">
+    <div className="relative h-[490px] overflow-hidden pt-8">
+      {/* Ask AI side panel — slides in from the left (like the Auto Archive
+          account menu) and pushes the inbox to the right. Once settled it stays
+          put, so the prompt cards on the left can be hovered. */}
+      <div
+        className={cn(
+          "absolute bottom-0 left-0 top-8 z-20 flex w-[237px] flex-col gap-[18px] border-r-[0.5px] border-[#edecec] bg-white px-5 pb-[31px] pt-[17px]",
+          "transition-transform duration-700 ease-out",
+          entered ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
         <p className="text-[13px] font-semibold tracking-[-0.14px] text-[#29323d]">
           Ask AI
         </p>
@@ -300,9 +309,15 @@ function AskAiContent({ askDemo }: { askDemo: number }) {
         </div>
       </div>
 
-      {/* Inbox behind, slightly dimmed (the inbox keeps running). Spacing
-          mirrors Split Inbox: tabs 64px from card top, 40px gap to the list. */}
-      <div className="flex flex-1 flex-col gap-10 pt-8 opacity-80">
+      {/* Inbox behind — full width at first, then pushed right + dimmed as the
+          panel slides in. Spacing mirrors Split Inbox: tabs 64px from card top,
+          40px gap to the list. */}
+      <div
+        className={cn(
+          "flex flex-col gap-10 pr-[25px] pt-8 transition-all duration-700 ease-out",
+          entered ? "translate-x-[253px] opacity-80" : "translate-x-0 opacity-100",
+        )}
+      >
         <div className="flex items-center gap-[13px] overflow-hidden">
           <IconHamburger className="size-4 shrink-0" />
           {ASK_AI_TABS.map((tab) => (
@@ -380,11 +395,34 @@ export function WorkflowPreview({
   reminderWait: string;
   askDemo: number;
 }) {
+  // Ask AI entry: the inbox fades in full-width, then the side panel slides in
+  // from the left and pushes it right. `entered` drives the slide; `settled`
+  // gates the floating answer card so it only pops once the panel has arrived.
+  const [entered, setEntered] = useState(false);
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    if (step !== "ask-ai") {
+      setEntered(false);
+      setSettled(false);
+      return;
+    }
+    setEntered(false);
+    setSettled(false);
+    const t1 = setTimeout(() => setEntered(true), 500);
+    const t2 = setTimeout(() => setSettled(true), 1250);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [step]);
+
   return (
-    <PreviewCard overlay={step === "ask-ai" ? <AskAiAnswerCard askDemo={askDemo} /> : undefined}>
+    <PreviewCard
+      overlay={step === "ask-ai" && settled ? <AskAiAnswerCard askDemo={askDemo} /> : undefined}
+    >
       {step === "ask-ai" ? (
         <div key="askai" style={{ animation: "preview-fade 360ms ease-out both" }}>
-          <AskAiContent askDemo={askDemo} />
+          <AskAiContent askDemo={askDemo} entered={entered} />
         </div>
       ) : (
         <ConversationContent
