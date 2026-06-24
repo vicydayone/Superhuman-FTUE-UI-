@@ -41,7 +41,7 @@ export function IntroScreen({ onContinue }: { onContinue: () => void }) {
     const timers = STEPS.map((_, i) =>
       setTimeout(() => setDone((d) => Math.max(d, i + 1)), 700 * (i + 1)),
     );
-    const advance = setTimeout(onContinue, 700 * STEPS.length + 900);
+    const advance = setTimeout(onContinue, 5000);
     return () => {
       timers.forEach(clearTimeout);
       clearTimeout(advance);
