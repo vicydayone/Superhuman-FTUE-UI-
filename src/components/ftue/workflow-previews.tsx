@@ -133,12 +133,12 @@ function ConversationContent({
           </div>
         </div>
       ) : (
-        // AUTO DRAFT — incoming mail + drafted reply highlight + send row (no
-        // divider; matches Figma node 1928:4693). Fixed height keeps the reply
-        // card + send row anchored as the left cards swap the demo.
-        <div className="flex h-[290px] w-[436px] max-w-full flex-col rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 pb-5 pt-[30px]">
-          {/* Incoming email — anchored at the top */}
-          <div className="flex w-full shrink-0 flex-col items-start gap-2.5">
+        // AUTO DRAFT — incoming mail + drafted reply highlight + send row,
+        // stacked with an even 30px gap (no divider, no fixed-height void;
+        // matches Figma node 1928:4693).
+        <div className="flex w-[436px] max-w-full flex-col gap-[30px] rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 py-[30px]">
+          {/* Incoming email */}
+          <div className="flex w-full flex-col items-start gap-2.5">
             <div className="flex items-center gap-2.5">
               <p className="text-[12px] font-semibold leading-4 text-[#29323d]">
                 {demo.incoming.sender}
@@ -149,18 +149,15 @@ function ConversationContent({
                 </span>
               )}
             </div>
-            <p className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)]">
+            <p className="w-full text-[12px] leading-4 text-[rgba(0,0,0,0.55)]">
               {demo.incoming.body}
             </p>
           </div>
 
-          {/* Spacer keeps the highlight card at a consistent Y across demos */}
-          <div className="flex-1" />
-
           {/* Drafted reply highlight */}
           <div
             key={draftDemo}
-            className="flex w-[467px] max-w-none shrink-0 flex-col gap-[11px] self-center rounded-[4px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
+            className="flex w-[467px] max-w-none flex-col gap-[11px] self-center rounded-[4px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
             style={{ animation: "highlight-pop 380ms ease-out both" }}
           >
             <p className="leading-4">
@@ -185,10 +182,8 @@ function ConversationContent({
             </p>
           </div>
 
-          {/* Send row — anchored at the bottom */}
-          <div className="mt-4 w-full shrink-0">
-            <SendRow />
-          </div>
+          {/* Send row */}
+          <SendRow />
         </div>
       )}
     </div>
