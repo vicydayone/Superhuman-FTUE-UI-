@@ -1,19 +1,34 @@
 "use client";
 
 /**
- * Final "You're all set!" screen — full-bleed mountain background, centered
- * white card with gradient headline + two CTAs. Matches Figma node 1928:11489.
+ * Final "You're all set!" screen — mountain photo with a purple colour-overlay
+ * (replicates the Figma imgDone1 filter layer) + a subtle pink radial gradient.
+ * Matches Figma node 1928:11489.
  */
 export function DoneCard({ onRestart }: { onRestart: () => void }) {
   return (
-    // Full-bleed mountain background (same photo as Chapter 1 auth screens).
+    // Stacking context: mountain photo → purple overlay → pink gradient → card.
     // pt-14 clears the absolute-positioned Stepper bar (~56px).
-    <div
-      className="flex h-full w-full items-center justify-center bg-cover bg-center pt-14"
-      style={{ backgroundImage: "url(/auth-bg.png)" }}
-    >
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden pt-14">
+      {/* Layer 1 — mountain photo */}
       <div
-        className="flex flex-col items-center gap-10 rounded-[12px] border border-[#e2e2e2] bg-white px-[80px] pb-[60px] pt-[70px] shadow-[0px_0px_27.6px_rgba(107,72,134,0.1)]"
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url(/auth-bg.png)" }}
+      />
+      {/* Layer 2 — purple/lavender colour filter (Figma imgDone1 approximation) */}
+      <div className="absolute inset-0 bg-[rgba(100,78,150,0.42)]" />
+      {/* Layer 3 — subtle pink radial gradient bottom-right (10% opacity, matches Figma) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 80% 80% at 90% 90%, rgba(255,165,174,0.18) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Card */}
+      <div
+        className="relative flex flex-col items-center gap-10 rounded-[12px] border border-[#e2e2e2] bg-white px-[80px] pb-[60px] pt-[70px] shadow-[0px_0px_27.6px_rgba(107,72,134,0.1)]"
         style={{ animation: "screen-enter 420ms ease-out both" }}
       >
         {/* Headline + subtitle */}
