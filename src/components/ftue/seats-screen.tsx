@@ -138,7 +138,7 @@ export function SeatsLeft({
             position. In no-seats mode the count+banner only appear once the
             first person is added; the tag area (min-h-[78px]) is always present
             so the section height is stable. */}
-        <div className={`flex flex-col gap-4 pt-1 ${(!noSeats || added.size > 0) ? "border-t border-[#ededed]" : ""}`}>
+        <div className={`mt-[10px] flex flex-col gap-4 pt-1 ${(!noSeats || added.size > 0) ? "border-t border-[#ededed]" : ""}`}>
           {/* Count line — only show when there's someone to count. */}
           {(!noSeats || added.size > 0) && (
             noSeats ? (
@@ -146,9 +146,9 @@ export function SeatsLeft({
                 <p className="text-[14px] text-ink">
                   Your team: <span className="font-semibold">{teamCount}</span>
                 </p>
-                <span className="flex h-6 items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 text-[14px] leading-none text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <span className="flex items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 py-[3px] text-[14px] leading-none text-white">
                   <Info className="size-4 shrink-0" strokeWidth={2} />
-                  You will be billed for each teammate who joins.
+                  <span className="translate-y-px">You will be billed for each teammate who joins.</span>
                 </span>
               </div>
             ) : (
