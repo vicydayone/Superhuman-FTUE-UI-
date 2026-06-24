@@ -343,8 +343,9 @@ const TAB_ORDER: { key: SplitCategory; label: string }[] = [
   { key: "other", label: "Other" },
 ];
 
-// "Inbox" cross-fades to "Important" almost instantly — imperceptible.
-const PHASE1_AT = 150;
+// "Inbox" cross-fades to "Important" on the very next tick — transition
+// itself is very long so the switch is almost imperceptible.
+const PHASE1_AT = 0;
 // Each folder appears clearly, waits for its emails to collapse, then the
 // next one follows. Gaps: ~900ms to establish "Important", then 1400ms
 // between each folder so the collapse animation finishes with a short pause.
@@ -497,7 +498,7 @@ function SplitInboxContent({
               "flex items-baseline gap-[5px] text-[16px] text-ink",
               phase >= 1 && "pointer-events-none absolute inset-y-0 left-0",
             )}
-            style={{ opacity: phase === 0 ? 1 : 0, transition: "opacity 180ms ease-out" }}
+            style={{ opacity: phase === 0 ? 1 : 0, transition: "opacity 800ms ease-out" }}
           >
             <span>Inbox</span>
             <Counter
@@ -511,7 +512,7 @@ function SplitInboxContent({
             // Fades in over "Inbox"; Calendar/Jira/Other slide in (tab-enter).
             <div
               className="flex flex-1 items-center"
-              style={{ animation: "preview-fade 350ms ease-out both" }}
+              style={{ animation: "preview-fade 800ms ease-out both" }}
             >
               {TAB_ORDER.map(({ key, label }) => {
                 const tp = tabPhase(key);
