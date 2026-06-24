@@ -313,7 +313,7 @@ function AskAiContent({ askDemo, entered }: { askDemo: number; entered: boolean 
           panel slides in. Spacing mirrors Split Inbox: tabs 64px from card top,
           40px gap to the list. */}
       <div
-        className="flex flex-col gap-10 pr-[25px] pt-8"
+        className="flex flex-col gap-10 pl-6 pr-[25px] pt-8"
         style={{
           transform: entered ? "translateX(253px)" : "translateX(0)",
           opacity: entered ? 0.8 : 1,
@@ -369,7 +369,7 @@ function AskAiAnswerCard({ askDemo }: { askDemo: number }) {
   return (
     <div
       key={askDemo}
-      className="absolute left-[-20px] w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
+      className="absolute left-[-20px] z-30 w-[214px] rounded-[4px] bg-white p-[18px] shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)] flex flex-col gap-[12px]"
       style={{ top, animation: "highlight-pop 420ms ease-out both" }}
     >
       <AskAiAnswer index={askDemo} />
