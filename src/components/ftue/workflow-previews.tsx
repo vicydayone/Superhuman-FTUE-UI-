@@ -282,11 +282,11 @@ function AskAiContent({ askDemo, entered }: { askDemo: number; entered: boolean 
           account menu) and pushes the inbox to the right. Once settled it stays
           put, so the prompt cards on the left can be hovered. */}
       <div
-        className={cn(
-          "absolute bottom-0 left-0 top-8 z-20 flex w-[237px] flex-col gap-[18px] border-r-[0.5px] border-[#edecec] bg-white px-5 pb-[31px] pt-[17px]",
-          "transition-transform duration-700 ease-out",
-          entered ? "translate-x-0" : "-translate-x-full",
-        )}
+        className="absolute bottom-0 left-0 top-8 z-20 flex w-[237px] flex-col gap-[18px] border-r-[0.5px] border-[#edecec] bg-white px-5 pb-[31px] pt-[17px]"
+        style={{
+          transform: entered ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 700ms ease-out",
+        }}
       >
         <p className="text-[13px] font-semibold tracking-[-0.14px] text-[#29323d]">
           Ask AI
@@ -313,10 +313,12 @@ function AskAiContent({ askDemo, entered }: { askDemo: number; entered: boolean 
           panel slides in. Spacing mirrors Split Inbox: tabs 64px from card top,
           40px gap to the list. */}
       <div
-        className={cn(
-          "flex flex-col gap-10 pr-[25px] pt-8 transition-all duration-700 ease-out",
-          entered ? "translate-x-[253px] opacity-80" : "translate-x-0 opacity-100",
-        )}
+        className="flex flex-col gap-10 pr-[25px] pt-8"
+        style={{
+          transform: entered ? "translateX(253px)" : "translateX(0)",
+          opacity: entered ? 0.8 : 1,
+          transition: "transform 700ms ease-out, opacity 700ms ease-out",
+        }}
       >
         <div className="flex items-center gap-[13px] overflow-hidden">
           <IconHamburger className="size-4 shrink-0" />
@@ -408,8 +410,8 @@ export function WorkflowPreview({
     }
     setEntered(false);
     setSettled(false);
-    const t1 = setTimeout(() => setEntered(true), 500);
-    const t2 = setTimeout(() => setSettled(true), 1250);
+    const t1 = setTimeout(() => setEntered(true), 800);
+    const t2 = setTimeout(() => setSettled(true), 1600);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -421,7 +423,7 @@ export function WorkflowPreview({
       overlay={step === "ask-ai" && settled ? <AskAiAnswerCard askDemo={askDemo} /> : undefined}
     >
       {step === "ask-ai" ? (
-        <div key="askai" style={{ animation: "preview-fade 360ms ease-out both" }}>
+        <div key="askai">
           <AskAiContent askDemo={askDemo} entered={entered} />
         </div>
       ) : (
