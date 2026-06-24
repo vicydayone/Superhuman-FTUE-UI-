@@ -41,7 +41,7 @@ export function AutoReminderLeft({
           onMouseLeave={() => onHover(null)}
         >
           <p className="text-[14px] text-ink-subdued">
-            Remind me if I don&apos;t hear back
+            Remind me if I don&apos;t hear back:
           </p>
           {REMINDER_OPTIONS.map((option) => (
             <SelectionCard
