@@ -73,14 +73,16 @@ export function SeatsLeft({
         <h1 className="text-[22px] font-semibold leading-normal">
           Bring your team into Superhuman.
         </h1>
-        <p className="text-[14px] leading-normal">
+        <p className="min-h-[44px] text-[14px] leading-normal">
           {noSeats
             ? "Invite teammates now. Seats will be added automatically for everyone you bring in."
             : "Add your teammates to share conversations, comments, and Snippets. Your plan includes 5 people, and you can always add more."}
         </p>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col justify-center gap-5">
+      <div className="flex min-h-0 flex-1 flex-col justify-between">
+        {/* Top block: People to invite + Recommended — fixed at top of middle area */}
+        <div className="flex flex-col gap-5">
         {/* People to invite */}
         <div className="flex flex-col gap-2.5">
           <p className="text-[14px] text-ink-subdued">
@@ -130,12 +132,13 @@ export function SeatsLeft({
             ))}
           </div>
         )}
+        </div>{/* end top block */}
 
-        {/* Your team — pulled up so the divider sits closer to the last row.
-            In no-seats mode this whole section only appears once the first
-            teammate is added (matches Figma "no seats purchased 1" → "2"). */}
-        {(!noSeats || added.size > 0) && (
-        <div className="-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4">
+        {/* Your team — always rendered so the layout height stays stable and
+            "People to invite" doesn't shift between variants. In no-seats mode
+            the section is invisible (takes space) until the first person is
+            added, at which point it becomes visible (matches Figma flow). */}
+        <div className={`-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4 ${noSeats && added.size === 0 ? "invisible" : ""}`}>
           {/* Count line — "(N/5)" with a hard limit when seats are purchased,
               "Your team: N" + billing notice when they're not. */}
           {noSeats ? (
@@ -143,7 +146,7 @@ export function SeatsLeft({
               <p className="text-[14px] text-ink">
                 Your team: <span className="font-semibold">{teamCount}</span>
               </p>
-              <span className="flex h-6 items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 text-[14px] leading-4 text-white">
+              <span className="flex h-6 items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 text-[14px] leading-none text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                 <Info className="size-4 shrink-0" strokeWidth={2} />
                 You will be billed for each teammate who joins.
               </span>
@@ -189,7 +192,6 @@ export function SeatsLeft({
             ))}
           </div>
         </div>
-        )}
       </div>
 
       <div className="flex flex-col gap-5">
