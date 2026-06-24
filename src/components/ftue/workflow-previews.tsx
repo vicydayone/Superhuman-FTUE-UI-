@@ -477,8 +477,17 @@ export function SeatsPreview() {
       style={{ animation: "screen-enter 420ms ease-out both" }}
     >
       {/* Frosted compose card — semi-transparent so the wash shows through
-          (no opaque white block). */}
-      <div className="absolute left-[40px] top-[70px] w-[440px] overflow-hidden rounded-[10px] border border-white/40 bg-white/40 px-7 py-6 backdrop-blur-md shadow-[0px_13px_38px_rgba(104,212,235,0.25),0px_6.5px_32px_rgba(226,138,226,0.3),0px_0.6px_2.6px_rgba(0,0,0,0.22)]">
+          (no opaque white block). The whole card (background + text) fades out
+          toward the right edge via a horizontal mask, so the draft dissolves
+          into the wash exactly like the Figma mockup. Sized wider than its
+          visible area so the body lines run off into the fade. */}
+      <div
+        className="absolute left-[40px] top-[60px] w-[520px] rounded-[10px] border border-white/40 bg-white/45 px-7 pb-9 pt-6 backdrop-blur-md shadow-[0px_13px_38px_rgba(104,212,235,0.25),0px_6.5px_32px_rgba(226,138,226,0.3),0px_0.6px_2.6px_rgba(0,0,0,0.22)]"
+        style={{
+          WebkitMaskImage: "linear-gradient(to right, black 0%, black 52%, transparent 92%)",
+          maskImage: "linear-gradient(to right, black 0%, black 52%, transparent 92%)",
+        }}
+      >
         <p
           className="bg-clip-text text-[21px] font-semibold text-transparent"
           style={{ backgroundImage: "linear-gradient(90deg,#5cc3fa,#fa75f8 46%,#fab266)" }}
@@ -486,20 +495,14 @@ export function SeatsPreview() {
           New message
         </p>
         <div className="my-4 h-px w-full bg-black/10" />
-        <p className="text-[15px] leading-[28px] text-[rgba(93,112,137,0.55)]">
+        <p className="text-[18px] leading-[36px] text-[rgba(93,112,137,0.55)]">
           Hi team,
         </p>
-        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.55)]">
+        <p className="mt-2 text-[18px] leading-[36px] text-[rgba(93,112,137,0.55)]">
           I am thrilled about our recent product launch! As you all know,
           ProductHunt is a great platform for tapping into the tech community and
-          gaining exposure. If you haven&apos;t already, please take a moment to
-          upvote our launch — it only takes a few clicks. Thank you for your
-          support, and let&apos;s keep up the great work.
-        </p>
-        <p className="mt-3 text-[15px] leading-[28px] text-[rgba(93,112,137,0.55)]">
-          Best,
-          <br />
-          Nicole
+          gaining exposure for our product. However, we can&apos;t do it alone.
+          That&apos;s why I&apos;m reaching out to ask for your help.
         </p>
       </div>
 
