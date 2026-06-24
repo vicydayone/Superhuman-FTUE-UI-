@@ -6,8 +6,12 @@
  */
 export function DoneCard({ onRestart }: { onRestart: () => void }) {
   return (
-    // pt-14 clears the absolute-positioned Stepper bar (~56px)
-    <div className="flex h-full w-full items-center justify-center pt-14">
+    // Full-bleed mountain background (same photo as Chapter 1 auth screens).
+    // pt-14 clears the absolute-positioned Stepper bar (~56px).
+    <div
+      className="flex h-full w-full items-center justify-center bg-cover bg-center pt-14"
+      style={{ backgroundImage: "url(/auth-bg.png)" }}
+    >
       <div
         className="flex flex-col items-center gap-10 rounded-[12px] border border-[#e2e2e2] bg-white px-[80px] pb-[60px] pt-[70px] shadow-[0px_0px_27.6px_rgba(107,72,134,0.1)]"
         style={{ animation: "screen-enter 420ms ease-out both" }}
@@ -20,7 +24,7 @@ export function DoneCard({ onRestart }: { onRestart: () => void }) {
           >
             You&rsquo;re all set!
           </h1>
-          <p className="max-w-[440px] text-[16px] leading-6 text-ink">
+          <p className="whitespace-nowrap text-[16px] leading-6 text-ink">
             Now let&rsquo;s take a two-minute tutorial to learn how to fly through your inbox.
           </p>
         </div>
