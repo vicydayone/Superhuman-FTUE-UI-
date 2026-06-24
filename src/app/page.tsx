@@ -20,6 +20,7 @@ import { DoneCard } from "@/components/ftue/done-screen";
 import { Chapter2Preview } from "@/components/ftue/inbox-preview";
 import { WorkflowPreview, SeatsPreview } from "@/components/ftue/workflow-previews";
 import { AUTO_ARCHIVE_MAIL, SPLIT_MAIL, REMINDER_OPTIONS } from "@/lib/data";
+import { cn } from "@/lib/utils";
 import type {
   AutoArchiveToggles,
   AutoDraftDemo,
@@ -86,6 +87,10 @@ export default function Home() {
   const [reminder, setReminder] = useState<ReminderChoice>("couple-days");
   const [reminderHover, setReminderHover] = useState<ReminderChoice | null>(null);
   const [askDemo, setAskDemo] = useState(0);
+  // Team Seats has two variants: seats pre-purchased (default) vs. no seats
+  // purchased (teammates billed as added). Toggled via the prototype switch
+  // on the Seats screen.
+  const [noSeats, setNoSeats] = useState(false);
 
   const restart = () => {
     setArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
@@ -94,6 +99,7 @@ export default function Home() {
     setDraftDemo("responses");
     setReminder("couple-days");
     setAskDemo(0);
+    setNoSeats(false);
     setArchiveClosing(false);
     setArchiveHoverLabel(null);
     setSplitHoverTab(null);
@@ -169,7 +175,9 @@ export default function Home() {
           />
         );
       case "seats":
-        return <SeatsLeft onContinue={() => setStep("done")} />;
+        // key={noSeats} remounts the column on toggle so the invite state
+        // (added teammates) resets cleanly between the two variants.
+        return <SeatsLeft key={String(noSeats)} noSeats={noSeats} onContinue={() => setStep("done")} />;
       default:
         return null;
     }
@@ -296,6 +304,34 @@ export default function Home() {
               onNavigate={(s) => { setArchiveClosing(false); setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
               className="absolute inset-x-0 top-0 z-10"
             />
+
+            {/* Prototype switch — only on the Seats screen. Toggles between the
+                "seats purchased" and "no seats purchased" variants. Sits just
+                below the progress bar, top-right. */}
+            {step === "seats" && (
+              <div className="absolute right-6 top-[60px] z-20 flex items-center gap-2 rounded-full border border-black/10 bg-white/90 p-1 shadow-[0_1px_3px_rgba(0,0,0,0.12)] backdrop-blur-sm">
+                <button
+                  type="button"
+                  onClick={() => setNoSeats(false)}
+                  className={cn(
+                    "rounded-full px-3 py-1 text-[12px] font-medium transition-colors",
+                    !noSeats ? "bg-primary text-primary-foreground" : "text-[#5f6368] hover:text-black",
+                  )}
+                >
+                  Seats purchased
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNoSeats(true)}
+                  className={cn(
+                    "rounded-full px-3 py-1 text-[12px] font-medium transition-colors",
+                    noSeats ? "bg-primary text-primary-foreground" : "text-[#5f6368] hover:text-black",
+                  )}
+                >
+                  No seats
+                </button>
+              </div>
+            )}
 
             {step === "done" ? (
               <DoneCard onRestart={restart} />

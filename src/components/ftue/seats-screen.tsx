@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, X } from "lucide-react";
+import { Info, UserPlus, X } from "lucide-react";
 import { SEATS_PEOPLE, SEATS_TEAM } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
@@ -24,16 +24,32 @@ function Avatar({ className }: { className?: string }) {
   );
 }
 
-/** Seats left column — invite teammates; tracks local invite state. */
-export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
+/** Seats left column — invite teammates; tracks local invite state.
+ *
+ * Two variants, switched by `noSeats`:
+ *  - false (default): the user pre-purchased 5 seats. A base teammate (Emily)
+ *    is already on the team, the count shows "Your team (N/5)", and there's a
+ *    hard 5-seat limit.
+ *  - true: no seats purchased up front. No base teammate, no limit, the count
+ *    shows "Your team: N", and once the first person is added a billing notice
+ *    appears (seats are added — and billed — automatically). */
+export function SeatsLeft({
+  onContinue,
+  noSeats = false,
+}: {
+  onContinue: () => void;
+  noSeats?: boolean;
+}) {
   // Which recommended rows were added (by index). Added people leave the
   // recommended list and appear as removable tags under "Your team".
   const [added, setAdded] = useState<Set<number>>(new Set());
 
-  const teamCount = SEATS_TEAM.length + added.size;
+  // No-seats mode has no pre-existing teammate and no upper bound.
+  const baseTeam = noSeats ? [] : SEATS_TEAM;
+  const teamCount = baseTeam.length + added.size;
 
   const addPerson = (index: number) => {
-    if (teamCount >= SEAT_LIMIT) return;
+    if (!noSeats && teamCount >= SEAT_LIMIT) return;
     setAdded((prev) => new Set(prev).add(index));
   };
   const removePerson = (index: number) => {
@@ -58,8 +74,9 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           Bring your team into Superhuman.
         </h1>
         <p className="text-[14px] leading-normal">
-          Add your teammates to share conversations, comments, and Snippets.
-          Your plan includes 5 people, and you can always add more.
+          {noSeats
+            ? "Invite teammates now. Seats will be added automatically for everyone you bring in."
+            : "Add your teammates to share conversations, comments, and Snippets. Your plan includes 5 people, and you can always add more."}
         </p>
       </div>
 
@@ -114,15 +131,32 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
           </div>
         )}
 
-        {/* Your team — pulled up so the divider sits closer to the last row. */}
+        {/* Your team — pulled up so the divider sits closer to the last row.
+            In no-seats mode this whole section only appears once the first
+            teammate is added (matches Figma "no seats purchased 1" → "2"). */}
+        {(!noSeats || added.size > 0) && (
         <div className="-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4">
-          <p className="text-[14px] text-ink">
-            Your team ({teamCount}/{SEAT_LIMIT})
-          </p>
+          {/* Count line — "(N/5)" with a hard limit when seats are purchased,
+              "Your team: N" + billing notice when they're not. */}
+          {noSeats ? (
+            <div className="flex items-center gap-4">
+              <p className="text-[14px] text-ink">
+                Your team: <span className="font-semibold">{teamCount}</span>
+              </p>
+              <span className="flex h-6 items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 text-[14px] leading-4 text-white">
+                <Info className="size-4 shrink-0" strokeWidth={2} />
+                You will be billed for each teammate who joins.
+              </span>
+            </div>
+          ) : (
+            <p className="text-[14px] text-ink">
+              Your team ({teamCount}/{SEAT_LIMIT})
+            </p>
+          )}
           {/* Reserve two rows so the layout doesn't shift as tags wrap. */}
           <div className="flex min-h-[78px] flex-wrap content-start gap-2.5">
             {/* Base teammate — not removable. */}
-            {SEATS_TEAM.map((t) => (
+            {baseTeam.map((t) => (
               <div
                 key={t.name}
                 className="flex items-center gap-2 rounded-[4px] border border-[#e6e8f0] py-[5px] pl-2.5 pr-2.5"
@@ -155,6 +189,7 @@ export function SeatsLeft({ onContinue }: { onContinue: () => void }) {
             ))}
           </div>
         </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-5">
