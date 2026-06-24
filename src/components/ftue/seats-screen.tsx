@@ -134,27 +134,28 @@ export function SeatsLeft({
         )}
         </div>{/* end top block */}
 
-        {/* Your team — always rendered so the layout height stays stable and
-            "People to invite" doesn't shift between variants. In no-seats mode
-            the section is invisible (takes space) until the first person is
-            added, at which point it becomes visible (matches Figma flow). */}
-        <div className={`-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4 ${noSeats && added.size === 0 ? "invisible" : ""}`}>
-          {/* Count line — "(N/5)" with a hard limit when seats are purchased,
-              "Your team: N" + billing notice when they're not. */}
-          {noSeats ? (
-            <div className="flex items-center gap-4">
+        {/* Your team — always rendered so "People to invite" stays at a fixed
+            position. In no-seats mode the count+banner only appear once the
+            first person is added; the tag area (min-h-[78px]) is always present
+            so the section height is stable. */}
+        <div className="-mt-3 flex flex-col gap-4 border-t border-[#ededed] pt-4">
+          {/* Count line — only show when there's someone to count. */}
+          {(!noSeats || added.size > 0) && (
+            noSeats ? (
+              <div className="flex items-center gap-4">
+                <p className="text-[14px] text-ink">
+                  Your team: <span className="font-semibold">{teamCount}</span>
+                </p>
+                <span className="flex h-6 items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 text-[14px] leading-none text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                  <Info className="size-4 shrink-0" strokeWidth={2} />
+                  You will be billed for each teammate who joins.
+                </span>
+              </div>
+            ) : (
               <p className="text-[14px] text-ink">
-                Your team: <span className="font-semibold">{teamCount}</span>
+                Your team ({teamCount}/{SEAT_LIMIT})
               </p>
-              <span className="flex h-6 items-center gap-2.5 rounded-[4px] bg-[#54acdc] px-2.5 text-[14px] leading-none text-white [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
-                <Info className="size-4 shrink-0" strokeWidth={2} />
-                You will be billed for each teammate who joins.
-              </span>
-            </div>
-          ) : (
-            <p className="text-[14px] text-ink">
-              Your team ({teamCount}/{SEAT_LIMIT})
-            </p>
+            )
           )}
           {/* Reserve two rows so the layout doesn't shift as tags wrap. */}
           <div className="flex min-h-[78px] flex-wrap content-start gap-2.5">
