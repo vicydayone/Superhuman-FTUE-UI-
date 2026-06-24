@@ -606,7 +606,7 @@ function SplitInboxContent({
                 className={cn(
                   // Left bleed matches the -mx-5 offset; right bleed extends
                   // further past the date column per design spec.
-                  "-ml-5 -mr-[42px] rounded-[4px] pl-5 pr-[42px] transition-colors duration-500",
+                  "-ml-5 -mr-[52px] rounded-[4px] pl-5 pr-[52px] transition-colors duration-500",
                   isFeatured && transitioning ? "bg-[rgba(174,177,221,0.28)]" : "",
                   isFeatured && hovering && !transitioning ? "bg-[rgba(174,177,221,0.15)] cursor-pointer" : "",
                 )}
