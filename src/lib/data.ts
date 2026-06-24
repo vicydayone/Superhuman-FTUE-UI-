@@ -182,7 +182,6 @@ export const AUTO_DRAFT_DEMOS: Record<
   followUps: {
     incoming: {
       sender: "Me",
-      badge: "Auto Reminder returned",
       body: "Hi Maria, did you get a chance to review the contract that I sent over? Let me know if you wanted to chat through any open details.",
     },
     reply: [
