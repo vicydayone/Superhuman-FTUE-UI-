@@ -289,6 +289,6 @@
 /* Hovering a Split category card pulses the matching tab larger, then back. */
 @keyframes tab-pulse {
   0%   { transform: scale(1); }
-  35%  { transform: scale(1.04); }
+  35%  { transform: scale(1.07); }
   100% { transform: scale(1); }
 }
