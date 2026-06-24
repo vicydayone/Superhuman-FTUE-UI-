@@ -73,11 +73,9 @@ function SendRow() {
   );
 }
 
-// ── Conversation content (Auto Draft + Auto Reminder share this view) ─────────
+// ── Conversation content (Auto Draft + Auto Reminder) ─────────────────────────
 
-/** Auto Reminder's fixed exchange — the sent draft, now a "Me" message. */
-const REMINDER_INCOMING =
-  "Thanks for sending that contract over. The team and I will review and then we can discuss next steps.";
+/** Auto Reminder's sent draft, now shown as a "Me" message. */
 const REMINDER_REPLY =
   "That’s great to hear Maria! I’m available to clarify anything or go over details if needed. Let me know if you’d like to discuss!";
 
@@ -93,10 +91,6 @@ function ConversationContent({
   const isReminder = step === "auto-reminder";
   const demo = AUTO_DRAFT_DEMOS[draftDemo];
 
-  const sender = isReminder ? "Maria" : demo.incoming.sender;
-  const incomingBody = isReminder ? REMINDER_INCOMING : demo.incoming.body;
-  const badge = isReminder ? undefined : demo.incoming.badge;
-
   return (
     <div
       className="flex h-[490px] flex-col items-center gap-4 px-[25px] pt-[40px]"
@@ -108,87 +102,77 @@ function ConversationContent({
         <div className="h-[50px] flex-1" />
       </div>
 
-      {/* Conversation box — fixed height so the send row and highlight card
-          are always at the same vertical position regardless of which card is
-          hovered. flex-1 spacer absorbs the variable height of the incoming section. */}
-      <div
-        className="flex w-[436px] max-w-full flex-col rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 pt-[30px] pb-5 transition-[height] duration-500 ease-out"
-        style={{ height: isReminder ? "auto" : 290 }}
-      >
-        {/* Incoming email — always anchored at the top */}
-        <div className="flex w-full shrink-0 flex-col items-start gap-2.5">
-          <div className="flex items-center gap-2.5">
-            <p className="text-[12px] font-semibold leading-[20px] tracking-[-0.15px] text-[#29323d]">
-              {sender}
+      {isReminder ? (
+        // AUTO REMINDER — sent "Me" reply + reminder confirmation (no incoming
+        // mail, no divider, no send row; matches Figma node 1928:4824).
+        <div className="flex w-[436px] max-w-full flex-col items-center gap-[30px] rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 py-[30px] shadow-[0_0_4.5px_rgba(0,0,0,0.15)]">
+          <div
+            className="flex w-full flex-col items-start gap-2.5"
+            style={{ animation: "reply-rise 500ms ease-out 200ms both" }}
+          >
+            <p className="text-[12px] font-semibold leading-4 text-[#29323d]">Me</p>
+            <p className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)]">
+              {REMINDER_REPLY}
             </p>
-            {/* Figma design: "Auto Reminder returned" is bold text inline, not a pill badge */}
-            {badge && (
-              <span className="text-[12px] font-bold leading-[20px] tracking-[-0.15px] text-[#29323d]">
-                {badge}
-              </span>
-            )}
           </div>
-          <p className="text-[12px] leading-[20px] tracking-[-0.15px] text-[rgba(0,0,0,0.55)]">
-            {incomingBody}
-          </p>
+          <div
+            className="flex w-[467px] max-w-none items-center gap-[11px] self-center rounded-[4px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
+            style={{ animation: "highlight-pop 450ms ease-out 720ms both" }}
+          >
+            <Sparkle className="size-[17px] shrink-0" />
+            <p className="text-[12px] leading-4 text-[rgba(0,0,0,0.75)]">
+              We’ll remind you{" "}
+              <span
+                className="bg-clip-text font-semibold text-transparent"
+                style={{ backgroundImage: "linear-gradient(97.6deg, rgb(28, 165, 215) 23%, rgb(134, 85, 214) 88%)" }}
+              >
+                {reminderWait}
+              </span>{" "}
+              if no reply
+            </p>
+          </div>
         </div>
-
-        {/* Divider — always immediately after incoming, visible on every variant */}
-        <div className="mt-6 h-px w-full shrink-0 bg-black/[0.08]" />
-
-        {/* Spacer — only for Auto Draft to keep highlight card at consistent Y as demos switch */}
-        {!isReminder && <div className="flex-1" />}
-
-        {/* AUTO REMINDER: sent "Me" reply thread + reminder confirmation */}
-        {isReminder && (
-          <div className="flex w-full shrink-0 flex-col gap-[16px] mt-6">
-            <div
-              className="flex w-full flex-col items-start gap-2.5"
-              style={{ animation: "reply-rise 500ms ease-out 200ms both" }}
-            >
-              <p className="text-[12px] font-semibold leading-[20px] tracking-[-0.15px] text-[#29323d]">
-                Me
+      ) : (
+        // AUTO DRAFT — incoming mail + drafted reply highlight + send row (no
+        // divider; matches Figma node 1928:4693). Fixed height keeps the reply
+        // card + send row anchored as the left cards swap the demo.
+        <div className="flex h-[290px] w-[436px] max-w-full flex-col rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 pb-5 pt-[30px]">
+          {/* Incoming email — anchored at the top */}
+          <div className="flex w-full shrink-0 flex-col items-start gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <p className="text-[12px] font-semibold leading-4 text-[#29323d]">
+                {demo.incoming.sender}
               </p>
-              <p className="text-[12px] leading-[20px] tracking-[-0.15px] text-[rgba(0,0,0,0.55)]">
-                {REMINDER_REPLY}
-              </p>
+              {demo.incoming.badge && (
+                <span className="text-[12px] font-bold leading-4 text-[#29323d]">
+                  {demo.incoming.badge}
+                </span>
+              )}
             </div>
-            <div
-              className="flex w-[467px] max-w-none self-center items-center gap-2 rounded-[12px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
-              style={{ animation: "highlight-pop 450ms ease-out 720ms both" }}
-            >
-              <Sparkle className="size-4 shrink-0" />
-              <p className="text-[13px] leading-[20px] tracking-[-0.15px] text-[rgba(0,0,0,0.75)]">
-                We’ll remind you{" "}
-                <span
-                  className="bg-clip-text font-bold text-transparent"
-                  style={{ backgroundImage: "linear-gradient(97.6deg, rgb(28, 165, 215) 23%, rgb(134, 85, 214) 88%)" }}
-                >
-                  {reminderWait}
-                </span>{" "}
-                if no reply
-              </p>
-            </div>
+            <p className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)]">
+              {demo.incoming.body}
+            </p>
           </div>
-        )}
 
-        {/* AUTO DRAFT: drafted reply highlight — anchored at consistent distance from bottom */}
-        {!isReminder && (
+          {/* Spacer keeps the highlight card at a consistent Y across demos */}
+          <div className="flex-1" />
+
+          {/* Drafted reply highlight */}
           <div
             key={draftDemo}
-            className="flex w-[467px] max-w-none self-center shrink-0 flex-col gap-[10px] rounded-[4px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
+            className="flex w-[467px] max-w-none shrink-0 flex-col gap-[11px] self-center rounded-[4px] bg-white px-5 py-3 shadow-[0px_0px_8.6px_rgba(187,187,209,0.7)]"
             style={{ animation: "highlight-pop 380ms ease-out both" }}
           >
-            <p className="leading-[20px] tracking-[-0.15px]">
+            <p className="leading-4">
               <span
-                className="text-[12.9px] font-bold tracking-[0.1px] bg-clip-text text-transparent"
+                className="bg-clip-text text-[12px] font-semibold text-transparent"
                 style={{ backgroundImage: "linear-gradient(91.75deg, rgb(28, 165, 215) 7.86%, rgb(134, 85, 214) 87.96%)" }}
               >
                 Auto Draft
               </span>
-              <span className="text-[11.9px] text-[#29323d]"> to Maria</span>
+              <span className="text-[12px] text-[#29323d]"> to Maria</span>
             </p>
-            <p className="text-[12.9px] leading-[20px] tracking-[-0.15px] text-[#29323d]">
+            <p className="text-[12px] leading-4 text-[#29323d]">
               {demo.reply.map((seg, i) =>
                 seg.highlight ? (
                   <span key={i} className="font-medium text-[#4a7fd0]">
@@ -200,13 +184,13 @@ function ConversationContent({
               )}
             </p>
           </div>
-        )}
 
-        {/* Send row — always at the bottom, fixed position via pb-5 on the box */}
-        <div className="mt-4 w-full shrink-0">
-          <SendRow />
+          {/* Send row — anchored at the bottom */}
+          <div className="mt-4 w-full shrink-0">
+            <SendRow />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
