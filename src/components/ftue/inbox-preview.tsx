@@ -583,7 +583,7 @@ function SplitInboxContent({
           )}
         </div>
       </div>
-      <div className="flex flex-1 flex-col overflow-hidden pl-[30px]">
+      <div className="flex flex-1 flex-col pl-[30px]">
         {mailItems.map(({ mail, collapsed, delay }) => {
           const isFeatured = !animating && mail.sender === "Maria Howard" && mail.subject === "Sales Contract";
           return (
