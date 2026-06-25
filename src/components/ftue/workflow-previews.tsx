@@ -127,7 +127,7 @@ function ConversationContent({
               if no reply
             </p>
           </div>
-          <SendRow />
+          <div className="self-start"><SendRow /></div>
         </div>
       ) : (
         // AUTO DRAFT — incoming mail + drafted reply highlight + send row,
