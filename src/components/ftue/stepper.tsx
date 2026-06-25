@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FlowStep } from "@/lib/types";
@@ -7,8 +10,6 @@ import type { FlowStep } from "@/lib/types";
  * double as navigation. Chapter 2 has 2 segments, Chapter 3 has 5.
  */
 const SEGMENT_TARGETS: Record<2 | 3, (FlowStep | undefined)[]> = {
-  // Chapter 2 = 2 steps: Auto Archive, then Split Inbox. (The "Welcome" intro
-  // is a loading screen and shows no progress bar.)
   2: ["auto-archive", "split-inbox"],
   3: ["auto-draft", "auto-reminder", "ask-ai", "seats", "done"],
 };
@@ -19,15 +20,15 @@ const STEPS: { label: string; doneTarget?: FlowStep }[] = [
   { label: "Accelerate your workflow" },
 ];
 
+// Duration of the fade-out phase before content swaps, and the fade-in after.
+const FADE_MS = 280;
+
 /**
- * Top onboarding stepper:
- *   Connect your account ✓ — Organize your Inbox — Accelerate your workflow
+ * Top onboarding stepper with smooth cross-fade between chapters.
  *
- * `activeStep` says which chapter is in progress (2 = Organize, 3 = Accelerate,
- * "done" = everything finished). The active step shows progress segments —
- * three for chapter 2, five for chapter 3 — and `progress` drives how many
- * are filled. Completed steps collapse to a checkmark; clicking a filled
- * segment (or a navigable completed step) jumps to the matching screen.
+ * When `activeStep` changes, the addons (progress bars / checkmark) first fade
+ * out over FADE_MS, then the content swaps and fades back in. Label colors
+ * transition continuously via CSS so the text never snaps.
  */
 export function Stepper({
   activeStep,
@@ -40,9 +41,36 @@ export function Stepper({
   onNavigate?: (step: FlowStep) => void;
   className?: string;
 }) {
-  // 0-based index of the active step; "done" sits past the last step so all
-  // three render as completed.
-  const activeIndex = activeStep === "done" ? STEPS.length : activeStep - 1;
+  // `displayed` lags behind `activeStep` during a chapter transition so we can
+  // fade the old addons out before swapping content.
+  const [displayed, setDisplayed] = useState<2 | 3 | "done">(activeStep);
+  // 0 = stable, 1 = fading-out (old content), 2 = fading-in (new content)
+  const [phase, setPhase] = useState<0 | 1 | 2>(0);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    if (activeStep === displayed) return;
+    // Clear any in-flight timers from a rapid step change.
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+
+    setPhase(1); // fade out current addons
+    timers.current.push(
+      setTimeout(() => {
+        setDisplayed(activeStep); // swap content
+        setPhase(2);              // fade in new addons
+      }, FADE_MS),
+    );
+    timers.current.push(
+      setTimeout(() => setPhase(0), FADE_MS * 2), // settled
+    );
+    return () => timers.current.forEach(clearTimeout);
+  }, [activeStep]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Addon opacity: fade out on phase 1, fade in on phase 2+.
+  const addonOpacity = phase === 1 ? 0 : 1;
+
+  const activeIndex = displayed === "done" ? STEPS.length : displayed - 1;
 
   return (
     <header
@@ -52,19 +80,21 @@ export function Stepper({
       )}
     >
       {STEPS.map((step, i) => {
+        // State is derived from `displayed` (not `activeStep`) so it doesn't
+        // jump ahead while the fade-out is still playing.
         const state =
           i < activeIndex ? "done" : i === activeIndex ? "active" : "upcoming";
 
-        // Label keeps a constant width (a hidden bold copy is the sizer) so it
-        // never shifts when the weight changes between active and done.
         const label = (
           <span className="relative inline-block whitespace-nowrap text-[14px] tracking-[-0.2px]">
+            {/* Invisible bold copy keeps the container width constant so
+                nothing shifts when the active weight changes. */}
             <span aria-hidden className="invisible font-bold">
               {step.label}
             </span>
             <span
               className={cn(
-                "absolute inset-0",
+                "absolute inset-0 transition-colors duration-500",
                 state === "active"
                   ? "font-bold text-stepper"
                   : state === "done"
@@ -77,13 +107,11 @@ export function Stepper({
           </span>
         );
 
-        // Add-on (checkmark or progress segments) sits ABSOLUTELY to the right
-        // of the label, so it never pushes the label out of position.
         let addon: React.ReactNode = null;
         if (state === "done") {
           addon = <Check className="size-3 text-stepper" strokeWidth={2.5} />;
         } else if (state === "active") {
-          const targets = SEGMENT_TARGETS[activeStep as 2 | 3];
+          const targets = SEGMENT_TARGETS[displayed as 2 | 3];
           const count = targets.length;
           addon = (
             <div className="flex items-center gap-0.5">
@@ -92,7 +120,7 @@ export function Stepper({
                 const bar = (
                   <span
                     className={cn(
-                      "block h-[5px] w-full",
+                      "block h-[5px] w-full transition-colors duration-300",
                       seg === 0 && "rounded-l-[3px] rounded-r-[1px]",
                       seg > 0 && seg < count - 1 && "rounded-[1px]",
                       seg === count - 1 && "rounded-l-[1px] rounded-r-[3px]",
@@ -137,7 +165,13 @@ export function Stepper({
               label
             )}
             {addon && (
-              <span className="absolute left-full top-1/2 ml-2 flex -translate-y-1/2 items-center">
+              <span
+                className="absolute left-full top-1/2 ml-2 flex -translate-y-1/2 items-center"
+                style={{
+                  opacity: addonOpacity,
+                  transition: `opacity ${FADE_MS}ms ease-out`,
+                }}
+              >
                 {addon}
               </span>
             )}
