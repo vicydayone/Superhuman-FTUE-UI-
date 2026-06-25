@@ -575,7 +575,7 @@ function SplitInboxContent({
                         "grid-template-columns 400ms ease-out, opacity 300ms ease-out",
                     }}
                   >
-                    <div style={{ overflow: "hidden", minWidth: 0 }}>{button}</div>
+                    <div style={{ overflow: collapsed ? "hidden" : "visible", minWidth: 0 }}>{button}</div>
                   </div>
                 );
               })}
