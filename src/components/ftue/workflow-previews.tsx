@@ -99,16 +99,16 @@ function ConversationContent({
       </div>
 
       {isReminder ? (
-        // AUTO REMINDER — sent "Me" reply + reminder confirmation (no incoming
-        // mail, no divider, no send row; matches Figma node 1928:4824).
+        // AUTO REMINDER — compose draft "Me to Maria" + reminder highlight +
+        // send row (matches updated Figma node 1917:2663).
         <div className="flex w-[436px] max-w-full flex-col items-center gap-[30px] rounded-[4px] border-l-[3px] border-[#bec1e4] bg-white px-5 py-[30px] shadow-[0_0_4.5px_rgba(0,0,0,0.15)]">
           <div
             className="flex w-full flex-col items-start gap-2.5"
             style={{ animation: "reply-rise 500ms ease-out 200ms both" }}
           >
-            <p className="text-[12px] font-semibold leading-4 text-[#29323d]">Me</p>
+            <p className="text-[12px] font-semibold leading-4 text-[#29323d]">Me to Maria</p>
             <p className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)]">
-              {REMINDER_REPLY}
+              Absolutely! Can you please set up a meeting to discuss as a group later this week? There are a few remaining open questions I&apos;d like to go over.
             </p>
           </div>
           <div
@@ -117,7 +117,7 @@ function ConversationContent({
           >
             <Sparkle className="size-[17px] shrink-0" />
             <p className="text-[12px] leading-4 text-[rgba(0,0,0,0.75)]">
-              We’ll remind you{" "}
+              We&apos;ll remind you{" "}
               <span
                 className="bg-clip-text font-semibold text-transparent"
                 style={{ backgroundImage: "linear-gradient(97.6deg, rgb(28, 165, 215) 23%, rgb(134, 85, 214) 88%)" }}
@@ -127,6 +127,7 @@ function ConversationContent({
               if no reply
             </p>
           </div>
+          <SendRow />
         </div>
       ) : (
         // AUTO DRAFT — incoming mail + drafted reply highlight + send row,
