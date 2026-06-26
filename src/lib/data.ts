@@ -181,7 +181,7 @@ export const AUTO_DRAFT_DEMOS: Record<
   },
   followUps: {
     incoming: {
-      sender: "Me",
+      sender: "Me to Maria",
       body: "Hi Maria, did you get a chance to review the contract that I sent over? Let me know if you wanted to chat through any open details.",
     },
     reply: [
@@ -192,7 +192,7 @@ export const AUTO_DRAFT_DEMOS: Record<
   },
   scheduling: {
     incoming: {
-      sender: "Me",
+      sender: "Me to Maria",
       body: "Hi Maria, did you get a chance to review the contract that I sent over? Let me know if you wanted to chat through any open details.",
     },
     reply: [
