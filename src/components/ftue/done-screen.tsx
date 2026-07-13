@@ -1,29 +1,13 @@
 "use client";
 
 /**
- * Final "You're all set!" screen — mountain photo with a purple colour-overlay
- * (replicates the Figma imgDone1 filter layer) + a subtle pink radial gradient.
- * Matches Figma node 1928:11489.
+ * Final "You're all set!" screen — sits on the shared light gradient wash
+ * (/background.png from the page container), matching every other Chapter 2/3
+ * screen. pt-14 clears the absolute-positioned Stepper bar (~56px).
  */
 export function DoneCard({ onRestart }: { onRestart: () => void }) {
   return (
-    // Stacking context: mountain photo → purple overlay → pink gradient → card.
-    // pt-14 clears the absolute-positioned Stepper bar (~56px).
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden pt-14">
-      {/* Layer 1 — mountain photo (natural blue-purple tones from auth-bg.png) */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url(/auth-bg.png)" }}
-      />
-      {/* Layer 2 — subtle pink radial gradient bottom-right (matches Figma) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse 80% 80% at 90% 90%, rgba(255,165,174,0.18) 0%, transparent 70%)",
-        }}
-      />
-
       {/* Card */}
       <div
         className="relative flex flex-col items-center gap-10 rounded-[12px] border border-[#e2e2e2] bg-white px-[80px] pb-[60px] pt-[70px] shadow-[0px_0px_27.6px_rgba(107,72,134,0.1)]"
