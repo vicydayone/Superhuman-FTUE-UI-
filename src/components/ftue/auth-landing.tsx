@@ -8,7 +8,15 @@ import { cn } from "@/lib/utils";
  * MAIL wordmark, and a white card. The welcome and sign-in screens share this
  * shell and only swap the card body — matching the two Figma frames exactly.
  */
-function AuthLanding({ children }: { children: React.ReactNode }) {
+function AuthLanding({
+  children,
+  cornerLink,
+}: {
+  children: React.ReactNode;
+  /** Rendered pinned to the actual screen corner (not the centered card), so
+   *  it stays put regardless of card height. */
+  cornerLink?: React.ReactNode;
+}) {
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
       {/* Lake Wanaka dusk photo. Swap this file (public/auth-bg.png) for the
@@ -34,6 +42,8 @@ function AuthLanding({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </div>
+
+      {cornerLink}
     </div>
   );
 }
@@ -101,7 +111,19 @@ export function SignInScreen({
   onPrototypeSignIn?: () => void;
 }) {
   return (
-    <AuthLanding>
+    <AuthLanding
+      cornerLink={
+        onPrototypeSignIn && (
+          <button
+            type="button"
+            onClick={onPrototypeSignIn}
+            className="absolute bottom-3 right-3 z-20 text-[11px] text-white/40 transition-colors hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          >
+            Sign in prototype
+          </button>
+        )
+      }
+    >
       <div className="flex flex-col items-center gap-6 sm:gap-8">
         <h1 className={headingClass}>{HEADING}</h1>
         <div className="flex w-full max-w-[340px] flex-col gap-[13px]">
@@ -109,15 +131,6 @@ export function SignInScreen({
           <AuthButton onClick={onContinue}>Sign in with Microsoft</AuthButton>
         </div>
       </div>
-      {onPrototypeSignIn && (
-        <button
-          type="button"
-          onClick={onPrototypeSignIn}
-          className="absolute bottom-2 right-2 text-[10px] text-black/10 transition-colors hover:text-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-        >
-          Sign in prototype
-        </button>
-      )}
     </AuthLanding>
   );
 }

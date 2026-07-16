@@ -259,11 +259,14 @@ export default function Home() {
 
   const isChapter1 = (CHAPTER1 as string[]).includes(step);
 
-  // Full linear order across the whole onboarding, so the prototype nav arrows
-  // can step forward/back through every screen (resetting transient transition
-  // state so jumps land cleanly).
+  // Linear order for the prototype nav arrows. The Google sign-in mockup
+  // (google-account/consent/scopes/signing-in) is intentionally left out —
+  // it's a hidden side path reachable only via the "Sign in prototype" link
+  // on the Sign In screen, so the default forward/back flow always skips
+  // straight from "signin" to "intro" and never surfaces those screens.
   const FLOW_ORDER: FlowStep[] = [
-    ...CHAPTER1,
+    "welcome",
+    "signin",
     "intro",
     "auto-archive",
     "split-inbox",
@@ -379,7 +382,9 @@ export default function Home() {
           <button
             type="button"
             onClick={() => goTo(flowIdx + 1)}
-            disabled={flowIdx >= FLOW_ORDER.length - 1}
+            // flowIdx is -1 while on a hidden Google mockup screen (it's not
+            // in FLOW_ORDER) — disable rather than let +1 wrap to "welcome".
+            disabled={flowIdx < 0 || flowIdx >= FLOW_ORDER.length - 1}
             aria-label="Next screen"
             className="flex size-8 items-center justify-center rounded-full border border-black/10 bg-white/85 text-[#5f6368] shadow-[0_1px_3px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
           >
