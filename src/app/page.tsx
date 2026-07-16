@@ -228,7 +228,12 @@ export default function Home() {
       case "welcome":
         return <WelcomeScreen onContinue={() => setStep("signin")} />;
       case "signin":
-        return <SignInScreen onContinue={() => setStep("google-account")} />;
+        return (
+          <SignInScreen
+            onContinue={() => setStep("intro")}
+            onPrototypeSignIn={() => setStep("google-account")}
+          />
+        );
       case "google-account":
         return <GoogleAccountScreen onContinue={() => setStep("google-consent")} />;
       case "google-consent":

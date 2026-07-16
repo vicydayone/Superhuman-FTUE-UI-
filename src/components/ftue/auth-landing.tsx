@@ -87,8 +87,19 @@ export function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-/** Screen 2 — sign in. Google / Microsoft provider buttons. */
-export function SignInScreen({ onContinue }: { onContinue: () => void }) {
+/**
+ * Screen 2 — sign in. Google / Microsoft provider buttons skip straight to
+ * the Welcome Loading screen by default. A hidden "Sign in prototype" link
+ * (bottom-right) is the only way to walk through the full Google auth
+ * mockup (account picker → consent → scopes → signing-in).
+ */
+export function SignInScreen({
+  onContinue,
+  onPrototypeSignIn,
+}: {
+  onContinue: () => void;
+  onPrototypeSignIn?: () => void;
+}) {
   return (
     <AuthLanding>
       <div className="flex flex-col items-center gap-6 sm:gap-8">
@@ -98,6 +109,15 @@ export function SignInScreen({ onContinue }: { onContinue: () => void }) {
           <AuthButton onClick={onContinue}>Sign in with Microsoft</AuthButton>
         </div>
       </div>
+      {onPrototypeSignIn && (
+        <button
+          type="button"
+          onClick={onPrototypeSignIn}
+          className="absolute bottom-2 right-2 text-[10px] text-black/10 transition-colors hover:text-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+        >
+          Sign in prototype
+        </button>
+      )}
     </AuthLanding>
   );
 }
