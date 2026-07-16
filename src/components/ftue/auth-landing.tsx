@@ -76,34 +76,13 @@ const HEADING = "The most productive email app ever made.";
 const headingClass =
   "text-center text-[20px] font-normal leading-[1.15] text-black/60 sm:text-[26px]";
 
-/** Screen 1 — welcome. Single "Get Started Now" CTA + a download link. */
-export function WelcomeScreen({ onContinue }: { onContinue: () => void }) {
-  return (
-    <AuthLanding>
-      <div className="flex flex-col items-center gap-6 sm:gap-8">
-        <h1 className={headingClass}>{HEADING}</h1>
-        <div className="flex w-full max-w-[340px] flex-col items-center gap-4">
-          <AuthButton onClick={onContinue}>Get Started Now</AuthButton>
-          <button
-            type="button"
-            onClick={onContinue}
-            className="text-[13px] text-black/45 transition-colors hover:text-black/60"
-          >
-            Want native? <span className="text-[#8797cd]">Download here</span>
-          </button>
-        </div>
-      </div>
-    </AuthLanding>
-  );
-}
-
 /**
- * Screen 2 — sign in. Google / Microsoft provider buttons skip straight to
- * the Welcome Loading screen by default. A hidden "Sign in prototype" link
- * (bottom-right) is the only way to walk through the full Google auth
- * mockup (account picker → consent → scopes → signing-in).
+ * Screen 1 — welcome. "Get Started Now" skips straight to the Welcome
+ * Loading screen by default. A hidden "Sign in prototype" link (bottom-right)
+ * is the only way to walk through the full auth mockup (sign-in provider
+ * picker → Google account picker → consent → scopes → signing-in).
  */
-export function SignInScreen({
+export function WelcomeScreen({
   onContinue,
   onPrototypeSignIn,
 }: {
@@ -124,6 +103,31 @@ export function SignInScreen({
         )
       }
     >
+      <div className="flex flex-col items-center gap-6 sm:gap-8">
+        <h1 className={headingClass}>{HEADING}</h1>
+        <div className="flex w-full max-w-[340px] flex-col items-center gap-4">
+          <AuthButton onClick={onContinue}>Get Started Now</AuthButton>
+          <button
+            type="button"
+            onClick={onContinue}
+            className="text-[13px] text-black/45 transition-colors hover:text-black/60"
+          >
+            Want native? <span className="text-[#8797cd]">Download here</span>
+          </button>
+        </div>
+      </div>
+    </AuthLanding>
+  );
+}
+
+/**
+ * Screen 2 — sign in. Only reachable via the hidden "Sign in prototype" link
+ * on the Welcome screen, so both provider buttons lead into the full Google
+ * auth mockup (account picker → consent → scopes → signing-in).
+ */
+export function SignInScreen({ onContinue }: { onContinue: () => void }) {
+  return (
+    <AuthLanding>
       <div className="flex flex-col items-center gap-6 sm:gap-8">
         <h1 className={headingClass}>{HEADING}</h1>
         <div className="flex w-full max-w-[340px] flex-col gap-[13px]">

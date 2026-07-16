@@ -226,14 +226,14 @@ export default function Home() {
   const renderChapter1 = () => {
     switch (step) {
       case "welcome":
-        return <WelcomeScreen onContinue={() => setStep("signin")} />;
-      case "signin":
         return (
-          <SignInScreen
+          <WelcomeScreen
             onContinue={() => setStep("intro")}
-            onPrototypeSignIn={() => setStep("google-account")}
+            onPrototypeSignIn={() => setStep("signin")}
           />
         );
+      case "signin":
+        return <SignInScreen onContinue={() => setStep("google-account")} />;
       case "google-account":
         return <GoogleAccountScreen onContinue={() => setStep("google-consent")} />;
       case "google-consent":
@@ -259,14 +259,13 @@ export default function Home() {
 
   const isChapter1 = (CHAPTER1 as string[]).includes(step);
 
-  // Linear order for the prototype nav arrows. The Google sign-in mockup
-  // (google-account/consent/scopes/signing-in) is intentionally left out —
-  // it's a hidden side path reachable only via the "Sign in prototype" link
-  // on the Sign In screen, so the default forward/back flow always skips
-  // straight from "signin" to "intro" and never surfaces those screens.
+  // Linear order for the prototype nav arrows. The whole auth mockup
+  // (signin, google-account/consent/scopes/signing-in) is intentionally left
+  // out — it's a hidden side path reachable only via the "Sign in prototype"
+  // link on the Welcome screen, so the default forward/back flow always
+  // skips straight from "welcome" to "intro" and never surfaces those screens.
   const FLOW_ORDER: FlowStep[] = [
     "welcome",
-    "signin",
     "intro",
     "auto-archive",
     "split-inbox",
