@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Stepper } from "@/components/ftue/stepper";
 import { IntroScreen } from "@/components/ftue/intro-screen";
 import { WelcomeScreen, SignInScreen } from "@/components/ftue/auth-landing";
@@ -90,6 +90,17 @@ export default function Home() {
   // purchased (teammates billed as added). Toggled via the prototype switch
   // on the Seats screen.
   const [noSeats, setNoSeats] = useState(false);
+  // Experiment: on entering Auto Archive (the first Chapter 2 screen), hold
+  // back the stepper + left column entirely so focus lands on the preview
+  // alone for a couple seconds — then the rest reveals together.
+  const [chapter2Focus, setChapter2Focus] = useState(false);
+
+  useEffect(() => {
+    if (step !== "auto-archive") return;
+    setChapter2Focus(false);
+    const t = setTimeout(() => setChapter2Focus(true), 2400);
+    return () => clearTimeout(t);
+  }, [step]);
 
   const restart = () => {
     setArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
@@ -296,12 +307,17 @@ export default function Home() {
         ) : (
           <div className="relative flex h-full w-full">
             {/* Persistent stepper — stays mounted across every non-intro step,
-                so the progress bar holds its position and only the fill moves. */}
+                so the progress bar holds its position and only the fill moves.
+                Held invisible during the Auto Archive preview-focus window so
+                the preview is truly the only thing on screen. */}
             <Stepper
               activeStep={meta!.activeStep}
               progress={meta!.progress}
               onNavigate={(s) => { setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
-              className="absolute inset-x-0 top-0 z-10"
+              className={cn(
+                "absolute inset-x-0 top-0 z-10 transition-opacity duration-500",
+                step === "auto-archive" && !chapter2Focus ? "opacity-0" : "opacity-100",
+              )}
             />
 
             {/* Prototype switch — only on the Seats screen. Toggles between the
@@ -335,30 +351,50 @@ export default function Home() {
             {step === "done" ? (
               <DoneCard onRestart={restart} />
             ) : (
-              <>
-                {/* Left column — white panel persists; inner content transitions.
-                    On the very first Chapter 2 screen (coming from the Intro
-                    loading screen), the options are held back so attention
-                    lands on the preview first — it fades in immediately on
-                    the right, then the left column follows after a beat. */}
-                <div className="flex h-full w-1/2 flex-col bg-white px-[100px] pb-[30px] pt-[100px]">
-                  <div
-                    key={step}
-                    className="flex min-h-0 flex-1 flex-col justify-between"
-                    style={{
-                      animation: "screen-enter 360ms ease-out both",
-                      animationDelay: step === "auto-archive" ? "550ms" : "0ms",
-                    }}
-                  >
-                    {leftFor()}
+              // Grid (not flex) so the left column's width itself can animate
+              // from 0 to 1fr — a true "curtain" reveal, not just a content
+              // fade. While collapsed, the right column naturally fills the
+              // whole row, so the preview sits dead-center on screen.
+              <div
+                className="grid h-full w-full"
+                style={{
+                  // minmax(0, ...) — not plain 1fr — so the tracks ignore
+                  // each column's content-driven min-width (the preview
+                  // card + its padding are wider than a bare 50% share) and
+                  // always split by the fr ratio alone, same as a plain
+                  // flex w-1/2 pair would if it didn't overflow.
+                  gridTemplateColumns:
+                    step === "auto-archive" && !chapter2Focus
+                      ? "minmax(0,0fr) minmax(0,1fr)"
+                      : "minmax(0,1fr) minmax(0,1fr)",
+                  transition: "grid-template-columns 700ms ease-out",
+                }}
+              >
+                {/* Left column — outer cell clips while its width animates;
+                    inner panel keeps a fixed half-viewport width so its
+                    content never reflows/squishes mid-animation. */}
+                <div className="h-full overflow-hidden bg-white">
+                  <div className="flex h-full w-[50vw] flex-col px-[100px] pb-[30px] pt-[100px]">
+                    <div
+                      key={step}
+                      className={cn(
+                        "flex min-h-0 flex-1 flex-col justify-between transition-all duration-500 ease-out",
+                        step === "auto-archive" && !chapter2Focus
+                          ? "translate-y-2 opacity-0"
+                          : "translate-y-0 opacity-100",
+                      )}
+                      style={{ transitionDelay: step === "auto-archive" && !chapter2Focus ? "0ms" : "250ms" }}
+                    >
+                      {leftFor()}
+                    </div>
                   </div>
                 </div>
 
                 {/* Right column — preview area (transparent over the wash). */}
-                <div className="flex h-full w-1/2 flex-col items-center justify-center px-[100px] pb-[100px] pt-[140px]">
+                <div className="flex h-full flex-col items-center justify-center px-[100px] pb-[100px] pt-[140px]">
                   {previewFor()}
                 </div>
-              </>
+              </div>
             )}
           </div>
         )}
