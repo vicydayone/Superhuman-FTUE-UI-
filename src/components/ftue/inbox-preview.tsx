@@ -190,7 +190,7 @@ function AccountMenu({
 }) {
   return (
     <div
-      className="absolute bottom-0 left-0 top-8 z-20 flex w-[189px] flex-col gap-[21px] rounded-bl-[16px] bg-white px-[13px] py-[14px] font-ui shadow-[2px_0px_22.9px_0px_rgba(0,0,0,0.06)]"
+      className="absolute bottom-0 left-0 top-8 z-20 flex w-[189px] flex-col gap-[21px] rounded-bl-[16px] bg-white px-4 py-[14px] font-ui shadow-[2px_0px_22.9px_0px_rgba(0,0,0,0.06)]"
     >
       {/* Profile */}
       <div className="flex w-full items-center gap-[6px]">
@@ -200,10 +200,9 @@ function AccountMenu({
         </p>
       </div>
 
-      <MenuSkeleton rows={2} />
-
-      {/* Auto Archive — the emphasized destination for archived mail */}
-      <div className="flex w-full items-center justify-between leading-5 tracking-[-0.15px] text-black">
+      {/* Auto Archive — bleeds 8px out from the menu edge (wider than the
+          16px container padding used by the profile row / skeleton below). */}
+      <div className="-mx-2 flex items-center justify-between rounded-[4px] bg-white px-2 py-[10px] leading-5 tracking-[-0.15px] text-black shadow-[0px_0px_8.25px_rgba(0,0,0,0.1)]">
         {/* Re-keying on archivedCount remounts the span so the pop animation
             replays each time the archived total changes (no setState effect). */}
         <span
