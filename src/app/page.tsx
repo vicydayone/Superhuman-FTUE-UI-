@@ -336,12 +336,19 @@ export default function Home() {
               <DoneCard onRestart={restart} />
             ) : (
               <>
-                {/* Left column — white panel persists; inner content transitions. */}
+                {/* Left column — white panel persists; inner content transitions.
+                    On the very first Chapter 2 screen (coming from the Intro
+                    loading screen), the options are held back so attention
+                    lands on the preview first — it fades in immediately on
+                    the right, then the left column follows after a beat. */}
                 <div className="flex h-full w-1/2 flex-col bg-white px-[100px] pb-[30px] pt-[100px]">
                   <div
                     key={step}
                     className="flex min-h-0 flex-1 flex-col justify-between"
-                    style={{ animation: "screen-enter 360ms ease-out both" }}
+                    style={{
+                      animation: "screen-enter 360ms ease-out both",
+                      animationDelay: step === "auto-archive" ? "550ms" : "0ms",
+                    }}
                   >
                     {leftFor()}
                   </div>
