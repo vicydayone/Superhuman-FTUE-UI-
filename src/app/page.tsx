@@ -64,9 +64,9 @@ export default function Home() {
     pitch: false,
     social: false,
   });
-  // Snapshot of the user's archive selections at the moment they click Continue —
-  // archivedLabels gets reset to all-false to animate the menu closing, so we
-  // need a separate copy that persists into the Split Inbox filter.
+  // Snapshot of the user's archive selections at the moment they click
+  // Continue, so Split Inbox's filter stays stable even if archivedLabels
+  // changes later (e.g. navigating back to Auto Archive and tweaking it).
   const [savedArchivedLabels, setSavedArchivedLabels] = useState<AutoArchiveToggles>({
     marketing: true,
     news: false,
@@ -77,7 +77,6 @@ export default function Home() {
     calendar: true,
     jira: true,
   });
-  const [archiveClosing, setArchiveClosing] = useState(false);
   // Which left-column card is hovered → pulse the matching tag / tab in preview.
   const [archiveHoverLabel, setArchiveHoverLabel] = useState<MailLabel | null>(null);
   const [splitHoverTab, setSplitHoverTab] = useState<SplitCategory | null>(null);
@@ -100,7 +99,6 @@ export default function Home() {
     setReminder("couple-days");
     setAskDemo(0);
     setNoSeats(false);
-    setArchiveClosing(false);
     setArchiveHoverLabel(null);
     setSplitHoverTab(null);
     setSplitHovering(false);
@@ -127,11 +125,7 @@ export default function Home() {
             onContinue={() => {
               // Snapshot the user's selection for the Split filter.
               setSavedArchivedLabels({ ...archivedLabels });
-              // Slide the menu out (content shifts back to x-0) WITHOUT
-              // un-archiving — the visible mails stay exactly as configured,
-              // so the Split Inbox picks up seamlessly with no reload.
-              setArchiveClosing(true);
-              setTimeout(() => setStep("split-inbox"), 750);
+              setStep("split-inbox");
             }}
           />
         );
@@ -197,7 +191,6 @@ export default function Home() {
             archivedLabels={step === "split-inbox" ? savedArchivedLabels : archivedLabels}
             splitMails={SPLIT_MAIL}
             splits={splits}
-            closing={archiveClosing}
             hovering={splitHovering}
             transitioning={splitTransitioning}
             hoverLabel={archiveHoverLabel}
@@ -278,7 +271,6 @@ export default function Home() {
   const flowIdx = FLOW_ORDER.indexOf(step);
   const goTo = (i: number) => {
     if (i < 0 || i >= FLOW_ORDER.length) return;
-    setArchiveClosing(false);
     setSplitHovering(false);
     setSplitTransitioning(false);
     setStep(FLOW_ORDER[i]);
@@ -308,7 +300,7 @@ export default function Home() {
             <Stepper
               activeStep={meta!.activeStep}
               progress={meta!.progress}
-              onNavigate={(s) => { setArchiveClosing(false); setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
+              onNavigate={(s) => { setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
               className="absolute inset-x-0 top-0 z-10"
             />
 

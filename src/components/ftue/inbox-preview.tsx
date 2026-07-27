@@ -182,22 +182,15 @@ function MenuSkeleton({ rows }: { rows: number }) {
 }
 
 function AccountMenu({
-  open,
   inboxCount,
   archivedCount,
 }: {
-  open: boolean;
   inboxCount: number;
   archivedCount: number;
 }) {
   return (
     <div
-      aria-hidden={!open}
-      className={cn(
-        "absolute bottom-0 left-0 top-8 z-20 flex w-[189px] flex-col gap-[21px] rounded-bl-[16px] bg-white px-[13px] py-[14px] font-ui",
-        "shadow-[2px_0px_22.9px_0px_rgba(0,0,0,0.06)] transition-transform duration-700 ease-out",
-        open ? "translate-x-0" : "-translate-x-full",
-      )}
+      className="absolute bottom-0 left-0 top-8 z-20 flex w-[189px] flex-col gap-[21px] rounded-bl-[16px] bg-white px-[13px] py-[14px] font-ui shadow-[2px_0px_22.9px_0px_rgba(0,0,0,0.06)]"
     >
       {/* Profile */}
       <div className="flex w-full items-center gap-[6px]">
@@ -219,7 +212,7 @@ function AccountMenu({
           className="text-[11px] font-semibold"
         >Auto Archived</span>
         <Counter
-          value={open ? archivedCount : 0}
+          value={archivedCount}
           delay={1400}
           className="text-[12px] font-bold text-[rgba(0,0,0,0.4)]"
         />
@@ -235,31 +228,21 @@ function AccountMenu({
 function AutoArchiveContent({
   mails,
   archivedLabels,
-  closing = false,
   hoverLabel = null,
 }: {
   mails: AutoArchiveMail[];
   archivedLabels: AutoArchiveToggles;
-  closing?: boolean;
   hoverLabel?: AutoArchiveMail["label"] | null;
 }) {
-  // Phase 1: menu slides in + content shifts right.
-  // Phase 2: marketing mails collapse (starts after menu has settled).
-  // Phase 3: "Auto Archived" counter tweens up (after mails are gone).
-  const [menuOpen, setMenuOpen] = useState(false);
+  // The account menu is shown from the very first frame and stays put —
+  // no slide in/out, regardless of which labels get toggled. Only the
+  // archived-mail collapse gets a short delay for visual pacing.
   const [collapseActive, setCollapseActive] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setMenuOpen(true), 1000);
-    const t2 = setTimeout(() => setCollapseActive(true), 2200);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t = setTimeout(() => setCollapseActive(true), 900);
+    return () => clearTimeout(t);
   }, []);
-
-  const hasArchivable = Object.values(archivedLabels).some(Boolean);
-  // On Continue the menu slides out (content shifts back to x-0) so the Split
-  // Inbox can pick up seamlessly — but the archived mails stay collapsed, so
-  // nothing reloads: the visible list is identical to Split's opening frame.
-  const showMenu = menuOpen && hasArchivable && !closing;
 
   const { inboxCount, archivedCount } = useMemo(() => ({
     inboxCount: collapseActive
@@ -272,21 +255,10 @@ function AutoArchiveContent({
 
   return (
     <>
-      <AccountMenu open={showMenu} inboxCount={inboxCount} archivedCount={archivedCount} />
+      <AccountMenu inboxCount={inboxCount} archivedCount={archivedCount} />
 
-      <div
-        className={cn(
-          "flex h-full flex-col transition-transform duration-700 ease-out",
-          showMenu ? "translate-x-[159px]" : "translate-x-0",
-        )}
-      >
+      <div className="flex h-full translate-x-[159px] flex-col">
         <div className="mb-10 flex items-center gap-[13px]">
-          <IconHamburger
-            className={cn(
-              "size-4 shrink-0 transition-opacity duration-300",
-              showMenu ? "opacity-0" : "opacity-100",
-            )}
-          />
           <span className="flex items-baseline gap-[5px] text-[16px] tracking-[-0.15px] text-ink">
             Inbox
             <Counter value={inboxCount} className="text-[13px] text-[rgba(0,0,0,0.4)] tabular-nums" />
@@ -665,7 +637,6 @@ export function Chapter2Preview({
   archivedLabels,
   splitMails: _splitMails,
   splits,
-  closing = false,
   hovering = false,
   transitioning = false,
   hoverLabel = null,
@@ -676,7 +647,6 @@ export function Chapter2Preview({
   archivedLabels: AutoArchiveToggles;
   splitMails: SplitMail[];
   splits: SplitToggles;
-  closing?: boolean;
   hovering?: boolean;
   transitioning?: boolean;
   hoverLabel?: AutoArchiveMail["label"] | null;
@@ -696,7 +666,7 @@ export function Chapter2Preview({
     >
       <PreviewShell>
         {step === "auto-archive" ? (
-          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} closing={closing} hoverLabel={hoverLabel} />
+          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} hoverLabel={hoverLabel} />
         ) : (
           <SplitInboxContent key="split" mails={animMails} toggles={splits} hovering={hovering} transitioning={transitioning} hoverTab={hoverTab} />
         )}
