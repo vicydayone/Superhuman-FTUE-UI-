@@ -258,7 +258,7 @@ function AutoArchiveContent({
       <AccountMenu inboxCount={inboxCount} archivedCount={archivedCount} />
 
       <div className="flex h-full translate-x-[159px] flex-col">
-        <div className="mb-10 flex items-center gap-[13px]">
+        <div className="mb-10 flex items-center pl-[30px]">
           <span className="flex items-baseline gap-[5px] text-[16px] tracking-[-0.15px] text-ink">
             Inbox
             <Counter value={inboxCount} className="text-[13px] text-[rgba(0,0,0,0.4)] tabular-nums" />
