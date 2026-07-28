@@ -358,20 +358,14 @@ export default function Home() {
           <div className="relative flex h-full w-full">
             {/* Persistent stepper — stays mounted across every non-intro step,
                 so the progress bar holds its position and only the fill moves.
-                Held invisible during the Auto Archive preview-focus window so
-                the preview is truly the only thing on screen. */}
+                Stays visible even during Auto Archive's V1 preview-focus
+                window (without it the centered preview reads as floating too
+                far down with nothing to anchor it against up top). */}
             <Stepper
               activeStep={meta!.activeStep}
               progress={meta!.progress}
               onNavigate={(s) => { setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
               className="absolute inset-x-0 top-0 z-10"
-              style={
-                isArchiveV1
-                  ? archiveReveal
-                    ? { animation: "highlight-pop 550ms ease-out both" }
-                    : { opacity: 0 }
-                  : undefined
-              }
             />
 
             {/* Prototype switch — Auto Archive's 3 demo variants, swap live
