@@ -453,6 +453,13 @@ export default function Home() {
               <div
                 className="grid h-full w-full"
                 style={{
+                  // Without an explicit row height, the grid's single
+                  // implicit row sizes to its tallest child's content
+                  // (padding + card) instead of stretching to fill the
+                  // grid's own h-full — here that was 733px vs. the real
+                  // 720px viewport, quietly pushing "centered" content
+                  // ~16px low. minmax(0,1fr) pins the row to the container.
+                  gridTemplateRows: "minmax(0,1fr)",
                   // minmax(0, ...) — not plain 1fr — so the tracks ignore
                   // each column's content-driven min-width (the preview
                   // card + its padding are wider than a bare 50% share) and
@@ -498,8 +505,10 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Right column — preview area (transparent over the wash). */}
-                <div className="flex h-full flex-col items-center justify-center px-[100px] pb-[100px] pt-[140px]">
+                {/* Right column — preview area (transparent over the wash).
+                    Symmetric top/bottom padding so the card sits truly
+                    vertically centered (was pt-140/pb-100, ~20px low). */}
+                <div className="flex h-full flex-col items-center justify-center px-[100px] pb-[100px] pt-[100px]">
                   {previewFor()}
                 </div>
               </div>
