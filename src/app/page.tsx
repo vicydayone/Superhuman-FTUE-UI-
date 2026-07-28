@@ -126,18 +126,18 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [step, archiveDemoVariant, archiveReplayKey]);
 
-  // Experiment: a quieter variant for Auto Archive → Split Inbox. Position
-  // doesn't move this time (no grid curtain) — just the left column's new
-  // options staying invisible until the preview's own tab build-up animation
-  // (Chapter2Preview's phase 0→5, see PHASE_OFFSETS in inbox-preview.tsx)
-  // has fully played out on the right, so the split options land right as
-  // the sorted inbox settles rather than racing it.
+  // Split Inbox now gets the same V1 dramatic treatment as Auto Archive:
+  // layout collapses so the preview is alone, dead-center, then the whole
+  // frame + left content pop in together once the preview's own tab
+  // build-up animation (Chapter2Preview's phase 0→5, see PHASE_OFFSETS in
+  // inbox-preview.tsx — finishes at 4900ms) is fully done + a 2s beat.
+  const SPLIT_BUILD_MS = 4900;
   const [splitLeftReady, setSplitLeftReady] = useState(false);
 
   useEffect(() => {
     if (step !== "split-inbox") return;
     setSplitLeftReady(false);
-    const t = setTimeout(() => setSplitLeftReady(true), 5000);
+    const t = setTimeout(() => setSplitLeftReady(true), SPLIT_BUILD_MS + 2000);
     return () => clearTimeout(t);
   }, [step]);
 
@@ -335,12 +335,16 @@ export default function Home() {
   const isArchiveV1 = step === "auto-archive" && archiveDemoVariant === 1;
   const isArchiveV2 = step === "auto-archive" && archiveDemoVariant === 2;
   const isArchiveV3 = step === "auto-archive" && archiveDemoVariant === 3;
+  const isSplitInbox = step === "split-inbox";
+  // Split Inbox now shares Auto Archive's V1 dramatic mechanic (grid
+  // curtain + frame pop) instead of its old quieter fixed-position fade.
+  const usesV1Mechanic = isArchiveV1 || isSplitInbox;
 
   // True while the left column's content should stay invisible: Auto
   // Archive's V1/V2 entrance holds, or Split Inbox's "wait for the preview
   // to finish sorting" hold.
   const leftContentHidden =
-    ((isArchiveV1 || isArchiveV2) && !archiveReveal) || (step === "split-inbox" && !splitLeftReady);
+    ((isArchiveV1 || isArchiveV2) && !archiveReveal) || (isSplitInbox && !splitLeftReady);
 
   return (
     <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
@@ -471,12 +475,12 @@ export default function Home() {
                   // always split by the fr ratio alone, same as a plain
                   // flex w-1/2 pair would if it didn't overflow.
                   gridTemplateColumns:
-                    isArchiveV1 && !archiveReveal
+                    usesV1Mechanic && leftContentHidden
                       ? "minmax(0,0fr) minmax(0,1fr)"
                       : "minmax(0,1fr) minmax(0,1fr)",
                   // V1 gets a springy overshoot on the curtain itself — the
                   // frame's own growth "pops" instead of just gliding open.
-                  transition: isArchiveV1
+                  transition: usesV1Mechanic
                     ? "grid-template-columns 950ms cubic-bezier(0.34,1.56,0.64,1)"
                     : "grid-template-columns 900ms ease-out",
                 }}
@@ -490,7 +494,7 @@ export default function Home() {
                       key={`${step}-${archiveReplayKey}`}
                       className={cn(
                         "flex min-h-0 flex-1 flex-col justify-between",
-                        isArchiveV1
+                        usesV1Mechanic
                           ? leftContentHidden && "opacity-0"
                           : cn(
                               "transition-all duration-700 ease-out",
@@ -498,7 +502,7 @@ export default function Home() {
                             ),
                       )}
                       style={
-                        isArchiveV1
+                        usesV1Mechanic
                           ? leftContentHidden
                             ? undefined
                             : { animation: "highlight-pop 850ms ease-out both" }
