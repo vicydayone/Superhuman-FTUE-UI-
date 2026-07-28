@@ -90,17 +90,41 @@ export default function Home() {
   // purchased (teammates billed as added). Toggled via the prototype switch
   // on the Seats screen.
   const [noSeats, setNoSeats] = useState(false);
-  // Experiment: on entering Auto Archive (the first Chapter 2 screen), hold
-  // back the stepper + left column entirely so focus lands on the preview
-  // alone for a couple seconds — then the rest reveals together.
-  const [chapter2Focus, setChapter2Focus] = useState(false);
+  // Experiment: 3 alternate entrance treatments for Auto Archive, switchable
+  // live via the prototype control on that screen (for demoing side by side
+  // in a meeting). All 3 replay from scratch on variant change or Replay.
+  //   V1 — dramatic: layout collapses so the preview is alone, dead-center,
+  //        then the whole frame + stepper "pop" in together once the
+  //        preview's own build animation is fully done + a 2s beat.
+  //   V2 — quiet: position never moves (matches the Split Inbox treatment);
+  //        only the left column's options wait for the build animation.
+  //   V3 — no preview at all: the left content shows alone, centered on
+  //        screen in a card.
+  const [archiveDemoVariant, setArchiveDemoVariant] = useState<1 | 2 | 3>(1);
+  const [archiveReplayKey, setArchiveReplayKey] = useState(0);
+  const [archiveReveal, setArchiveReveal] = useState(false);
+
+  // AutoArchiveContent's own build animation (mail collapsing into "Auto
+  // Archived"): collapseActive fires at 900ms, then the 3 marketing-labelled
+  // mails collapse in sequence at +200/+320/+440ms with a 900ms transition
+  // each — the last one finishes at 900+440+900 = 2240ms after mount.
+  const AUTO_ARCHIVE_BUILD_MS = 2240;
 
   useEffect(() => {
     if (step !== "auto-archive") return;
-    setChapter2Focus(false);
-    const t = setTimeout(() => setChapter2Focus(true), 2400);
+    if (archiveDemoVariant === 3) {
+      // No preview, nothing to wait on — show the centered card right away.
+      setArchiveReveal(true);
+      return;
+    }
+    setArchiveReveal(false);
+    const revealAt =
+      archiveDemoVariant === 1
+        ? AUTO_ARCHIVE_BUILD_MS + 2000 // V1: full build animation + a 2s beat
+        : AUTO_ARCHIVE_BUILD_MS + 300; // V2: right after, just a breath of room
+    const t = setTimeout(() => setArchiveReveal(true), revealAt);
     return () => clearTimeout(t);
-  }, [step]);
+  }, [step, archiveDemoVariant, archiveReplayKey]);
 
   // Experiment: a quieter variant for Auto Archive → Split Inbox. Position
   // doesn't move this time (no grid curtain) — just the left column's new
@@ -221,6 +245,7 @@ export default function Home() {
             transitioning={splitTransitioning}
             hoverLabel={archiveHoverLabel}
             hoverTab={splitHoverTab}
+            archiveReplayKey={archiveReplayKey}
           />
         );
       case "auto-draft":
@@ -307,11 +332,15 @@ export default function Home() {
       ? null
       : STEPPER_META[step as Exclude<FlowStep, "intro" | Chapter1Step>];
 
-  // True while the left column's content should stay invisible: the dramatic
-  // full-focus entrance into Auto Archive, or the quieter "wait for the
-  // preview to finish sorting" hold on the way into Split Inbox.
+  const isArchiveV1 = step === "auto-archive" && archiveDemoVariant === 1;
+  const isArchiveV2 = step === "auto-archive" && archiveDemoVariant === 2;
+  const isArchiveV3 = step === "auto-archive" && archiveDemoVariant === 3;
+
+  // True while the left column's content should stay invisible: Auto
+  // Archive's V1/V2 entrance holds, or Split Inbox's "wait for the preview
+  // to finish sorting" hold.
   const leftContentHidden =
-    (step === "auto-archive" && !chapter2Focus) || (step === "split-inbox" && !splitLeftReady);
+    ((isArchiveV1 || isArchiveV2) && !archiveReveal) || (step === "split-inbox" && !splitLeftReady);
 
   return (
     <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
@@ -335,11 +364,48 @@ export default function Home() {
               activeStep={meta!.activeStep}
               progress={meta!.progress}
               onNavigate={(s) => { setSplitHovering(false); setSplitTransitioning(false); setStep(s as FlowStep); }}
-              className={cn(
-                "absolute inset-x-0 top-0 z-10 transition-opacity duration-500",
-                step === "auto-archive" && !chapter2Focus ? "opacity-0" : "opacity-100",
-              )}
+              className="absolute inset-x-0 top-0 z-10"
+              style={
+                isArchiveV1
+                  ? archiveReveal
+                    ? { animation: "highlight-pop 550ms ease-out both" }
+                    : { opacity: 0 }
+                  : undefined
+              }
             />
+
+            {/* Prototype switch — Auto Archive's 3 demo variants, swap live
+                for the meeting walkthrough. Replay re-runs whichever is
+                selected from scratch. */}
+            {step === "auto-archive" && (
+              <div className="absolute right-6 top-[60px] z-20 flex items-center gap-2 rounded-full border border-black/10 bg-white/90 p-1 shadow-[0_1px_3px_rgba(0,0,0,0.12)] backdrop-blur-sm">
+                {([1, 2, 3] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => {
+                      setArchiveDemoVariant(v);
+                      setArchiveReplayKey((k) => k + 1);
+                    }}
+                    className={cn(
+                      "rounded-full px-3 py-1 text-[12px] font-medium transition-colors",
+                      archiveDemoVariant === v
+                        ? "bg-primary text-primary-foreground"
+                        : "text-[#5f6368] hover:text-black",
+                    )}
+                  >
+                    V{v}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setArchiveReplayKey((k) => k + 1)}
+                  className="rounded-full px-3 py-1 text-[12px] font-medium text-[#5f6368] hover:text-black"
+                >
+                  ↻ Replay
+                </button>
+              </div>
+            )}
 
             {/* Prototype switch — only on the Seats screen. Toggles between the
                 "seats purchased" and "no seats purchased" variants. Sits just
@@ -371,6 +437,20 @@ export default function Home() {
 
             {step === "done" ? (
               <DoneCard onRestart={restart} />
+            ) : isArchiveV3 ? (
+              // V3 — no preview at all. Left content shown alone, centered
+              // on screen in its own card.
+              <div className="flex h-full w-full items-center justify-center">
+                <div
+                  key={archiveReplayKey}
+                  className="w-full max-w-[520px] rounded-[8px] bg-white px-[56px] py-10 shadow-[0_24px_70px_rgba(30,24,70,0.16)]"
+                  style={{ animation: "highlight-pop 550ms ease-out both" }}
+                >
+                  <div className="flex min-h-0 flex-col justify-between">
+                    {leftFor()}
+                  </div>
+                </div>
+              </div>
             ) : (
               // Grid (not flex) so the left column's width itself can animate
               // from 0 to 1fr — a true "curtain" reveal, not just a content
@@ -385,10 +465,14 @@ export default function Home() {
                   // always split by the fr ratio alone, same as a plain
                   // flex w-1/2 pair would if it didn't overflow.
                   gridTemplateColumns:
-                    step === "auto-archive" && !chapter2Focus
+                    isArchiveV1 && !archiveReveal
                       ? "minmax(0,0fr) minmax(0,1fr)"
                       : "minmax(0,1fr) minmax(0,1fr)",
-                  transition: "grid-template-columns 700ms ease-out",
+                  // V1 gets a springy overshoot on the curtain itself — the
+                  // frame's own growth "pops" instead of just gliding open.
+                  transition: isArchiveV1
+                    ? "grid-template-columns 650ms cubic-bezier(0.34,1.56,0.64,1)"
+                    : "grid-template-columns 700ms ease-out",
                 }}
               >
                 {/* Left column — outer cell clips while its width animates;
@@ -397,12 +481,23 @@ export default function Home() {
                 <div className="h-full overflow-hidden bg-white">
                   <div className="flex h-full w-[50vw] flex-col px-[100px] pb-[30px] pt-[100px]">
                     <div
-                      key={step}
+                      key={`${step}-${archiveReplayKey}`}
                       className={cn(
-                        "flex min-h-0 flex-1 flex-col justify-between transition-all duration-500 ease-out",
-                        leftContentHidden ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
+                        "flex min-h-0 flex-1 flex-col justify-between",
+                        isArchiveV1
+                          ? leftContentHidden && "opacity-0"
+                          : cn(
+                              "transition-all duration-500 ease-out",
+                              leftContentHidden ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
+                            ),
                       )}
-                      style={{ transitionDelay: leftContentHidden ? "0ms" : "250ms" }}
+                      style={
+                        isArchiveV1
+                          ? leftContentHidden
+                            ? undefined
+                            : { animation: "highlight-pop 550ms ease-out both" }
+                          : { transitionDelay: leftContentHidden ? "0ms" : "250ms" }
+                      }
                     >
                       {leftFor()}
                     </div>

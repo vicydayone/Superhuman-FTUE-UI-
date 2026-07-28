@@ -640,6 +640,7 @@ export function Chapter2Preview({
   transitioning = false,
   hoverLabel = null,
   hoverTab = null,
+  archiveReplayKey = 0,
 }: {
   step: "auto-archive" | "split-inbox";
   archivedMails: AutoArchiveMail[];
@@ -650,6 +651,10 @@ export function Chapter2Preview({
   transitioning?: boolean;
   hoverLabel?: AutoArchiveMail["label"] | null;
   hoverTab?: SplitCategory | null;
+  /** Bumping this remounts just the Auto Archive content (not the shell),
+   *  replaying its mail-collapse build animation — used by the Auto Archive
+   *  demo-variant switcher's Replay control. */
+  archiveReplayKey?: number;
 }) {
   const animMails = archivedMails
     .filter((m) => !m.label || !archivedLabels[m.label])
@@ -665,7 +670,7 @@ export function Chapter2Preview({
     >
       <PreviewShell>
         {step === "auto-archive" ? (
-          <AutoArchiveContent key="archive" mails={archivedMails} archivedLabels={archivedLabels} hoverLabel={hoverLabel} />
+          <AutoArchiveContent key={`archive-${archiveReplayKey}`} mails={archivedMails} archivedLabels={archivedLabels} hoverLabel={hoverLabel} />
         ) : (
           <SplitInboxContent key="split" mails={animMails} toggles={splits} hovering={hovering} transitioning={transitioning} hoverTab={hoverTab} />
         )}

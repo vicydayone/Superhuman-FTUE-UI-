@@ -20,11 +20,13 @@ export function Stepper({
   progress = 0,
   onNavigate,
   className,
+  style,
 }: {
   activeStep: 2 | 3 | "done";
   progress?: number;
   onNavigate?: (step: FlowStep) => void;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const activeIndex = activeStep === "done" ? STEPS.length : (activeStep as number) - 1;
 
@@ -34,6 +36,7 @@ export function Stepper({
         "flex w-full items-center justify-center gap-20 bg-white px-[100px] py-4 font-ui",
         className,
       )}
+      style={style}
     >
       {STEPS.map((step, i) => {
         const isDone = i < activeIndex;
