@@ -102,6 +102,21 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [step]);
 
+  // Experiment: a quieter variant for Auto Archive → Split Inbox. Position
+  // doesn't move this time (no grid curtain) — just the left column's new
+  // options staying invisible until the preview's own tab build-up animation
+  // (Chapter2Preview's phase 0→5, see PHASE_OFFSETS in inbox-preview.tsx)
+  // has fully played out on the right, so the split options land right as
+  // the sorted inbox settles rather than racing it.
+  const [splitLeftReady, setSplitLeftReady] = useState(false);
+
+  useEffect(() => {
+    if (step !== "split-inbox") return;
+    setSplitLeftReady(false);
+    const t = setTimeout(() => setSplitLeftReady(true), 5000);
+    return () => clearTimeout(t);
+  }, [step]);
+
   const restart = () => {
     setArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
     setSavedArchivedLabels({ marketing: true, news: false, pitch: false, social: false });
@@ -292,6 +307,12 @@ export default function Home() {
       ? null
       : STEPPER_META[step as Exclude<FlowStep, "intro" | Chapter1Step>];
 
+  // True while the left column's content should stay invisible: the dramatic
+  // full-focus entrance into Auto Archive, or the quieter "wait for the
+  // preview to finish sorting" hold on the way into Split Inbox.
+  const leftContentHidden =
+    (step === "auto-archive" && !chapter2Focus) || (step === "split-inbox" && !splitLeftReady);
+
   return (
     <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
       <div className="relative h-full w-full">
@@ -379,11 +400,9 @@ export default function Home() {
                       key={step}
                       className={cn(
                         "flex min-h-0 flex-1 flex-col justify-between transition-all duration-500 ease-out",
-                        step === "auto-archive" && !chapter2Focus
-                          ? "translate-y-2 opacity-0"
-                          : "translate-y-0 opacity-100",
+                        leftContentHidden ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
                       )}
-                      style={{ transitionDelay: step === "auto-archive" && !chapter2Focus ? "0ms" : "250ms" }}
+                      style={{ transitionDelay: leftContentHidden ? "0ms" : "250ms" }}
                     >
                       {leftFor()}
                     </div>
