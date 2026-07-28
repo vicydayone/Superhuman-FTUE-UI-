@@ -440,10 +440,10 @@ export default function Home() {
             ) : isArchiveV3 ? (
               // V3 — no preview at all. Left content shown alone, centered
               // on screen in its own card.
-              <div className="flex h-full w-full items-center justify-center">
+              <div className="flex h-full w-full items-center justify-center pt-[140px] pb-[100px]">
                 <div
                   key={archiveReplayKey}
-                  className="w-full max-w-[520px] rounded-[8px] bg-white px-[56px] py-10 shadow-[0_24px_70px_rgba(30,24,70,0.16)]"
+                  className="w-full max-w-[720px] rounded-[8px] bg-white px-[56px] py-10 shadow-[0_24px_70px_rgba(30,24,70,0.16)]"
                   style={{ animation: "highlight-pop 550ms ease-out both" }}
                 >
                   <div className="flex min-h-0 flex-col justify-between">

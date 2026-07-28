@@ -201,15 +201,16 @@ function AccountMenu({
       </div>
 
       {/* Auto Archive — bleeds 8px out from the menu edge (wider than the
-          16px container padding used by the profile row / skeleton below). */}
-      <div className="-mx-2 flex items-center justify-between rounded-[4px] bg-white px-2 py-[10px] leading-5 tracking-[-0.15px] text-black shadow-[0px_0px_8.25px_rgba(0,0,0,0.1)]">
-        {/* Re-keying on archivedCount remounts the span so the pop animation
-            replays each time the archived total changes (no setState effect). */}
-        <span
-          key={archivedCount}
-          style={{ display: "inline-block", animation: archivedCount > 0 ? "label-pop 700ms ease-out 1400ms both" : "none" }}
-          className="text-[11px] font-semibold"
-        >Auto Archived</span>
+          16px container padding used by the profile row / skeleton below).
+          Re-keying on archivedCount remounts the whole card so the pop
+          animation replays on the frame itself (not just the text inside)
+          each time the archived total changes. */}
+      <div
+        key={archivedCount}
+        style={{ animation: archivedCount > 0 ? "label-pop 700ms ease-out 1400ms both" : "none" }}
+        className="-mx-2 flex items-center justify-between rounded-[4px] bg-white px-2 py-[10px] leading-5 tracking-[-0.15px] text-black shadow-[0px_0px_8.25px_rgba(0,0,0,0.1)]"
+      >
+        <span className="text-[11px] font-semibold">Auto Archived</span>
         <Counter
           value={archivedCount}
           delay={1400}
