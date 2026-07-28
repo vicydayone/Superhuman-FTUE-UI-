@@ -451,14 +451,19 @@ export default function Home() {
               // fade. While collapsed, the right column naturally fills the
               // whole row, so the preview sits dead-center on screen.
               <div
-                className="grid h-full w-full"
+                className="grid w-full"
                 style={{
+                  // Reserve the stepper's own height (measured ~53px) up
+                  // top so "centered" means between the progress bar and
+                  // the bottom of the screen — not the full viewport height,
+                  // which would sit noticeably higher than the stepper.
+                  marginTop: 53,
+                  height: "calc(100% - 53px)",
                   // Without an explicit row height, the grid's single
                   // implicit row sizes to its tallest child's content
                   // (padding + card) instead of stretching to fill the
-                  // grid's own h-full — here that was 733px vs. the real
-                  // 720px viewport, quietly pushing "centered" content
-                  // ~16px low. minmax(0,1fr) pins the row to the container.
+                  // grid's own height, quietly pushing "centered" content
+                  // low. minmax(0,1fr) pins the row to the container.
                   gridTemplateRows: "minmax(0,1fr)",
                   // minmax(0, ...) — not plain 1fr — so the tracks ignore
                   // each column's content-driven min-width (the preview
