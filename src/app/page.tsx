@@ -438,7 +438,7 @@ export default function Home() {
                 <div
                   key={archiveReplayKey}
                   className="w-full max-w-[720px] rounded-[8px] bg-white px-[56px] py-10 shadow-[0_24px_70px_rgba(30,24,70,0.16)]"
-                  style={{ animation: "highlight-pop 550ms ease-out both" }}
+                  style={{ animation: "highlight-pop 850ms ease-out both" }}
                 >
                   <div className="flex min-h-0 flex-col justify-between">
                     {leftFor()}
@@ -477,8 +477,8 @@ export default function Home() {
                   // V1 gets a springy overshoot on the curtain itself — the
                   // frame's own growth "pops" instead of just gliding open.
                   transition: isArchiveV1
-                    ? "grid-template-columns 650ms cubic-bezier(0.34,1.56,0.64,1)"
-                    : "grid-template-columns 700ms ease-out",
+                    ? "grid-template-columns 950ms cubic-bezier(0.34,1.56,0.64,1)"
+                    : "grid-template-columns 900ms ease-out",
                 }}
               >
                 {/* Left column — outer cell clips while its width animates;
@@ -493,7 +493,7 @@ export default function Home() {
                         isArchiveV1
                           ? leftContentHidden && "opacity-0"
                           : cn(
-                              "transition-all duration-500 ease-out",
+                              "transition-all duration-700 ease-out",
                               leftContentHidden ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
                             ),
                       )}
@@ -501,8 +501,8 @@ export default function Home() {
                         isArchiveV1
                           ? leftContentHidden
                             ? undefined
-                            : { animation: "highlight-pop 550ms ease-out both" }
-                          : { transitionDelay: leftContentHidden ? "0ms" : "250ms" }
+                            : { animation: "highlight-pop 850ms ease-out both" }
+                          : { transitionDelay: leftContentHidden ? "0ms" : "350ms" }
                       }
                     >
                       {leftFor()}
