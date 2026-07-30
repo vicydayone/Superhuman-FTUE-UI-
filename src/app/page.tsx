@@ -56,6 +56,23 @@ const STEPPER_META: Record<
   done: { activeStep: "done", progress: 0 },
 };
 
+// Every step after Auto Archive uses the same V1 "preview starts centered"
+// entrance unconditionally (Auto Archive keeps its own switchable V1/V2/V3
+// demo variants — see archiveDemoVariant below). Each entry is how long that
+// step's own preview build animation takes before the 2s beat + reveal:
+//  - split-inbox: Chapter2Preview's tab build-up (PHASE_OFFSETS, inbox-preview.tsx)
+//  - auto-draft/auto-reminder: ConversationContent's reply-rise + highlight-pop
+//  - ask-ai: WorkflowPreview's entered/settled slide-in
+//  - seats: SeatsPreview has no build sequence, just its own 420ms fade-in
+const PREVIEW_BUILD_MS: Partial<Record<FlowStep, number>> = {
+  "split-inbox": 4900,
+  "auto-draft": 1170,
+  "auto-reminder": 1170,
+  "ask-ai": 1600,
+  seats: 420,
+};
+const V1_GENERIC_STEPS = Object.keys(PREVIEW_BUILD_MS) as FlowStep[];
+
 export default function Home() {
   const [step, setStep] = useState<FlowStep>("welcome");
   const [archivedLabels, setArchivedLabels] = useState<AutoArchiveToggles>({
@@ -126,18 +143,18 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [step, archiveDemoVariant, archiveReplayKey]);
 
-  // Split Inbox now gets the same V1 dramatic treatment as Auto Archive:
-  // layout collapses so the preview is alone, dead-center, then the whole
-  // frame + left content pop in together once the preview's own tab
-  // build-up animation (Chapter2Preview's phase 0→5, see PHASE_OFFSETS in
-  // inbox-preview.tsx — finishes at 4900ms) is fully done + a 2s beat.
-  const SPLIT_BUILD_MS = 4900;
-  const [splitLeftReady, setSplitLeftReady] = useState(false);
+  // Every other step (split-inbox, auto-draft, auto-reminder, ask-ai, seats)
+  // shares that same V1 dramatic treatment unconditionally: layout collapses
+  // so the preview is alone, dead-center, then the whole frame + left
+  // content pop in together once that step's own preview build animation
+  // (PREVIEW_BUILD_MS above) is fully done + a 2s beat.
+  const [previewRevealed, setPreviewRevealed] = useState(false);
 
   useEffect(() => {
-    if (step !== "split-inbox") return;
-    setSplitLeftReady(false);
-    const t = setTimeout(() => setSplitLeftReady(true), SPLIT_BUILD_MS + 2000);
+    if (!V1_GENERIC_STEPS.includes(step)) return;
+    setPreviewRevealed(false);
+    const buildMs = PREVIEW_BUILD_MS[step] ?? 1200;
+    const t = setTimeout(() => setPreviewRevealed(true), buildMs + 2000);
     return () => clearTimeout(t);
   }, [step]);
 
@@ -335,16 +352,17 @@ export default function Home() {
   const isArchiveV1 = step === "auto-archive" && archiveDemoVariant === 1;
   const isArchiveV2 = step === "auto-archive" && archiveDemoVariant === 2;
   const isArchiveV3 = step === "auto-archive" && archiveDemoVariant === 3;
-  const isSplitInbox = step === "split-inbox";
-  // Split Inbox now shares Auto Archive's V1 dramatic mechanic (grid
-  // curtain + frame pop) instead of its old quieter fixed-position fade.
-  const usesV1Mechanic = isArchiveV1 || isSplitInbox;
+  const isV1GenericStep = V1_GENERIC_STEPS.includes(step);
+  // Every screen after Auto Archive shares the V1 dramatic mechanic (grid
+  // curtain + frame pop) unconditionally — Auto Archive is the only one
+  // with a switchable variant.
+  const usesV1Mechanic = isArchiveV1 || isV1GenericStep;
 
   // True while the left column's content should stay invisible: Auto
-  // Archive's V1/V2 entrance holds, or Split Inbox's "wait for the preview
-  // to finish sorting" hold.
+  // Archive's V1/V2 entrance holds, or any other screen's "wait for the
+  // preview's own build animation to finish" hold.
   const leftContentHidden =
-    ((isArchiveV1 || isArchiveV2) && !archiveReveal) || (isSplitInbox && !splitLeftReady);
+    ((isArchiveV1 || isArchiveV2) && !archiveReveal) || (isV1GenericStep && !previewRevealed);
 
   return (
     <main className="h-screen w-full overflow-hidden bg-white bg-cover bg-center [background-image:url(/background.png)]">
