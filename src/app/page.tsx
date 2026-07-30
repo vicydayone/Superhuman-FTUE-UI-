@@ -56,20 +56,20 @@ const STEPPER_META: Record<
   done: { activeStep: "done", progress: 0 },
 };
 
-// Every step after Auto Archive uses the same V1 "preview starts centered"
-// entrance unconditionally (Auto Archive keeps its own switchable V1/V2/V3
-// demo variants — see archiveDemoVariant below). Each entry is how long that
+// Every step after Auto Archive except Seats (the last "Add your team"
+// screen — its invite form reads better without the centered-preview
+// entrance) uses the same V1 "preview starts centered" treatment
+// unconditionally (Auto Archive keeps its own switchable V1/V2/V3 demo
+// variants — see archiveDemoVariant below). Each entry is how long that
 // step's own preview build animation takes before the 2s beat + reveal:
 //  - split-inbox: Chapter2Preview's tab build-up (PHASE_OFFSETS, inbox-preview.tsx)
 //  - auto-draft/auto-reminder: ConversationContent's reply-rise + highlight-pop
 //  - ask-ai: WorkflowPreview's entered/settled slide-in
-//  - seats: SeatsPreview has no build sequence, just its own 420ms fade-in
 const PREVIEW_BUILD_MS: Partial<Record<FlowStep, number>> = {
   "split-inbox": 4900,
   "auto-draft": 1170,
   "auto-reminder": 1170,
   "ask-ai": 1600,
-  seats: 420,
 };
 const V1_GENERIC_STEPS = Object.keys(PREVIEW_BUILD_MS) as FlowStep[];
 
